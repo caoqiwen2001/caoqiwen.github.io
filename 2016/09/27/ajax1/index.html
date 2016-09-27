@@ -102,31 +102,28 @@
 
 
 
-<meta name="description" content="&amp;amp;&amp;emsp;使用它的XMLHttpRequest请求，不需要刷新网页就可以交互数据。比如说用户的注册交互事件，大致可以分为以下几个步骤进行
+<meta name="description" content="&amp;emsp;使用它的XMLHttpRequest请求，不需要刷新网页就可以交互数据。比如说用户的注册交互事件，大致可以分为以下几个步骤进行
  创建一个 jsp页面，输入页面元素文档
  采用jqury库中的函数对表单元素进行操作，通过采用post请求将数据转发到post请求。
 创建一个serverlt将 数据中转过来之后将数据进行交互，然后再将数据转发到原网页当中去
-###具体实现代码
-$">
+具体实现代码$(function">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用Ajax创建一个简单的网页交互">
 <meta property="og:url" content="http://caoqiwen2001.github.io/2016/09/27/ajax1/index.html">
 <meta property="og:site_name" content="学习永无止境">
-<meta property="og:description" content="&amp;amp;&amp;emsp;使用它的XMLHttpRequest请求，不需要刷新网页就可以交互数据。比如说用户的注册交互事件，大致可以分为以下几个步骤进行
+<meta property="og:description" content="&amp;emsp;使用它的XMLHttpRequest请求，不需要刷新网页就可以交互数据。比如说用户的注册交互事件，大致可以分为以下几个步骤进行
  创建一个 jsp页面，输入页面元素文档
  采用jqury库中的函数对表单元素进行操作，通过采用post请求将数据转发到post请求。
 创建一个serverlt将 数据中转过来之后将数据进行交互，然后再将数据转发到原网页当中去
-###具体实现代码
-$">
-<meta property="og:updated_time" content="2016-09-27T05:23:49.878Z">
+具体实现代码$(function">
+<meta property="og:updated_time" content="2016-09-27T05:53:11.797Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用Ajax创建一个简单的网页交互">
-<meta name="twitter:description" content="&amp;amp;&amp;emsp;使用它的XMLHttpRequest请求，不需要刷新网页就可以交互数据。比如说用户的注册交互事件，大致可以分为以下几个步骤进行
+<meta name="twitter:description" content="&amp;emsp;使用它的XMLHttpRequest请求，不需要刷新网页就可以交互数据。比如说用户的注册交互事件，大致可以分为以下几个步骤进行
  创建一个 jsp页面，输入页面元素文档
  采用jqury库中的函数对表单元素进行操作，通过采用post请求将数据转发到post请求。
 创建一个serverlt将 数据中转过来之后将数据进行交互，然后再将数据转发到原网页当中去
-###具体实现代码
-$">
+具体实现代码$(function">
 
 
 
@@ -207,7 +204,7 @@ $">
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Startseite
+            Home
           </a>
         </li>
       
@@ -217,7 +214,7 @@ $">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
-            Kategorien
+            Categories
           </a>
         </li>
       
@@ -227,7 +224,7 @@ $">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
-            Archiv
+            Archives
           </a>
         </li>
       
@@ -290,7 +287,7 @@ $">
             <span class="post-meta-item-icon">
               <i class="fa fa-calendar-o"></i>
             </span>
-            <span class="post-meta-item-text">Veröffentlicht am</span>
+            <span class="post-meta-item-text">Posted on</span>
             <time itemprop="dateCreated" datetime="2016-09-27T00:28:21+08:00" content="2016-09-27">
               2016-09-27
             </time>
@@ -302,7 +299,7 @@ $">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
-              <span class="post-meta-item-text">in</span>
+              <span class="post-meta-item-text">In</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
                   <a href="/categories/thinking/" itemprop="url" rel="index">
@@ -338,12 +335,11 @@ $">
       
 
       
-        <p>&amp;&emsp;使用它的XMLHttpRequest请求，不需要刷新网页就可以交互数据。比如说用户的注册交互事件，大致可以分为以下几个步骤进行<br></p>
+        <p>&emsp;使用它的XMLHttpRequest请求，不需要刷新网页就可以交互数据。比如说用户的注册交互事件，大致可以分为以下几个步骤进行<br></p>
 <p><li> 创建一个 jsp页面，输入页面元素文档</li></p>
 <p><li> 采用jqury库中的函数对表单元素进行操作，通过采用post请求将数据转发到post请求。</li></p>
 <p><li>创建一个serverlt将 数据中转过来之后将数据进行交互，然后再将数据转发到原网页当中去<br><br></li></p>
-<p>###具体实现代码</p>
-<pre><code>$(function() {
+<h3 id="具体实现代码"><a href="#具体实现代码" class="headerlink" title="具体实现代码"></a>具体实现代码</h3><pre><code>$(function() {
     $(&quot;:input[name=&apos;username&apos;]&quot;).change(function() {
         var val = $(this).val();
         val = $.trim(val);
@@ -461,10 +457,10 @@ $">
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            Inhaltsverzeichnis
+            Table of Contents
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview">
-            Übersicht
+            Overview
           </li>
         </ul>
       
@@ -481,7 +477,7 @@ $">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
               <span class="site-state-item-count">4</span>
-              <span class="site-state-item-name">Artikel</span>
+              <span class="site-state-item-name">posts</span>
             </a>
           </div>
 
@@ -489,7 +485,7 @@ $">
             <div class="site-state-item site-state-categories">
               <a href="/categories">
                 <span class="site-state-item-count">1</span>
-                <span class="site-state-item-name">Kategorien</span>
+                <span class="site-state-item-name">categories</span>
               </a>
             </div>
           
@@ -498,7 +494,7 @@ $">
             <div class="site-state-item site-state-tags">
               <a href="/tags">
                 <span class="site-state-item-count">2</span>
-                <span class="site-state-item-name">Tags</span>
+                <span class="site-state-item-name">tags</span>
               </a>
             </div>
           
@@ -526,7 +522,7 @@ $">
               
             
             
-              <p class="post-toc-empty">Dieser Artikel hat kein Inhaltsverzeichnis</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#具体实现代码"><span class="nav-number">1.</span> <span class="nav-text">具体实现代码</span></a></li></ol></div>
             
           </div>
         </section>
@@ -553,7 +549,7 @@ $">
 </div>
 
 <div class="powered-by">
-  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
 </div>
 
 <div class="theme-info">
