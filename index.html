@@ -286,8 +286,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/09/27/hibernate-1/" itemprop="url">
-                  hibernate中的外键1对1测试
+                <a class="post-title-link" href="/2016/09/30/spring-1/" itemprop="url">
+                  Spring中配置bean需要注意的点
                 </a>
               
             
@@ -300,8 +300,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-27T00:28:21+08:00" content="2016-09-27">
-              2016-09-27
+            <time itemprop="dateCreated" datetime="2016-09-30T01:40:53+08:00" content="2016-09-30">
+              2016-09-30
             </time>
           </span>
 
@@ -314,8 +314,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/thinking/" itemprop="url" rel="index">
-                    <span itemprop="name">编程</span>
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
                   </a>
                 </span>
 
@@ -330,8 +330,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/09/27/hibernate-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/27/hibernate-1/" itemprop="commentsCount"></span>
+                <a href="/2016/09/30/spring-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/30/spring-1/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -356,12 +356,19 @@
       
         
           
-            <p> &emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，<br>Department包含Manager的引用。<br>然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</div><div class="line">&lt;!DOCTYPE hibernate-mapping PUBLIC &quot;-//Hibernate/Hibernate Mapping DTD 3.0//EN&quot;</div><div class="line">&quot;http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd&quot;&gt;</div><div class="line">&lt;hibernate-mapping&gt;</div><div class="line">    &lt;class name=&quot;com.hiberate.one2one.foreign.Department&quot; table=&quot;DEPARTMENTS&quot;&gt;</div><div class="line">        &lt;id name=&quot;deptID&quot; type=&quot;java.lang.Integer&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_ID&quot; /&gt;</div><div class="line">            &lt;generator class=&quot;native&quot; /&gt;</div><div class="line">        &lt;/id&gt;</div><div class="line">        &lt;property name=&quot;deptName&quot; type=&quot;java.lang.String&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_NAME&quot; /&gt;</div><div class="line">        &lt;/property&gt;</div><div class="line">        &lt;many-to-one name=&quot;manager&quot; class=&quot;com.hiberate.one2one.foreign.Manager&quot;</div><div class="line">        column=&quot;MGR_ID&quot; unique=&quot;true&quot;&gt;&lt;/many-to-one&gt;</div><div class="line">    &lt;/class&gt;</div><div class="line">&lt;/hibernate-mapping&gt;</div></pre></td></tr></table></figure></p>
-<p>&emsp;</p>
+            <p>   在Spring中配置通知的时候需要注意以下几个点：</p>
 <ul>
-<li>要特别注意的是在配置property的时候一定要对上java文件中的字段，否则就会报错。</li>
-<li>配置many-to-one时需要将unique=”true”。</li>
+<li>需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。</li>
+<li><p>在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">   &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans</div><div class="line">           http://www.springframework.org/schema/beans/spring-beans.xsd</div><div class="line">           http://www.springframework.org/schema/context</div><div class="line">           http://www.springframework.org/schema/context/spring-context-3.0.xsd</div><div class="line">           http://www.springframework.org/schema/aop</div><div class="line">           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd&quot;&gt;</div><div class="line">	&lt;context:component-scan base-package=&quot;com.caoqiwen.spring.aop&quot; &gt;</div><div class="line">        &lt;/context:component-scan&gt;</div><div class="line">        &lt;aop:aspectj-autoproxy&gt;&lt;/aop:aspectj-autoproxy&gt;</div><div class="line"> &lt;/beans&gt;</div></pre></td></tr></table></figure>
+<p>我配置了Context和aop的空间，特别注意的是在schmaLocation的配置中需要和上面的配置命名空间的顺序统一，否则也可能会报错。</p>
+</li>
 </ul>
+<ul>
+<li>通过注解来获取对应类的实例方法</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package com.caoqiwen.spring.aop;</div><div class="line">import org.springframework.stereotype.Component;</div><div class="line"></div><div class="line">@Component(&quot;arithmeticCalculator&quot;)</div><div class="line">public class  ArithmeticCalculatorImpl implements ArithmeticCalculator &#123;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int add(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		//return 0;</div><div class="line">		int result=x+y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int sub(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x-y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int mul(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x*y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int div(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x/y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>会根据配置去扫描com.caoqiwen.spring.aop命名空间下面的所有类</p>
 
           
         
@@ -515,6 +522,131 @@
     System.out.println(result);
     response.getWriter().print(result);
 </code></pre><p>通过得到传过来的参数username将数据进行初始化之后，然后对比是否可以注册当前的名字来返回html的文字来作为最终的结果。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/09/27/hibernate-1/" itemprop="url">
+                  hibernate中的外键1对1测试
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-27T00:28:21+08:00" content="2016-09-27">
+              2016-09-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/thinking/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/27/hibernate-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/27/hibernate-1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p> &emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，<br>Department包含Manager的引用。<br>然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</div><div class="line">&lt;!DOCTYPE hibernate-mapping PUBLIC &quot;-//Hibernate/Hibernate Mapping DTD 3.0//EN&quot;</div><div class="line">&quot;http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd&quot;&gt;</div><div class="line">&lt;hibernate-mapping&gt;</div><div class="line">    &lt;class name=&quot;com.hiberate.one2one.foreign.Department&quot; table=&quot;DEPARTMENTS&quot;&gt;</div><div class="line">        &lt;id name=&quot;deptID&quot; type=&quot;java.lang.Integer&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_ID&quot; /&gt;</div><div class="line">            &lt;generator class=&quot;native&quot; /&gt;</div><div class="line">        &lt;/id&gt;</div><div class="line">        &lt;property name=&quot;deptName&quot; type=&quot;java.lang.String&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_NAME&quot; /&gt;</div><div class="line">        &lt;/property&gt;</div><div class="line">        &lt;many-to-one name=&quot;manager&quot; class=&quot;com.hiberate.one2one.foreign.Manager&quot;</div><div class="line">        column=&quot;MGR_ID&quot; unique=&quot;true&quot;&gt;&lt;/many-to-one&gt;</div><div class="line">    &lt;/class&gt;</div><div class="line">&lt;/hibernate-mapping&gt;</div></pre></td></tr></table></figure></p>
+<p>&emsp;</p>
+<ul>
+<li>要特别注意的是在配置property的时候一定要对上java文件中的字段，否则就会报错。</li>
+<li>配置many-to-one时需要将unique=”true”。</li>
+</ul>
 
           
         
@@ -830,7 +962,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-count">5</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -838,7 +970,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>

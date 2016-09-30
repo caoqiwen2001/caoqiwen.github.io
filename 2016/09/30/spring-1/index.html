@@ -86,7 +86,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="test,hexo," />
 
 
 
@@ -102,19 +102,28 @@
 
 
 
-<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
+<meta name="description" content="在Spring中配置通知的时候需要注意以下几个点：
+
+需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。
+在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：
+123456789101112131415   &amp;lt;?xml versi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://caoqiwen2001.github.io/2016/08/12/hello-world/index.html">
+<meta property="og:title" content="Spring中配置bean需要注意的点">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2016/09/30/spring-1/index.html">
 <meta property="og:site_name" content="爱代码的小文同学">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
-<meta property="og:updated_time" content="2016-08-14T13:27:26.118Z">
+<meta property="og:description" content="在Spring中配置通知的时候需要注意以下几个点：
+
+需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。
+在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：
+123456789101112131415   &amp;lt;?xml versi">
+<meta property="og:updated_time" content="2016-09-30T03:31:16.331Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
+<meta name="twitter:title" content="Spring中配置bean需要注意的点">
+<meta name="twitter:description" content="在Spring中配置通知的时候需要注意以下几个点：
+
+需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。
+在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：
+123456789101112131415   &amp;lt;?xml versi">
 
 
 
@@ -135,9 +144,9 @@ Quick">
 
 
 
-  <link rel="canonical" href="http://caoqiwen2001.github.io/2016/08/12/hello-world/"/>
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2016/09/30/spring-1/"/>
 
-  <title> Hello World | 爱代码的小文同学 </title>
+  <title> Spring中配置bean需要注意的点 | 爱代码的小文同学 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -276,7 +285,7 @@ Quick">
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
 
     
       <header class="post-header">
@@ -287,7 +296,7 @@ Quick">
             
             
               
-                Hello World
+                Spring中配置bean需要注意的点
               
             
           </h1>
@@ -299,19 +308,38 @@ Quick">
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-12T01:37:58+08:00" content="2016-08-12">
-              2016-08-12
+            <time itemprop="dateCreated" datetime="2016-09-30T01:40:53+08:00" content="2016-09-30">
+              2016-09-30
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/08/12/hello-world/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/12/hello-world/" itemprop="commentsCount"></span>
+                <a href="/2016/09/30/spring-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/30/spring-1/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -334,15 +362,19 @@ Quick">
       
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+        <p>   在Spring中配置通知的时候需要注意以下几个点：</p>
+<ul>
+<li>需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。</li>
+<li><p>在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">   &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans</div><div class="line">           http://www.springframework.org/schema/beans/spring-beans.xsd</div><div class="line">           http://www.springframework.org/schema/context</div><div class="line">           http://www.springframework.org/schema/context/spring-context-3.0.xsd</div><div class="line">           http://www.springframework.org/schema/aop</div><div class="line">           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd&quot;&gt;</div><div class="line">	&lt;context:component-scan base-package=&quot;com.caoqiwen.spring.aop&quot; &gt;</div><div class="line">        &lt;/context:component-scan&gt;</div><div class="line">        &lt;aop:aspectj-autoproxy&gt;&lt;/aop:aspectj-autoproxy&gt;</div><div class="line"> &lt;/beans&gt;</div></pre></td></tr></table></figure>
+<p>我配置了Context和aop的空间，特别注意的是在schmaLocation的配置中需要和上面的配置命名空间的顺序统一，否则也可能会报错。</p>
+</li>
+</ul>
+<ul>
+<li>通过注解来获取对应类的实例方法</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package com.caoqiwen.spring.aop;</div><div class="line">import org.springframework.stereotype.Component;</div><div class="line"></div><div class="line">@Component(&quot;arithmeticCalculator&quot;)</div><div class="line">public class  ArithmeticCalculatorImpl implements ArithmeticCalculator &#123;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int add(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		//return 0;</div><div class="line">		int result=x+y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int sub(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x-y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int mul(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x*y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int div(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x/y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>会根据配置去扫描com.caoqiwen.spring.aop命名空间下面的所有类</p>
 
       
     </div>
@@ -363,18 +395,26 @@ Quick">
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/test/" rel="tag">#test</a>
+          
+            <a href="/tags/hexo/" rel="tag">#hexo</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2016/09/27/ajax1/" rel="next" title="使用Ajax创建一个简单的网页交互">
+                <i class="fa fa-chevron-left"></i> 使用Ajax创建一个简单的网页交互
+              </a>
+            
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/08/12/my-new-post/" rel="prev" title="如何用hexo搭建个人博客">
-                如何用hexo搭建个人博客 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -400,8 +440,8 @@ Quick">
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/08/12/hello-world/"
-           data-title="Hello World" data-url="http://caoqiwen2001.github.io/2016/08/12/hello-world/">
+      <div class="ds-thread" data-thread-key="2016/09/30/spring-1/"
+           data-title="Spring中配置bean需要注意的点" data-url="http://caoqiwen2001.github.io/2016/09/30/spring-1/">
       </div>
     
   </div>
@@ -492,7 +532,7 @@ Quick">
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
         </section>
