@@ -286,6 +286,145 @@
             
               
                 
+                <a class="post-title-link" href="/2016/11/17/mybatis-1/" itemprop="url">
+                  mybatis的基础配置
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-17T23:10:31+08:00" content="2016-11-17">
+              2016-11-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/thinking/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/17/mybatis-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/17/mybatis-1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="mybatis的基础配置"><a href="#mybatis的基础配置" class="headerlink" title="mybatis的基础配置"></a>mybatis的基础配置</h1><p>  mybatis最好的优点就是采用面向接口的方法来实现数据库的增删查改，很方便的对数据库进行相关的操作，开篇讲如何配置mybatis。</p>
+<h1 id="配置相关选项"><a href="#配置相关选项" class="headerlink" title="配置相关选项"></a>配置相关选项</h1><ol>
+<li>下载mybatis的相关包，本项目中用的是mybatis3.0 。</li>
+<li>配置数据库选项</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</div><div class="line">&lt;!DOCTYPE configuration</div><div class="line">  PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;</div><div class="line">  &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;</div><div class="line">&lt;configuration&gt;</div><div class="line">    &lt;!-- 对事务的管理和连接池的配置 --&gt;</div><div class="line">    &lt;properties resource=&quot;db.properties&quot;&gt;&lt;/properties&gt;</div><div class="line">    &lt;environments default=&quot;development&quot;&gt;</div><div class="line">        &lt;environment id=&quot;users&quot;&gt;</div><div class="line">            &lt;transactionManager type=&quot;JDBC&quot; /&gt;</div><div class="line">            &lt;dataSource type=&quot;POOLED&quot;&gt;</div><div class="line">                &lt;property name=&quot;driver&quot; value=&quot;$&#123;db.driver&#125;&quot; /&gt;</div><div class="line">                &lt;property name=&quot;url&quot; value=&quot;$&#123;db.url&#125;&quot; /&gt;</div><div class="line">                &lt;property name=&quot;username&quot; value=&quot;$&#123;db.username&#125;&quot; /&gt;</div><div class="line">                &lt;property name=&quot;password&quot; value=&quot;$&#123;db.password&#125;&quot; /&gt;</div><div class="line">            &lt;/dataSource&gt;</div><div class="line">        &lt;/environment&gt;</div><div class="line">    &lt;/environments&gt;</div><div class="line"></div><div class="line">    &lt;!-- mapping 文件路径配置 --&gt;</div><div class="line">    &lt;mappers&gt;</div><div class="line">        &lt;mapper resource=&quot;model/UserMapper.xml&quot; /&gt;</div><div class="line">    &lt;/mappers&gt;</div><div class="line">&lt;/configuration&gt;</div></pre></td></tr></table></figure>
+<p>我把数据库的相关信息保存在db.propertise文件中，方便日后的维护工作。需要注意的是id的值，我们在测试的过程中会用到。</p>
+<ol>
+<li>创建对应的映射文件UserMapper.xml,将对应sql语句写在这个文件中，项目中一般一个模块的sql都放在该模块中。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;!DOCTYPE mapper</div><div class="line">PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</div><div class="line">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;</div><div class="line"></div><div class="line">&lt;mapper namespace=&quot;model.UserMapper&quot;&gt;</div><div class="line">	&lt;select id=&quot;selectUser&quot; resultType=&quot;model.User&quot;&gt;</div><div class="line">		select *from User where</div><div class="line">		id=#&#123;id&#125;</div><div class="line">	&lt;/select&gt;</div><div class="line">&lt;!-- parameterType 代表插入数据类型为user类型 --&gt;</div><div class="line">	&lt;insert id=&quot;addUser&quot; parameterType=&quot;String&quot;&gt;</div><div class="line">		insert into user(userName,userPwd) values (#&#123;userName&#125;,#&#123;userPwd&#125;)</div><div class="line">	&lt;/insert&gt;</div><div class="line"></div><div class="line">&lt;/mapper&gt;</div></pre></td></tr></table></figure>
+<p>注意这里的namespace要对应的包下面的类名。对于查询语句，这里返回的是User类，而插入语句， 传入的参数类型为String类型，对于返回类型这里没有做相关操作。</p>
+<ol>
+<li>创建对应的model类<br>所谓的model，表示对应数据库中相应的属性名，这里创建一个User类</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">package model;</div><div class="line"></div><div class="line">public class User &#123;</div><div class="line">	private int id;</div><div class="line">	private String userName;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public String toString() &#123;</div><div class="line">		return &quot;User [id=&quot; + id + &quot;, userName=&quot; + userName + &quot;, userPwd=&quot; + userPwd + &quot;]&quot;;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public int getId() &#123;</div><div class="line">		return id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public void setId(int id) &#123;</div><div class="line">		this.id = id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public String getUserName() &#123;</div><div class="line">		return userName;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public void setUserName(String userName) &#123;</div><div class="line">		this.userName = userName;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public String getUserPwd() &#123;</div><div class="line">		return userPwd;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public void setUserPwd(String userPwd) &#123;</div><div class="line">		this.userPwd = userPwd;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	private String userPwd;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>有了这些前期工作准备就可以开始查询工作了。可以创建一个单元测试来测试对应方法。</p>
+<h2 id="关于使用接口的方法来进行数据库操作"><a href="#关于使用接口的方法来进行数据库操作" class="headerlink" title="关于使用接口的方法来进行数据库操作"></a>关于使用接口的方法来进行数据库操作</h2><p>接口的方式省去了手动写代码的工作量。值得注意的是在配置对应的接口命名空间及对应cfg文件的配置。如下图所示：<br>创建一个UserMapper接口类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public interface UserMapper &#123;</div><div class="line">	public User selectUser(int id);</div><div class="line">	public List&lt;User&gt; selectAllUser();</div><div class="line">	public void addUser(User user);</div><div class="line">	public void updateUser(User user);</div><div class="line">	public void deleteUser(int id);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该类与我们的UserMapper.xml相对应。值得注意的是在配置mybatis时，不需要加class类的路径，即如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;!-- mapping 文件路径配置 --&gt;</div><div class="line">  &lt;mappers&gt;</div><div class="line">     &lt;mapper resource=&quot;model/UserMapper.xml&quot; /&gt;</div><div class="line">   &lt;!--    &lt;mapper class=&quot;dao.UserMapper&quot;/&gt;--&gt;</div><div class="line">  &lt;/mappers&gt;</div></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/11/12/Idea/" itemprop="url">
                   idea神器配置和使用
                 </a>
@@ -1031,115 +1170,6 @@
 <li><a href="http://crazymilk.github.io/2015/12/28/GitHub-Pages-Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/#more" target="_blank" rel="external">GitHub Pages + Hexo搭建博客</a></li>
 <li><a href="http://www.cnblogs.com/zhcncn/p/4097881.html" target="_blank" rel="external">Hexo搭建Github静态博客</a></li>
 </ol>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/12/hello-world/" itemprop="url">
-                  Hello World
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-12T01:37:58+08:00" content="2016-08-12">
-              2016-08-12
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/08/12/hello-world/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/12/hello-world/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
 
           
         
