@@ -286,6 +286,236 @@
             
               
                 
+                <a class="post-title-link" href="/2017/01/03/string-1/" itemprop="url">
+                  java的String源码解析
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-03T18:04:06+08:00" content="2017-01-03">
+              2017-01-03
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/03/string-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/03/string-1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="java的属性"><a href="#java的属性" class="headerlink" title="java的属性"></a>java的属性</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private final char value[];  //final类型的char数组，则赋值之后是不能改变的。</div><div class="line"></div><div class="line">   /** Cache the hash code for the string */</div><div class="line">   private int hash; // Default to 0 //哈希值</div><div class="line"></div><div class="line">   /** use serialVersionUID from JDK 1.0.2 for interoperability */</div><div class="line">   private static final long serialVersionUID = -6849794470754667710L;</div></pre></td></tr></table></figure>
+<h3 id="常用的构造函数"><a href="#常用的构造函数" class="headerlink" title="常用的构造函数"></a>常用的构造函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">//默认给一个空间</div><div class="line"> public String() &#123;</div><div class="line">        this.value = new char[0];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">  public String(String original) &#123;</div><div class="line">        this.value = original.value;</div><div class="line">        this.hash = original.hash;</div><div class="line">    &#125;    </div><div class="line">    //支持char数组初始化</div><div class="line">    public String(char value[]) &#123;</div><div class="line">        this.value = Arrays.copyOf(value, value.length);</div><div class="line">    &#125;  </div><div class="line">    //支持StringBuilder初始化</div><div class="line">    public String(StringBuilder builder) &#123;</div><div class="line">        this.value = Arrays.copyOf(builder.getValue(), builder.length());</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h3 id="常用到的函数"><a href="#常用到的函数" class="headerlink" title="常用到的函数"></a>常用到的函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//返回char数组中对应的字符</div><div class="line">  public char charAt(int index) &#123;</div><div class="line">        if ((index &lt; 0) || (index &gt;= value.length)) &#123;</div><div class="line">            throw new StringIndexOutOfBoundsException(index);</div><div class="line">        &#125;</div><div class="line">        return value[index];</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//输入一个String返回一个char数组</div><div class="line">    public char[] toCharArray() &#123;</div><div class="line">        // Cannot use Arrays.copyOf because of class initialization order issues</div><div class="line">        char result[] = new char[value.length];</div><div class="line">        System.arraycopy(value, 0, result, 0, value.length);</div><div class="line">        return result;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h2 id="附上java中考到的一个算法题。"><a href="#附上java中考到的一个算法题。" class="headerlink" title="附上java中考到的一个算法题。"></a>附上java中考到的一个算法题。</h2><p>求String字符串中重复的字符算法题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public static Map&lt;Character, Integer&gt; allTotalSum(String str) &#123;</div><div class="line"></div><div class="line">	char[] chars=str.toCharArray();//把String转换成char数组</div><div class="line">	</div><div class="line">	HashMap&lt;Character, Integer&gt; hash = new HashMap&lt;Character, Integer&gt;();</div><div class="line"></div><div class="line">	for (int i = 0; i &lt; chars.length; i++) &#123;</div><div class="line">		if (!hash.containsKey(chars[i])) &#123;</div><div class="line">			hash.put(chars[i], 1);</div><div class="line">		&#125; else &#123;</div><div class="line">			int count = hash.get(chars[i]) + 1;</div><div class="line">			hash.put(chars[i], count);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	return hash;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/12/19/io-1/" itemprop="url">
+                  java二进制流
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-19T17:03:18+08:00" content="2016-12-19">
+              2016-12-19
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/19/io-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/19/io-1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>   通过这个测试用例，明确Java中的io流是怎么一回事，以及在项目中如何通过二进制流传输我们需要的文件。以下代码仅供测试使用。</p>
+<ul>
+<li>将文件转化成二进制流，然后通过流接收。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line">package com.caoqiwen.io;</div><div class="line"></div><div class="line">import java.io.BufferedInputStream;</div><div class="line">import java.io.BufferedOutputStream;</div><div class="line">import java.io.ByteArrayInputStream;</div><div class="line">import java.io.ByteArrayOutputStream;</div><div class="line">import java.io.File;</div><div class="line">import java.io.FileInputStream;</div><div class="line">import java.io.FileNotFoundException;</div><div class="line">import java.io.FileOutputStream;</div><div class="line">import java.io.IOException;</div><div class="line">import java.io.InputStream;</div><div class="line">import java.io.OutputStream;</div><div class="line">import java.util.Random;</div><div class="line">import java.util.zip.DeflaterOutputStream;</div><div class="line"></div><div class="line">/***</div><div class="line"> * 字节流的做法</div><div class="line"> * @author caoqiwen</div><div class="line"> *</div><div class="line"> */</div><div class="line"></div><div class="line">public class Demo5 &#123;</div><div class="line"></div><div class="line">	public static void main(String[] args) throws IOException &#123;</div><div class="line">		byte[] arr = getBytesFromFile(&quot;F:/Android/Java/JavaDemo/JavaDemo2/2.txt&quot;);</div><div class="line">		int random = new Random().nextInt(100);</div><div class="line">		String name = String.valueOf(random);</div><div class="line">		String destPath = &quot;F:/Android/Java/JavaDemo/JavaDemo2/&quot; + name + &quot;.txt&quot;;</div><div class="line">		toFileFromByteArray(arr, destPath);</div><div class="line">	&#125;</div><div class="line"></div><div class="line"></div><div class="line">//转换成byte数组</div><div class="line">	public static byte[] getBytesFromFile(String srcPath) throws IOException &#123;</div><div class="line">		File file = new File(srcPath);</div><div class="line">		byte[] dest = null;</div><div class="line">		InputStream is = new BufferedInputStream(new FileInputStream(srcPath));</div><div class="line">		// 字节数组输出流</div><div class="line">		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();</div><div class="line"></div><div class="line">		byte[] flush = new byte[1024];   //缓冲空间为1024个字节。</div><div class="line">		int len = 0;</div><div class="line">		while (-1 != (len = is.read(flush))) &#123;</div><div class="line">			byteArrayOutputStream.write(flush, 0, len);</div><div class="line">		&#125;</div><div class="line">		byteArrayOutputStream.flush();</div><div class="line">		dest = byteArrayOutputStream.toByteArray(); // 转换成byte[]数组</div><div class="line">		byteArrayOutputStream.close();</div><div class="line">		is.close();</div><div class="line">		return dest;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public static void toFileFromByteArray(byte[] src, String destPath) throws IOException &#123;</div><div class="line">		File dest = new File(destPath);</div><div class="line">		InputStream iStream = new BufferedInputStream(new ByteArrayInputStream(src));</div><div class="line">		OutputStream oStream = new BufferedOutputStream(new FileOutputStream(dest));</div><div class="line">		byte[] flush = new byte[1024];</div><div class="line">		int len = 0;</div><div class="line">		while (-1 != (len = iStream.read(flush))) &#123;</div><div class="line">			oStream.write(flush, 0, len);</div><div class="line">		&#125;</div><div class="line">		oStream.flush();   </div><div class="line">		oStream.close();   //后面打开的先关闭</div><div class="line">		iStream.close();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/11/17/mybatis-1/" itemprop="url">
                   mybatis的基础配置
                 </a>
@@ -1239,7 +1469,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-count">9</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1256,7 +1486,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -1293,7 +1523,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2016</span>
+  <span itemprop="copyrightYear">2017</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

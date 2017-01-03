@@ -102,28 +102,16 @@
 
 
 
-<meta name="description" content="在Spring中配置通知的时候需要注意以下几个点：
-
-需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。
-在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：
-123456789101112131415   &amp;lt;?xml versi">
+<meta name="description" content="java的属性1234567private final char value[];  //final类型的char数组，则赋值之后是不能改变的。   /** Cache the hash code for the string */   private int hash; // Default to 0 //哈希值   /** use serialVersionUID from JDK 1.0.2">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spring中配置bean需要注意的点">
-<meta property="og:url" content="http://caoqiwen2001.github.io/2016/09/30/spring-1/index.html">
+<meta property="og:title" content="java的String源码解析">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2017/01/03/string-1/index.html">
 <meta property="og:site_name" content="Coding Running">
-<meta property="og:description" content="在Spring中配置通知的时候需要注意以下几个点：
-
-需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。
-在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：
-123456789101112131415   &amp;lt;?xml versi">
-<meta property="og:updated_time" content="2016-09-30T03:46:27.141Z">
+<meta property="og:description" content="java的属性1234567private final char value[];  //final类型的char数组，则赋值之后是不能改变的。   /** Cache the hash code for the string */   private int hash; // Default to 0 //哈希值   /** use serialVersionUID from JDK 1.0.2">
+<meta property="og:updated_time" content="2017-01-03T10:22:18.001Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spring中配置bean需要注意的点">
-<meta name="twitter:description" content="在Spring中配置通知的时候需要注意以下几个点：
-
-需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。
-在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：
-123456789101112131415   &amp;lt;?xml versi">
+<meta name="twitter:title" content="java的String源码解析">
+<meta name="twitter:description" content="java的属性1234567private final char value[];  //final类型的char数组，则赋值之后是不能改变的。   /** Cache the hash code for the string */   private int hash; // Default to 0 //哈希值   /** use serialVersionUID from JDK 1.0.2">
 
 
 
@@ -144,9 +132,9 @@
 
 
 
-  <link rel="canonical" href="http://caoqiwen2001.github.io/2016/09/30/spring-1/"/>
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2017/01/03/string-1/"/>
 
-  <title> Spring中配置bean需要注意的点 | Coding Running </title>
+  <title> java的String源码解析 | Coding Running </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -296,7 +284,7 @@
             
             
               
-                Spring中配置bean需要注意的点
+                java的String源码解析
               
             
           </h1>
@@ -308,8 +296,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-30T01:40:53+08:00" content="2016-09-30">
-              2016-09-30
+            <time itemprop="dateCreated" datetime="2017-01-03T18:04:06+08:00" content="2017-01-03">
+              2017-01-03
             </time>
           </span>
 
@@ -338,8 +326,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/09/30/spring-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/30/spring-1/" itemprop="commentsCount"></span>
+                <a href="/2017/01/03/string-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/03/string-1/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -362,21 +350,12 @@
       
 
       
-        <p>   在Spring中配置通知的时候需要注意以下几个点：</p>
-<ul>
-<li>需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。</li>
-<li><p>在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">   &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans</div><div class="line">           http://www.springframework.org/schema/beans/spring-beans.xsd</div><div class="line">           http://www.springframework.org/schema/context</div><div class="line">           http://www.springframework.org/schema/context/spring-context-3.0.xsd</div><div class="line">           http://www.springframework.org/schema/aop</div><div class="line">           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd&quot;&gt;</div><div class="line">	&lt;context:component-scan base-package=&quot;com.caoqiwen.spring.aop&quot; &gt;</div><div class="line">        &lt;/context:component-scan&gt;</div><div class="line">        &lt;aop:aspectj-autoproxy&gt;&lt;/aop:aspectj-autoproxy&gt;</div><div class="line"> &lt;/beans&gt;</div></pre></td></tr></table></figure>
-<p>我配置了Context和aop的空间，特别注意的是在schmaLocation的配置中需要和上面的配置命名空间的顺序统一，否则也可能会报错。</p>
-</li>
-</ul>
-<ul>
-<li>通过注解来获取对应类的实例方法</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package com.caoqiwen.spring.aop;</div><div class="line">import org.springframework.stereotype.Component;</div><div class="line"></div><div class="line">@Component(&quot;arithmeticCalculator&quot;)</div><div class="line">public class  ArithmeticCalculatorImpl implements ArithmeticCalculator &#123;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int add(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		//return 0;</div><div class="line">		int result=x+y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int sub(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x-y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int mul(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x*y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int div(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x/y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>会根据配置去扫描com.caoqiwen.spring.aop命名空间下面的所有类</p>
-<h3 id="关于切面优先级的问题"><a href="#关于切面优先级的问题" class="headerlink" title="关于切面优先级的问题"></a>关于切面优先级的问题</h3><p>&emsp; 对于同一个切面，可以在类的前面注释一个order优先级，优先级，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">@Order(2)</div><div class="line">@Component</div><div class="line">@Aspect</div><div class="line">public class DesperateAspect &#123;</div><div class="line"></div><div class="line">	@Before(&quot;execution(public int com.caoqiwen.spring.aop.ArithmeticCalculator.*(..))&quot;)</div><div class="line">	public void beforeMethod(JoinPoint joinPoint) &#123;</div><div class="line">		String methodName = joinPoint.getSignature().getName();</div><div class="line">		Object[] args = joinPoint.getArgs();</div><div class="line">		System.out.println(&quot;the DesperateAspect&quot; + methodName + &quot;is start&quot; + Arrays.asList(args));</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>如果优先级越低，则该方法会优先执行。</p>
+        <h2 id="java的属性"><a href="#java的属性" class="headerlink" title="java的属性"></a>java的属性</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private final char value[];  //final类型的char数组，则赋值之后是不能改变的。</div><div class="line"></div><div class="line">   /** Cache the hash code for the string */</div><div class="line">   private int hash; // Default to 0 //哈希值</div><div class="line"></div><div class="line">   /** use serialVersionUID from JDK 1.0.2 for interoperability */</div><div class="line">   private static final long serialVersionUID = -6849794470754667710L;</div></pre></td></tr></table></figure>
+<h3 id="常用的构造函数"><a href="#常用的构造函数" class="headerlink" title="常用的构造函数"></a>常用的构造函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">//默认给一个空间</div><div class="line"> public String() &#123;</div><div class="line">        this.value = new char[0];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">  public String(String original) &#123;</div><div class="line">        this.value = original.value;</div><div class="line">        this.hash = original.hash;</div><div class="line">    &#125;    </div><div class="line">    //支持char数组初始化</div><div class="line">    public String(char value[]) &#123;</div><div class="line">        this.value = Arrays.copyOf(value, value.length);</div><div class="line">    &#125;  </div><div class="line">    //支持StringBuilder初始化</div><div class="line">    public String(StringBuilder builder) &#123;</div><div class="line">        this.value = Arrays.copyOf(builder.getValue(), builder.length());</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h3 id="常用到的函数"><a href="#常用到的函数" class="headerlink" title="常用到的函数"></a>常用到的函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//返回char数组中对应的字符</div><div class="line">  public char charAt(int index) &#123;</div><div class="line">        if ((index &lt; 0) || (index &gt;= value.length)) &#123;</div><div class="line">            throw new StringIndexOutOfBoundsException(index);</div><div class="line">        &#125;</div><div class="line">        return value[index];</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//输入一个String返回一个char数组</div><div class="line">    public char[] toCharArray() &#123;</div><div class="line">        // Cannot use Arrays.copyOf because of class initialization order issues</div><div class="line">        char result[] = new char[value.length];</div><div class="line">        System.arraycopy(value, 0, result, 0, value.length);</div><div class="line">        return result;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h2 id="附上java中考到的一个算法题。"><a href="#附上java中考到的一个算法题。" class="headerlink" title="附上java中考到的一个算法题。"></a>附上java中考到的一个算法题。</h2><p>求String字符串中重复的字符算法题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public static Map&lt;Character, Integer&gt; allTotalSum(String str) &#123;</div><div class="line"></div><div class="line">	char[] chars=str.toCharArray();//把String转换成char数组</div><div class="line">	</div><div class="line">	HashMap&lt;Character, Integer&gt; hash = new HashMap&lt;Character, Integer&gt;();</div><div class="line"></div><div class="line">	for (int i = 0; i &lt; chars.length; i++) &#123;</div><div class="line">		if (!hash.containsKey(chars[i])) &#123;</div><div class="line">			hash.put(chars[i], 1);</div><div class="line">		&#125; else &#123;</div><div class="line">			int count = hash.get(chars[i]) + 1;</div><div class="line">			hash.put(chars[i], count);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	return hash;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
       
     </div>
@@ -410,17 +389,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/09/27/ajax1/" rel="next" title="使用Ajax创建一个简单的网页交互">
-                <i class="fa fa-chevron-left"></i> 使用Ajax创建一个简单的网页交互
+              <a href="/2016/12/19/io-1/" rel="next" title="java二进制流">
+                <i class="fa fa-chevron-left"></i> java二进制流
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/11/05/youxi-md/" rel="prev" title="还是离开了游戏行业">
-                还是离开了游戏行业 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -446,8 +421,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/09/30/spring-1/"
-           data-title="Spring中配置bean需要注意的点" data-url="http://caoqiwen2001.github.io/2016/09/30/spring-1/">
+      <div class="ds-thread" data-thread-key="2017/01/03/string-1/"
+           data-title="java的String源码解析" data-url="http://caoqiwen2001.github.io/2017/01/03/string-1/">
       </div>
     
   </div>
@@ -538,7 +513,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于切面优先级的问题"><span class="nav-number">1.</span> <span class="nav-text">关于切面优先级的问题</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#java的属性"><span class="nav-number">1.</span> <span class="nav-text">java的属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常用的构造函数"><span class="nav-number">1.1.</span> <span class="nav-text">常用的构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用到的函数"><span class="nav-number">1.2.</span> <span class="nav-text">常用到的函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附上java中考到的一个算法题。"><span class="nav-number">2.</span> <span class="nav-text">附上java中考到的一个算法题。</span></a></li></ol></div>
             
           </div>
         </section>
