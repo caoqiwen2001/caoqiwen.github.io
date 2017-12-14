@@ -86,7 +86,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="hexo,test," />
+  <meta name="keywords" content="hexo," />
 
 
 
@@ -102,16 +102,22 @@
 
 
 
-<meta name="description" content="java的属性1234567private final char value[];  //final类型的char数组，则赋值之后是不能改变的。   /** Cache the hash code for the string */   private int hash; // Default to 0 //哈希值   /** use serialVersionUID from JDK 1.0.2">
+<meta name="description" content="单例模式单例模式是比较基础的一个设计模式了，在并发编程中需要考虑的是线程的安全性去实现对应的方法。
+饿汉式所谓饿汉式代码在命名一个初始化的时候就将对象创建出来了，所以不会有多线程情况下数据的问题。
+1234567891011public class EagerSingleton &amp;#123;    private static EagerSingleton instance = new Eager">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java的String源码解析">
-<meta property="og:url" content="http://caoqiwen2001.github.io/2017/01/03/string-1/index.html">
+<meta property="og:title" content="java设计模式之单例">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2017/12/14/java-design-singleton/index.html">
 <meta property="og:site_name" content="Coding Running">
-<meta property="og:description" content="java的属性1234567private final char value[];  //final类型的char数组，则赋值之后是不能改变的。   /** Cache the hash code for the string */   private int hash; // Default to 0 //哈希值   /** use serialVersionUID from JDK 1.0.2">
-<meta property="og:updated_time" content="2017-01-03T10:22:18.001Z">
+<meta property="og:description" content="单例模式单例模式是比较基础的一个设计模式了，在并发编程中需要考虑的是线程的安全性去实现对应的方法。
+饿汉式所谓饿汉式代码在命名一个初始化的时候就将对象创建出来了，所以不会有多线程情况下数据的问题。
+1234567891011public class EagerSingleton &amp;#123;    private static EagerSingleton instance = new Eager">
+<meta property="og:updated_time" content="2017-12-14T06:37:25.595Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="java的String源码解析">
-<meta name="twitter:description" content="java的属性1234567private final char value[];  //final类型的char数组，则赋值之后是不能改变的。   /** Cache the hash code for the string */   private int hash; // Default to 0 //哈希值   /** use serialVersionUID from JDK 1.0.2">
+<meta name="twitter:title" content="java设计模式之单例">
+<meta name="twitter:description" content="单例模式单例模式是比较基础的一个设计模式了，在并发编程中需要考虑的是线程的安全性去实现对应的方法。
+饿汉式所谓饿汉式代码在命名一个初始化的时候就将对象创建出来了，所以不会有多线程情况下数据的问题。
+1234567891011public class EagerSingleton &amp;#123;    private static EagerSingleton instance = new Eager">
 
 
 
@@ -132,9 +138,9 @@
 
 
 
-  <link rel="canonical" href="http://caoqiwen2001.github.io/2017/01/03/string-1/"/>
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2017/12/14/java-design-singleton/"/>
 
-  <title> java的String源码解析 | Coding Running </title>
+  <title> java设计模式之单例 | Coding Running </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -284,7 +290,7 @@
             
             
               
-                java的String源码解析
+                java设计模式之单例
               
             
           </h1>
@@ -296,8 +302,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-03T18:04:06+08:00" content="2017-01-03">
-              2017-01-03
+            <time itemprop="dateCreated" datetime="2017-12-14T14:30:07+08:00" content="2017-12-14">
+              2017-12-14
             </time>
           </span>
 
@@ -326,8 +332,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/01/03/string-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/03/string-1/" itemprop="commentsCount"></span>
+                <a href="/2017/12/14/java-design-singleton/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/14/java-design-singleton/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -350,12 +356,26 @@
       
 
       
-        <h2 id="java的属性"><a href="#java的属性" class="headerlink" title="java的属性"></a>java的属性</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private final char value[];  //final类型的char数组，则赋值之后是不能改变的。</div><div class="line"></div><div class="line">   /** Cache the hash code for the string */</div><div class="line">   private int hash; // Default to 0 //哈希值</div><div class="line"></div><div class="line">   /** use serialVersionUID from JDK 1.0.2 for interoperability */</div><div class="line">   private static final long serialVersionUID = -6849794470754667710L;</div></pre></td></tr></table></figure>
-<h3 id="常用的构造函数"><a href="#常用的构造函数" class="headerlink" title="常用的构造函数"></a>常用的构造函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">//默认给一个空间</div><div class="line"> public String() &#123;</div><div class="line">        this.value = new char[0];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">  public String(String original) &#123;</div><div class="line">        this.value = original.value;</div><div class="line">        this.hash = original.hash;</div><div class="line">    &#125;    </div><div class="line">    //支持char数组初始化</div><div class="line">    public String(char value[]) &#123;</div><div class="line">        this.value = Arrays.copyOf(value, value.length);</div><div class="line">    &#125;  </div><div class="line">    //支持StringBuilder初始化</div><div class="line">    public String(StringBuilder builder) &#123;</div><div class="line">        this.value = Arrays.copyOf(builder.getValue(), builder.length());</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<h3 id="常用到的函数"><a href="#常用到的函数" class="headerlink" title="常用到的函数"></a>常用到的函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//返回char数组中对应的字符</div><div class="line">  public char charAt(int index) &#123;</div><div class="line">        if ((index &lt; 0) || (index &gt;= value.length)) &#123;</div><div class="line">            throw new StringIndexOutOfBoundsException(index);</div><div class="line">        &#125;</div><div class="line">        return value[index];</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//输入一个String返回一个char数组</div><div class="line">    public char[] toCharArray() &#123;</div><div class="line">        // Cannot use Arrays.copyOf because of class initialization order issues</div><div class="line">        char result[] = new char[value.length];</div><div class="line">        System.arraycopy(value, 0, result, 0, value.length);</div><div class="line">        return result;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<h2 id="附上java中考到的一个算法题。"><a href="#附上java中考到的一个算法题。" class="headerlink" title="附上java中考到的一个算法题。"></a>附上java中考到的一个算法题。</h2><p>求String字符串中重复的字符算法题</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public static Map&lt;Character, Integer&gt; allTotalSum(String str) &#123;</div><div class="line"></div><div class="line">	char[] chars=str.toCharArray();//把String转换成char数组</div><div class="line">	</div><div class="line">	HashMap&lt;Character, Integer&gt; hash = new HashMap&lt;Character, Integer&gt;();</div><div class="line"></div><div class="line">	for (int i = 0; i &lt; chars.length; i++) &#123;</div><div class="line">		if (!hash.containsKey(chars[i])) &#123;</div><div class="line">			hash.put(chars[i], 1);</div><div class="line">		&#125; else &#123;</div><div class="line">			int count = hash.get(chars[i]) + 1;</div><div class="line">			hash.put(chars[i], count);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	return hash;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        <h3 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h3><p>单例模式是比较基础的一个设计模式了，在并发编程中需要考虑的是线程的安全性去实现对应的方法。</p>
+<h4 id="饿汉式"><a href="#饿汉式" class="headerlink" title="饿汉式"></a>饿汉式</h4><p>所谓饿汉式代码在命名一个初始化的时候就将对象创建出来了，所以不会有多线程情况下数据的问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class EagerSingleton &#123;</div><div class="line">    private static EagerSingleton instance = new EagerSingleton();</div><div class="line"></div><div class="line">    private EagerSingleton() &#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static EagerSingleton getInstance() &#123;</div><div class="line">        return instance;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="懒汉式"><a href="#懒汉式" class="headerlink" title="懒汉式"></a>懒汉式</h4><p>每次去在初始化的时候判断一下该对象是否为空，为空的时候去创建该对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class LazySingleton &#123;</div><div class="line">    private static LazySingleton  instance=null;</div><div class="line"></div><div class="line">    private LazySingleton()&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public  static  LazySingleton getInstance()&#123;</div><div class="line">        if (instance==null)&#123;</div><div class="line">            instance=new LazySingleton();</div><div class="line">        &#125;</div><div class="line">        return  instance;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此种情况下，在多线程的情况下会造成数据的竞争而导致该对象在内存中分配两份对象，违背了单例的本意。<br>如何解决多线程下存在的并发问题，采用双检锁的方法来实现。代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package com.caoqiwen.learning.design.example2;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by caoqiwen on 2017/12/13.</div><div class="line"> */</div><div class="line">public class DoubleCheckLockSingleton &#123;</div><div class="line">    private volatile  static  DoubleCheckLockSingleton instance=null;</div><div class="line">//    private  static  Object object=new Object();</div><div class="line"></div><div class="line">    private DoubleCheckLockSingleton()&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 线程安全的单例</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public  static  DoubleCheckLockSingleton getInstance()&#123;</div><div class="line">        if (instance==null)&#123;</div><div class="line">            synchronized (DoubleCheckLockSingleton.class)&#123;</div><div class="line">                if (instance==null)&#123;</div><div class="line">                    instance=new DoubleCheckLockSingleton();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return instance;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public  void get()&#123;</div><div class="line">        synchronized (this)&#123;</div><div class="line">            System.out.println(&quot;hello world&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面这段代码中存在1个疑问的地方。<br> 为什么DoubleCheckLockSingleton 需要加volatile关键字？<br> 笔者到网上找了一些答案，大概分析都是这两种情况：  </p>
+<ol>
+<li>内存的可见性，让其他线程马上对instance可见。</li>
+<li>保证内存顺序的一致性，可以参考知乎上装个讨论<a href="https://www.zhihu.com/question/56606703/answer/238878067" target="_blank" rel="external">java 单例模式中双重检查锁定 volatile 的作用？</a>。<br>实例化一个对象需要的步骤：  </li>
+</ol>
+<ul>
+<li>禁止指令的重排序<br>（1）分配内存空间<br>（2）初始化对象<br>（3）将内存空间的地址赋值给对应的引用<br>但是由于操作系统可以对指令进行重排序，程序运行的顺序可能是这样子的：<br>（1）分配内存空间<br>（2）将内存空间的地址赋值给对应的引用<br>（3）初始化对象<br>如果不加volatile 关键字可能会导致该初始化对象没有正确初始化，造成错误。</li>
+</ul>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>关于加volatile关键字的作用在面试中也是面试管非常喜欢问的一个问题，好好了解它的作用。即以下两个作用</p>
+<ul>
+<li>防止指令重排序</li>
+<li>内存可见性。</li>
+</ul>
 
       
     </div>
@@ -380,8 +400,6 @@
           
             <a href="/tags/hexo/" rel="tag">#hexo</a>
           
-            <a href="/tags/test/" rel="tag">#test</a>
-          
         </div>
       
 
@@ -389,17 +407,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/12/19/io-1/" rel="next" title="java二进制流">
-                <i class="fa fa-chevron-left"></i> java二进制流
+              <a href="/2017/01/03/string-1/" rel="next" title="java的String源码解析">
+                <i class="fa fa-chevron-left"></i> java的String源码解析
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/12/14/java-design-singleton/" rel="prev" title="java设计模式之单例">
-                java设计模式之单例 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -425,8 +439,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/01/03/string-1/"
-           data-title="java的String源码解析" data-url="http://caoqiwen2001.github.io/2017/01/03/string-1/">
+      <div class="ds-thread" data-thread-key="2017/12/14/java-design-singleton/"
+           data-title="java设计模式之单例" data-url="http://caoqiwen2001.github.io/2017/12/14/java-design-singleton/">
       </div>
     
   </div>
@@ -517,7 +531,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#java的属性"><span class="nav-number">1.</span> <span class="nav-text">java的属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常用的构造函数"><span class="nav-number">1.1.</span> <span class="nav-text">常用的构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用到的函数"><span class="nav-number">1.2.</span> <span class="nav-text">常用到的函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附上java中考到的一个算法题。"><span class="nav-number">2.</span> <span class="nav-text">附上java中考到的一个算法题。</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#单例模式"><span class="nav-number">1.</span> <span class="nav-text">单例模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#饿汉式"><span class="nav-number">1.1.</span> <span class="nav-text">饿汉式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#懒汉式"><span class="nav-number">1.2.</span> <span class="nav-text">懒汉式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
             
           </div>
         </section>

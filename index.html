@@ -286,6 +286,145 @@
             
               
                 
+                <a class="post-title-link" href="/2017/12/14/java-design-singleton/" itemprop="url">
+                  java设计模式之单例
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-12-14T14:30:07+08:00" content="2017-12-14">
+              2017-12-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/12/14/java-design-singleton/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/14/java-design-singleton/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h3><p>单例模式是比较基础的一个设计模式了，在并发编程中需要考虑的是线程的安全性去实现对应的方法。</p>
+<h4 id="饿汉式"><a href="#饿汉式" class="headerlink" title="饿汉式"></a>饿汉式</h4><p>所谓饿汉式代码在命名一个初始化的时候就将对象创建出来了，所以不会有多线程情况下数据的问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class EagerSingleton &#123;</div><div class="line">    private static EagerSingleton instance = new EagerSingleton();</div><div class="line"></div><div class="line">    private EagerSingleton() &#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static EagerSingleton getInstance() &#123;</div><div class="line">        return instance;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="懒汉式"><a href="#懒汉式" class="headerlink" title="懒汉式"></a>懒汉式</h4><p>每次去在初始化的时候判断一下该对象是否为空，为空的时候去创建该对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class LazySingleton &#123;</div><div class="line">    private static LazySingleton  instance=null;</div><div class="line"></div><div class="line">    private LazySingleton()&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public  static  LazySingleton getInstance()&#123;</div><div class="line">        if (instance==null)&#123;</div><div class="line">            instance=new LazySingleton();</div><div class="line">        &#125;</div><div class="line">        return  instance;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此种情况下，在多线程的情况下会造成数据的竞争而导致该对象在内存中分配两份对象，违背了单例的本意。<br>如何解决多线程下存在的并发问题，采用双检锁的方法来实现。代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package com.caoqiwen.learning.design.example2;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by caoqiwen on 2017/12/13.</div><div class="line"> */</div><div class="line">public class DoubleCheckLockSingleton &#123;</div><div class="line">    private volatile  static  DoubleCheckLockSingleton instance=null;</div><div class="line">//    private  static  Object object=new Object();</div><div class="line"></div><div class="line">    private DoubleCheckLockSingleton()&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 线程安全的单例</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public  static  DoubleCheckLockSingleton getInstance()&#123;</div><div class="line">        if (instance==null)&#123;</div><div class="line">            synchronized (DoubleCheckLockSingleton.class)&#123;</div><div class="line">                if (instance==null)&#123;</div><div class="line">                    instance=new DoubleCheckLockSingleton();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return instance;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public  void get()&#123;</div><div class="line">        synchronized (this)&#123;</div><div class="line">            System.out.println(&quot;hello world&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面这段代码中存在1个疑问的地方。<br> 为什么DoubleCheckLockSingleton 需要加volatile关键字？<br> 笔者到网上找了一些答案，大概分析都是这两种情况：  </p>
+<ol>
+<li>内存的可见性，让其他线程马上对instance可见。</li>
+<li>保证内存顺序的一致性，可以参考知乎上装个讨论<a href="https://www.zhihu.com/question/56606703/answer/238878067" target="_blank" rel="external">java 单例模式中双重检查锁定 volatile 的作用？</a>。<br>实例化一个对象需要的步骤：  </li>
+</ol>
+<ul>
+<li>禁止指令的重排序<br>（1）分配内存空间<br>（2）初始化对象<br>（3）将内存空间的地址赋值给对应的引用<br>但是由于操作系统可以对指令进行重排序，程序运行的顺序可能是这样子的：<br>（1）分配内存空间<br>（2）将内存空间的地址赋值给对应的引用<br>（3）初始化对象<br>如果不加volatile 关键字可能会导致该初始化对象没有正确初始化，造成错误。</li>
+</ul>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>关于加volatile关键字的作用在面试中也是面试管非常喜欢问的一个问题，好好了解它的作用。即以下两个作用</p>
+<ul>
+<li>防止指令重排序</li>
+<li>内存可见性。</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2017/01/03/string-1/" itemprop="url">
                   java的String源码解析
                 </a>
@@ -1034,6 +1173,131 @@
             
               
                 
+                <a class="post-title-link" href="/2016/09/27/hibernate-1/" itemprop="url">
+                  hibernate中的外键1对1测试
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-27T00:28:21+08:00" content="2016-09-27">
+              2016-09-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/thinking/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/27/hibernate-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/27/hibernate-1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p> &emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，<br>Department包含Manager的引用。<br>然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</div><div class="line">&lt;!DOCTYPE hibernate-mapping PUBLIC &quot;-//Hibernate/Hibernate Mapping DTD 3.0//EN&quot;</div><div class="line">&quot;http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd&quot;&gt;</div><div class="line">&lt;hibernate-mapping&gt;</div><div class="line">    &lt;class name=&quot;com.hiberate.one2one.foreign.Department&quot; table=&quot;DEPARTMENTS&quot;&gt;</div><div class="line">        &lt;id name=&quot;deptID&quot; type=&quot;java.lang.Integer&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_ID&quot; /&gt;</div><div class="line">            &lt;generator class=&quot;native&quot; /&gt;</div><div class="line">        &lt;/id&gt;</div><div class="line">        &lt;property name=&quot;deptName&quot; type=&quot;java.lang.String&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_NAME&quot; /&gt;</div><div class="line">        &lt;/property&gt;</div><div class="line">        &lt;many-to-one name=&quot;manager&quot; class=&quot;com.hiberate.one2one.foreign.Manager&quot;</div><div class="line">        column=&quot;MGR_ID&quot; unique=&quot;true&quot;&gt;&lt;/many-to-one&gt;</div><div class="line">    &lt;/class&gt;</div><div class="line">&lt;/hibernate-mapping&gt;</div></pre></td></tr></table></figure></p>
+<p>&emsp;</p>
+<ul>
+<li>要特别注意的是在配置property的时候一定要对上java文件中的字段，否则就会报错。</li>
+<li>配置many-to-one时需要将unique=”true”。</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/09/27/ajax1/" itemprop="url">
                   使用Ajax创建一个简单的网页交互
                 </a>
@@ -1138,131 +1402,6 @@
     System.out.println(result);
     response.getWriter().print(result);
 </code></pre><p>通过得到传过来的参数username将数据进行初始化之后，然后对比是否可以注册当前的名字来返回html的文字来作为最终的结果。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/09/27/hibernate-1/" itemprop="url">
-                  hibernate中的外键1对1测试
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-27T00:28:21+08:00" content="2016-09-27">
-              2016-09-27
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/thinking/" itemprop="url" rel="index">
-                    <span itemprop="name">编程</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/09/27/hibernate-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/27/hibernate-1/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p> &emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，<br>Department包含Manager的引用。<br>然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</div><div class="line">&lt;!DOCTYPE hibernate-mapping PUBLIC &quot;-//Hibernate/Hibernate Mapping DTD 3.0//EN&quot;</div><div class="line">&quot;http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd&quot;&gt;</div><div class="line">&lt;hibernate-mapping&gt;</div><div class="line">    &lt;class name=&quot;com.hiberate.one2one.foreign.Department&quot; table=&quot;DEPARTMENTS&quot;&gt;</div><div class="line">        &lt;id name=&quot;deptID&quot; type=&quot;java.lang.Integer&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_ID&quot; /&gt;</div><div class="line">            &lt;generator class=&quot;native&quot; /&gt;</div><div class="line">        &lt;/id&gt;</div><div class="line">        &lt;property name=&quot;deptName&quot; type=&quot;java.lang.String&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_NAME&quot; /&gt;</div><div class="line">        &lt;/property&gt;</div><div class="line">        &lt;many-to-one name=&quot;manager&quot; class=&quot;com.hiberate.one2one.foreign.Manager&quot;</div><div class="line">        column=&quot;MGR_ID&quot; unique=&quot;true&quot;&gt;&lt;/many-to-one&gt;</div><div class="line">    &lt;/class&gt;</div><div class="line">&lt;/hibernate-mapping&gt;</div></pre></td></tr></table></figure></p>
-<p>&emsp;</p>
-<ul>
-<li>要特别注意的是在配置property的时候一定要对上java文件中的字段，否则就会报错。</li>
-<li>配置many-to-one时需要将unique=”true”。</li>
-</ul>
 
           
         
@@ -1469,7 +1608,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-count">10</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
