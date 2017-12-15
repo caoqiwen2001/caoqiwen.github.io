@@ -102,15 +102,15 @@
 
 
 
-<meta name="description" content="关注游戏、互联网领域。">
+<meta name="description" content="记录自己的学习成长之路。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Coding Running">
 <meta property="og:url" content="http://caoqiwen2001.github.io/index.html">
 <meta property="og:site_name" content="Coding Running">
-<meta property="og:description" content="关注游戏、互联网领域。">
+<meta property="og:description" content="记录自己的学习成长之路。">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Coding Running">
-<meta name="twitter:description" content="关注游戏、互联网领域。">
+<meta name="twitter:description" content="记录自己的学习成长之路。">
 
 
 
@@ -180,7 +180,7 @@
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
-  <p class="site-subtitle">游戏开发，VR，java开发</p>
+  <p class="site-subtitle">Java开发</p>
 </div>
 
 <div class="site-nav-toggle">
@@ -214,6 +214,16 @@
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
             分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -356,28 +366,16 @@
       
         
           
-            <h3 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h3><p>单例模式是比较基础的一个设计模式了，在并发编程中需要考虑的是线程的安全性去实现对应的方法。</p>
-<h4 id="饿汉式"><a href="#饿汉式" class="headerlink" title="饿汉式"></a>饿汉式</h4><p>所谓饿汉式代码在命名一个初始化的时候就将对象创建出来了，所以不会有多线程情况下数据的问题。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class EagerSingleton &#123;</div><div class="line">    private static EagerSingleton instance = new EagerSingleton();</div><div class="line"></div><div class="line">    private EagerSingleton() &#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static EagerSingleton getInstance() &#123;</div><div class="line">        return instance;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="懒汉式"><a href="#懒汉式" class="headerlink" title="懒汉式"></a>懒汉式</h4><p>每次去在初始化的时候判断一下该对象是否为空，为空的时候去创建该对象。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class LazySingleton &#123;</div><div class="line">    private static LazySingleton  instance=null;</div><div class="line"></div><div class="line">    private LazySingleton()&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public  static  LazySingleton getInstance()&#123;</div><div class="line">        if (instance==null)&#123;</div><div class="line">            instance=new LazySingleton();</div><div class="line">        &#125;</div><div class="line">        return  instance;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>此种情况下，在多线程的情况下会造成数据的竞争而导致该对象在内存中分配两份对象，违背了单例的本意。<br>如何解决多线程下存在的并发问题，采用双检锁的方法来实现。代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package com.caoqiwen.learning.design.example2;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by caoqiwen on 2017/12/13.</div><div class="line"> */</div><div class="line">public class DoubleCheckLockSingleton &#123;</div><div class="line">    private volatile  static  DoubleCheckLockSingleton instance=null;</div><div class="line">//    private  static  Object object=new Object();</div><div class="line"></div><div class="line">    private DoubleCheckLockSingleton()&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 线程安全的单例</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public  static  DoubleCheckLockSingleton getInstance()&#123;</div><div class="line">        if (instance==null)&#123;</div><div class="line">            synchronized (DoubleCheckLockSingleton.class)&#123;</div><div class="line">                if (instance==null)&#123;</div><div class="line">                    instance=new DoubleCheckLockSingleton();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return instance;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public  void get()&#123;</div><div class="line">        synchronized (this)&#123;</div><div class="line">            System.out.println(&quot;hello world&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>上面这段代码中存在1个疑问的地方。<br> 为什么DoubleCheckLockSingleton 需要加volatile关键字？<br> 笔者到网上找了一些答案，大概分析都是这两种情况：  </p>
-<ol>
-<li>内存的可见性，让其他线程马上对instance可见。</li>
-<li>保证内存顺序的一致性，可以参考知乎上装个讨论<a href="https://www.zhihu.com/question/56606703/answer/238878067" target="_blank" rel="external">java 单例模式中双重检查锁定 volatile 的作用？</a>。<br>实例化一个对象需要的步骤：  </li>
-</ol>
-<ul>
-<li>禁止指令的重排序<br>（1）分配内存空间<br>（2）初始化对象<br>（3）将内存空间的地址赋值给对应的引用<br>但是由于操作系统可以对指令进行重排序，程序运行的顺序可能是这样子的：<br>（1）分配内存空间<br>（2）将内存空间的地址赋值给对应的引用<br>（3）初始化对象<br>如果不加volatile 关键字可能会导致该初始化对象没有正确初始化，造成错误。</li>
-</ul>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>关于加volatile关键字的作用在面试中也是面试管非常喜欢问的一个问题，好好了解它的作用。即以下两个作用</p>
-<ul>
-<li>防止指令重排序</li>
-<li>内存可见性。</li>
-</ul>
+          单例模式单例模式是比较基础的一个设计模式了，在并发编程中需要考虑的是线程的安全性去实现对应的方法。
+饿汉式所谓饿汉式代码在命名一个初始化的时候就将对象创建出来了，所以不会有多线程情况下数据的问题。
+1234567891011public class EagerSingleton &#123;    
+          ...
 
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2017/12/14/java-design-singleton/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -495,14 +493,14 @@
       
         
           
-            <h2 id="java的属性"><a href="#java的属性" class="headerlink" title="java的属性"></a>java的属性</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private final char value[];  //final类型的char数组，则赋值之后是不能改变的。</div><div class="line"></div><div class="line">   /** Cache the hash code for the string */</div><div class="line">   private int hash; // Default to 0 //哈希值</div><div class="line"></div><div class="line">   /** use serialVersionUID from JDK 1.0.2 for interoperability */</div><div class="line">   private static final long serialVersionUID = -6849794470754667710L;</div></pre></td></tr></table></figure>
-<h3 id="常用的构造函数"><a href="#常用的构造函数" class="headerlink" title="常用的构造函数"></a>常用的构造函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">//默认给一个空间</div><div class="line"> public String() &#123;</div><div class="line">        this.value = new char[0];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">  public String(String original) &#123;</div><div class="line">        this.value = original.value;</div><div class="line">        this.hash = original.hash;</div><div class="line">    &#125;    </div><div class="line">    //支持char数组初始化</div><div class="line">    public String(char value[]) &#123;</div><div class="line">        this.value = Arrays.copyOf(value, value.length);</div><div class="line">    &#125;  </div><div class="line">    //支持StringBuilder初始化</div><div class="line">    public String(StringBuilder builder) &#123;</div><div class="line">        this.value = Arrays.copyOf(builder.getValue(), builder.length());</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<h3 id="常用到的函数"><a href="#常用到的函数" class="headerlink" title="常用到的函数"></a>常用到的函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//返回char数组中对应的字符</div><div class="line">  public char charAt(int index) &#123;</div><div class="line">        if ((index &lt; 0) || (index &gt;= value.length)) &#123;</div><div class="line">            throw new StringIndexOutOfBoundsException(index);</div><div class="line">        &#125;</div><div class="line">        return value[index];</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//输入一个String返回一个char数组</div><div class="line">    public char[] toCharArray() &#123;</div><div class="line">        // Cannot use Arrays.copyOf because of class initialization order issues</div><div class="line">        char result[] = new char[value.length];</div><div class="line">        System.arraycopy(value, 0, result, 0, value.length);</div><div class="line">        return result;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<h2 id="附上java中考到的一个算法题。"><a href="#附上java中考到的一个算法题。" class="headerlink" title="附上java中考到的一个算法题。"></a>附上java中考到的一个算法题。</h2><p>求String字符串中重复的字符算法题</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public static Map&lt;Character, Integer&gt; allTotalSum(String str) &#123;</div><div class="line"></div><div class="line">	char[] chars=str.toCharArray();//把String转换成char数组</div><div class="line">	</div><div class="line">	HashMap&lt;Character, Integer&gt; hash = new HashMap&lt;Character, Integer&gt;();</div><div class="line"></div><div class="line">	for (int i = 0; i &lt; chars.length; i++) &#123;</div><div class="line">		if (!hash.containsKey(chars[i])) &#123;</div><div class="line">			hash.put(chars[i], 1);</div><div class="line">		&#125; else &#123;</div><div class="line">			int count = hash.get(chars[i]) + 1;</div><div class="line">			hash.put(chars[i], count);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	return hash;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+          java的属性1234567private final char value[];  //final类型的char数组，则赋值之后是不能改变的。   /** Cache the hash code for the string */   private int hash; // Default to
+          ...
 
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2017/01/03/string-1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -601,13 +599,18 @@
       
         
           
-            <p>   通过这个测试用例，明确Java中的io流是怎么一回事，以及在项目中如何通过二进制流传输我们需要的文件。以下代码仅供测试使用。</p>
-<ul>
-<li>将文件转化成二进制流，然后通过流接收。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line">package com.caoqiwen.io;</div><div class="line"></div><div class="line">import java.io.BufferedInputStream;</div><div class="line">import java.io.BufferedOutputStream;</div><div class="line">import java.io.ByteArrayInputStream;</div><div class="line">import java.io.ByteArrayOutputStream;</div><div class="line">import java.io.File;</div><div class="line">import java.io.FileInputStream;</div><div class="line">import java.io.FileNotFoundException;</div><div class="line">import java.io.FileOutputStream;</div><div class="line">import java.io.IOException;</div><div class="line">import java.io.InputStream;</div><div class="line">import java.io.OutputStream;</div><div class="line">import java.util.Random;</div><div class="line">import java.util.zip.DeflaterOutputStream;</div><div class="line"></div><div class="line">/***</div><div class="line"> * 字节流的做法</div><div class="line"> * @author caoqiwen</div><div class="line"> *</div><div class="line"> */</div><div class="line"></div><div class="line">public class Demo5 &#123;</div><div class="line"></div><div class="line">	public static void main(String[] args) throws IOException &#123;</div><div class="line">		byte[] arr = getBytesFromFile(&quot;F:/Android/Java/JavaDemo/JavaDemo2/2.txt&quot;);</div><div class="line">		int random = new Random().nextInt(100);</div><div class="line">		String name = String.valueOf(random);</div><div class="line">		String destPath = &quot;F:/Android/Java/JavaDemo/JavaDemo2/&quot; + name + &quot;.txt&quot;;</div><div class="line">		toFileFromByteArray(arr, destPath);</div><div class="line">	&#125;</div><div class="line"></div><div class="line"></div><div class="line">//转换成byte数组</div><div class="line">	public static byte[] getBytesFromFile(String srcPath) throws IOException &#123;</div><div class="line">		File file = new File(srcPath);</div><div class="line">		byte[] dest = null;</div><div class="line">		InputStream is = new BufferedInputStream(new FileInputStream(srcPath));</div><div class="line">		// 字节数组输出流</div><div class="line">		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();</div><div class="line"></div><div class="line">		byte[] flush = new byte[1024];   //缓冲空间为1024个字节。</div><div class="line">		int len = 0;</div><div class="line">		while (-1 != (len = is.read(flush))) &#123;</div><div class="line">			byteArrayOutputStream.write(flush, 0, len);</div><div class="line">		&#125;</div><div class="line">		byteArrayOutputStream.flush();</div><div class="line">		dest = byteArrayOutputStream.toByteArray(); // 转换成byte[]数组</div><div class="line">		byteArrayOutputStream.close();</div><div class="line">		is.close();</div><div class="line">		return dest;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public static void toFileFromByteArray(byte[] src, String destPath) throws IOException &#123;</div><div class="line">		File dest = new File(destPath);</div><div class="line">		InputStream iStream = new BufferedInputStream(new ByteArrayInputStream(src));</div><div class="line">		OutputStream oStream = new BufferedOutputStream(new FileOutputStream(dest));</div><div class="line">		byte[] flush = new byte[1024];</div><div class="line">		int len = 0;</div><div class="line">		while (-1 != (len = iStream.read(flush))) &#123;</div><div class="line">			oStream.write(flush, 0, len);</div><div class="line">		&#125;</div><div class="line">		oStream.flush();   </div><div class="line">		oStream.close();   //后面打开的先关闭</div><div class="line">		iStream.close();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+             通过这个测试用例，明确Java中的io流是怎么一回事，以及在项目中如何通过二进制流传输我们需要的文件。以下代码仅供测试使用。
 
-          
+将文件转化成二进制流，然后通过流接收。
+
+12345678910111213141516171819202122232425262728293031323334353
+          ...
+
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/12/19/io-1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -725,28 +728,19 @@
       
         
           
-            <h1 id="mybatis的基础配置"><a href="#mybatis的基础配置" class="headerlink" title="mybatis的基础配置"></a>mybatis的基础配置</h1><p>  mybatis最好的优点就是采用面向接口的方法来实现数据库的增删查改，很方便的对数据库进行相关的操作，开篇讲如何配置mybatis。</p>
-<h1 id="配置相关选项"><a href="#配置相关选项" class="headerlink" title="配置相关选项"></a>配置相关选项</h1><ol>
-<li>下载mybatis的相关包，本项目中用的是mybatis3.0 。</li>
-<li>配置数据库选项</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</div><div class="line">&lt;!DOCTYPE configuration</div><div class="line">  PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;</div><div class="line">  &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;</div><div class="line">&lt;configuration&gt;</div><div class="line">    &lt;!-- 对事务的管理和连接池的配置 --&gt;</div><div class="line">    &lt;properties resource=&quot;db.properties&quot;&gt;&lt;/properties&gt;</div><div class="line">    &lt;environments default=&quot;development&quot;&gt;</div><div class="line">        &lt;environment id=&quot;users&quot;&gt;</div><div class="line">            &lt;transactionManager type=&quot;JDBC&quot; /&gt;</div><div class="line">            &lt;dataSource type=&quot;POOLED&quot;&gt;</div><div class="line">                &lt;property name=&quot;driver&quot; value=&quot;$&#123;db.driver&#125;&quot; /&gt;</div><div class="line">                &lt;property name=&quot;url&quot; value=&quot;$&#123;db.url&#125;&quot; /&gt;</div><div class="line">                &lt;property name=&quot;username&quot; value=&quot;$&#123;db.username&#125;&quot; /&gt;</div><div class="line">                &lt;property name=&quot;password&quot; value=&quot;$&#123;db.password&#125;&quot; /&gt;</div><div class="line">            &lt;/dataSource&gt;</div><div class="line">        &lt;/environment&gt;</div><div class="line">    &lt;/environments&gt;</div><div class="line"></div><div class="line">    &lt;!-- mapping 文件路径配置 --&gt;</div><div class="line">    &lt;mappers&gt;</div><div class="line">        &lt;mapper resource=&quot;model/UserMapper.xml&quot; /&gt;</div><div class="line">    &lt;/mappers&gt;</div><div class="line">&lt;/configuration&gt;</div></pre></td></tr></table></figure>
-<p>我把数据库的相关信息保存在db.propertise文件中，方便日后的维护工作。需要注意的是id的值，我们在测试的过程中会用到。</p>
-<ol>
-<li>创建对应的映射文件UserMapper.xml,将对应sql语句写在这个文件中，项目中一般一个模块的sql都放在该模块中。</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;!DOCTYPE mapper</div><div class="line">PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</div><div class="line">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;</div><div class="line"></div><div class="line">&lt;mapper namespace=&quot;model.UserMapper&quot;&gt;</div><div class="line">	&lt;select id=&quot;selectUser&quot; resultType=&quot;model.User&quot;&gt;</div><div class="line">		select *from User where</div><div class="line">		id=#&#123;id&#125;</div><div class="line">	&lt;/select&gt;</div><div class="line">&lt;!-- parameterType 代表插入数据类型为user类型 --&gt;</div><div class="line">	&lt;insert id=&quot;addUser&quot; parameterType=&quot;String&quot;&gt;</div><div class="line">		insert into user(userName,userPwd) values (#&#123;userName&#125;,#&#123;userPwd&#125;)</div><div class="line">	&lt;/insert&gt;</div><div class="line"></div><div class="line">&lt;/mapper&gt;</div></pre></td></tr></table></figure>
-<p>注意这里的namespace要对应的包下面的类名。对于查询语句，这里返回的是User类，而插入语句， 传入的参数类型为String类型，对于返回类型这里没有做相关操作。</p>
-<ol>
-<li>创建对应的model类<br>所谓的model，表示对应数据库中相应的属性名，这里创建一个User类</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">package model;</div><div class="line"></div><div class="line">public class User &#123;</div><div class="line">	private int id;</div><div class="line">	private String userName;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public String toString() &#123;</div><div class="line">		return &quot;User [id=&quot; + id + &quot;, userName=&quot; + userName + &quot;, userPwd=&quot; + userPwd + &quot;]&quot;;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public int getId() &#123;</div><div class="line">		return id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public void setId(int id) &#123;</div><div class="line">		this.id = id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public String getUserName() &#123;</div><div class="line">		return userName;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public void setUserName(String userName) &#123;</div><div class="line">		this.userName = userName;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public String getUserPwd() &#123;</div><div class="line">		return userPwd;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public void setUserPwd(String userPwd) &#123;</div><div class="line">		this.userPwd = userPwd;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	private String userPwd;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>有了这些前期工作准备就可以开始查询工作了。可以创建一个单元测试来测试对应方法。</p>
-<h2 id="关于使用接口的方法来进行数据库操作"><a href="#关于使用接口的方法来进行数据库操作" class="headerlink" title="关于使用接口的方法来进行数据库操作"></a>关于使用接口的方法来进行数据库操作</h2><p>接口的方式省去了手动写代码的工作量。值得注意的是在配置对应的接口命名空间及对应cfg文件的配置。如下图所示：<br>创建一个UserMapper接口类：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public interface UserMapper &#123;</div><div class="line">	public User selectUser(int id);</div><div class="line">	public List&lt;User&gt; selectAllUser();</div><div class="line">	public void addUser(User user);</div><div class="line">	public void updateUser(User user);</div><div class="line">	public void deleteUser(int id);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>该类与我们的UserMapper.xml相对应。值得注意的是在配置mybatis时，不需要加class类的路径，即如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;!-- mapping 文件路径配置 --&gt;</div><div class="line">  &lt;mappers&gt;</div><div class="line">     &lt;mapper resource=&quot;model/UserMapper.xml&quot; /&gt;</div><div class="line">   &lt;!--    &lt;mapper class=&quot;dao.UserMapper&quot;/&gt;--&gt;</div><div class="line">  &lt;/mappers&gt;</div></pre></td></tr></table></figure></p>
+          mybatis的基础配置  mybatis最好的优点就是采用面向接口的方法来实现数据库的增删查改，很方便的对数据库进行相关的操作，开篇讲如何配置mybatis。
+配置相关选项
+下载mybatis的相关包，本项目中用的是mybatis3.0 。
+配置数据库选项
 
-          
+1234567891011121314
+          ...
+
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/11/17/mybatis-1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -864,14 +858,15 @@
       
         
           
-            <h1 id="为什么使用idea"><a href="#为什么使用idea" class="headerlink" title="为什么使用idea"></a>为什么使用idea</h1><p>最近公司全部用idea开发了，原来用eclipse开发的时候发现有时候莫名其妙的报错，而idea带给我的是另一番体验，自动的pom管理jar包，断点调试也是各种爽，单步调试每次的值不要鼠标停留才会显示出来，比eclipse爽多了，所以推荐大家用idea。</p>
-<h1 id="如何配置对应的maven项目"><a href="#如何配置对应的maven项目" class="headerlink" title="如何配置对应的maven项目"></a>如何配置对应的maven项目</h1><p>首先需要安装maven对应的包，然后在在环境中配置对应的系统变量，然后就可以在maven中进行配置了。然后就是一堆很多的配置文件，这个是个体力活，但是配置完之后就是一劳永逸的事情了。</p>
-<h1 id="配置选项"><a href="#配置选项" class="headerlink" title="配置选项"></a>配置选项</h1><p>去官网下载对应的安装包目录，假设我们的依赖包都已经全部下载完成之后，我们可以要设置tomcat和run Configurations等设置</p>
-<ol>
-<li>按下快捷键ctrl+alt+s,打开setting界面，设置maven的相关选项。<br><img src="https://ooo.0o0.ooo/2016/11/11/5825e7f4224b6.jpg" alt="1.jpg">将对应的依赖包放在特定的盘。<br>2、按下快捷键ctrl+alt+shift+S,开始设置项目的结构设置。<br><img src="https://ooo.0o0.ooo/2016/11/11/5825e97cb1e7e.jpg" alt="2.jpg"><br>会看到设置项目的project选项，一个一个分别设置上去。等这两步设置成功了。就可以开始设置我们的tomcat了。<br>3、打开Run/Debug Configurations 选项，新建一个tomcat，设置对应的名字和tomcat所在的位置，配置好Deployment。<br><img src="https://ooo.0o0.ooo/2016/11/11/5825eaf2e8d43.jpg" alt="3.jpg"><br>注意要配置对应的exploded包才行<br>项目如果没有错误，会提醒我们配置对应包，在Application context中要去配置对应的包名，就可以开启tomcat开使我们的代码之旅了。</li>
-</ol>
+          为什么使用idea最近公司全部用idea开发了，原来用eclipse开发的时候发现有时候莫名其妙的报错，而idea带给我的是另一番体验，自动的pom管理jar包，断点调试也是各种爽，单步调试每次的值不要鼠标停留才会显示出来，比eclipse爽多了，所以推荐大家用idea。
+如何配置对应的maven项
+          ...
 
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/11/12/Idea/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -989,9 +984,14 @@
       
         
           
-            <p>&nbsp; &nbsp; &nbsp;最近发生了一些事情，我辞掉了上家游戏开发的工作，转做java服务端的开发，中间有过迷茫有过纠结，不过最终还是决定下来去这么做了，算是决定了自己以后要走的路线，期间也多谢家人和朋友的支持和鼓励。<br>&nbsp;  &nbsp; &nbsp;说说我为什么要离开游戏行业，在进入这个行业之前觉得做游戏应该是一件比较开心的事，做自己喜欢的游戏，和自己的团队开发有趣的游戏，但是进入到这个行业之后，却让我看到了这个行业暴力的一面。在2016年整个互联网遇到寒冬的时候，我看到了公司的变相裁员，因为项目流产不得不缩衣节食，被迫让自己的员工走人，员工和公司反目成仇，我才发觉这个行业是多么的残酷，公司为了压低劳动成本，招一批廉价的应届生干着没有技术的活儿，而老员工确用各种手段来卡着不让涨工资，加班确永无尽头。每次为了应付策划的奇葩需求加班，自己完全就像机器一样在工作。我在思考之后觉得这样的生活被压榨，这样的老板不值得跟随，便有了离职的想法，离职后也接触过其他的团队，广州的手游圈也大底是那一套公司团队都共用一套框架，换换皮，战斗的表现改下三个月就可以上线了，如果效益不好就裁人，项目挂了就又开新项目换皮，后面觉得国内的游戏业也就这样了，而且极度不稳定，对于这种我不能驾驭的行业来说，便有了离开游戏圈的方法。<br>&nbsp;  &nbsp;&nbsp;其实入这个行业2年了，也算完完全全跟过一个完整的项目，深知一款游戏的成功需要太多的天时地利和人和。我所在的项目是开发一款ARPG页游，公司团队还挺大的，将近40个人，但是开发的周期确将近两年，为什么会耗时这么久还没开发完成上线呢？从我亲身体验来说，一方面是公司资源的欠缺，一个美术团队要跟几个项目，导致美术团队的工作量较大，做不过来。另一方面就是公司的策划比较水，前期提的案子都是提一个初步的规划，然后技术做完做个粗糙的版本出来给大伙先玩玩先，觉得Ok了又开始让美术换UI，中途我也跟过几个大型的模块，其结果就是搞业务逻辑的技术要累死，因为要换UI，要改逻辑，一个星期的任务量可能多大3至四个中大型的需求，前端人员虽然说有10个人左右，但是根本做不完，说来说去苦的还是写逻辑的程序员，做不完就要加班，上面只管要进度，加上工期又短，这也是导致我直接离开这个行业的原因：不想在一群水笔策划纠结下去了。<br>&nbsp;  &nbsp;&nbsp;从另一个方面来说，项目负责人也有一定的责任，虽然是技术出身，但是对项目管理做的不太充分，对整个项目的周期没有一个良好的规划。每次承若说要上线了，大家再加把劲，但是待遇各方面却从来不提，甚至直接说现在公司没钱，等项目上线了才给大伙儿涨点，可怜的游戏人！项目管理的混乱导致了策划和程序的冲突不断，在公司整天都过的提心吊胆，每天都堤防自己哪个代码写错了要被说，这样子的日子想想就够了，技术方面也没有多大提高，想想每天加班到9点10点还是有干不完的活，怎么有时间去充实读书提高自己的技术？现在决定了换个加班少的行业自己做点独立游戏玩玩，或许更有乐趣一点吧~！<br>&nbsp;  &nbsp;&nbsp;那些还想往游戏行业发展的年轻人们，想好太过美好，如果是真心热爱游戏这一行，千万不要进入国内的游戏行业，算是保存着自己最初对游戏的那份美好吧。</p>
+          &nbsp; &nbsp; &nbsp;最近发生了一些事情，我辞掉了上家游戏开发的工作，转做java服务端的开发，中间有过迷茫有过纠结，不过最终还是决定下来去这么做了，算是决定了自己以后要走的路线，期间也多谢家人和朋友的支持和鼓励。&nbsp;  &nbsp; &nbsp;说说我为什么要离开游戏行业
+          ...
 
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/11/05/youxi-md/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1109,148 +1109,17 @@
       
         
           
-            <p>   在Spring中配置通知的时候需要注意以下几个点：</p>
-<ul>
-<li>需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。</li>
-<li><p>在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">   &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans</div><div class="line">           http://www.springframework.org/schema/beans/spring-beans.xsd</div><div class="line">           http://www.springframework.org/schema/context</div><div class="line">           http://www.springframework.org/schema/context/spring-context-3.0.xsd</div><div class="line">           http://www.springframework.org/schema/aop</div><div class="line">           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd&quot;&gt;</div><div class="line">	&lt;context:component-scan base-package=&quot;com.caoqiwen.spring.aop&quot; &gt;</div><div class="line">        &lt;/context:component-scan&gt;</div><div class="line">        &lt;aop:aspectj-autoproxy&gt;&lt;/aop:aspectj-autoproxy&gt;</div><div class="line"> &lt;/beans&gt;</div></pre></td></tr></table></figure>
-<p>我配置了Context和aop的空间，特别注意的是在schmaLocation的配置中需要和上面的配置命名空间的顺序统一，否则也可能会报错。</p>
-</li>
-</ul>
-<ul>
-<li>通过注解来获取对应类的实例方法</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package com.caoqiwen.spring.aop;</div><div class="line">import org.springframework.stereotype.Component;</div><div class="line"></div><div class="line">@Component(&quot;arithmeticCalculator&quot;)</div><div class="line">public class  ArithmeticCalculatorImpl implements ArithmeticCalculator &#123;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int add(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		//return 0;</div><div class="line">		int result=x+y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int sub(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x-y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int mul(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x*y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int div(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x/y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>会根据配置去扫描com.caoqiwen.spring.aop命名空间下面的所有类</p>
-<h3 id="关于切面优先级的问题"><a href="#关于切面优先级的问题" class="headerlink" title="关于切面优先级的问题"></a>关于切面优先级的问题</h3><p>&emsp; 对于同一个切面，可以在类的前面注释一个order优先级，优先级，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">@Order(2)</div><div class="line">@Component</div><div class="line">@Aspect</div><div class="line">public class DesperateAspect &#123;</div><div class="line"></div><div class="line">	@Before(&quot;execution(public int com.caoqiwen.spring.aop.ArithmeticCalculator.*(..))&quot;)</div><div class="line">	public void beforeMethod(JoinPoint joinPoint) &#123;</div><div class="line">		String methodName = joinPoint.getSignature().getName();</div><div class="line">		Object[] args = joinPoint.getArgs();</div><div class="line">		System.out.println(&quot;the DesperateAspect&quot; + methodName + &quot;is start&quot; + Arrays.asList(args));</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>如果优先级越低，则该方法会优先执行。</p>
+             在Spring中配置通知的时候需要注意以下几个点：
 
-          
-        
-      
-    </div>
+需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。
+在配置对应的文件的时候，需要导入相应的
+          ...
 
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/09/27/hibernate-1/" itemprop="url">
-                  hibernate中的外键1对1测试
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-27T00:28:21+08:00" content="2016-09-27">
-              2016-09-27
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/thinking/" itemprop="url" rel="index">
-                    <span itemprop="name">编程</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/09/27/hibernate-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/27/hibernate-1/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p> &emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，<br>Department包含Manager的引用。<br>然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</div><div class="line">&lt;!DOCTYPE hibernate-mapping PUBLIC &quot;-//Hibernate/Hibernate Mapping DTD 3.0//EN&quot;</div><div class="line">&quot;http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd&quot;&gt;</div><div class="line">&lt;hibernate-mapping&gt;</div><div class="line">    &lt;class name=&quot;com.hiberate.one2one.foreign.Department&quot; table=&quot;DEPARTMENTS&quot;&gt;</div><div class="line">        &lt;id name=&quot;deptID&quot; type=&quot;java.lang.Integer&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_ID&quot; /&gt;</div><div class="line">            &lt;generator class=&quot;native&quot; /&gt;</div><div class="line">        &lt;/id&gt;</div><div class="line">        &lt;property name=&quot;deptName&quot; type=&quot;java.lang.String&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_NAME&quot; /&gt;</div><div class="line">        &lt;/property&gt;</div><div class="line">        &lt;many-to-one name=&quot;manager&quot; class=&quot;com.hiberate.one2one.foreign.Manager&quot;</div><div class="line">        column=&quot;MGR_ID&quot; unique=&quot;true&quot;&gt;&lt;/many-to-one&gt;</div><div class="line">    &lt;/class&gt;</div><div class="line">&lt;/hibernate-mapping&gt;</div></pre></td></tr></table></figure></p>
-<p>&emsp;</p>
-<ul>
-<li>要特别注意的是在配置property的时候一定要对上java文件中的字段，否则就会报错。</li>
-<li>配置many-to-one时需要将unique=”true”。</li>
-</ul>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/09/30/spring-1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1368,42 +1237,142 @@
       
         
           
-            <p>&emsp;使用它的XMLHttpRequest请求，不需要刷新网页就可以交互数据。比如说用户的注册交互事件，大致可以分为以下几个步骤进行<br></p>
-<p><li> 创建一个 jsp页面，输入页面元素文档</li></p>
-<p><li> 采用jqury库中的函数对表单元素进行操作，通过采用post请求将数据转发到post请求。</li></p>
-<p><li>创建一个serverlt将 数据中转过来之后将数据进行交互，然后再将数据转发到原网页当中去<br><br></li></p>
-<h3 id="具体实现代码"><a href="#具体实现代码" class="headerlink" title="具体实现代码"></a>具体实现代码</h3><pre><code>$(function() {
-    $(&quot;:input[name=&apos;username&apos;]&quot;).change(function() {
-        var val = $(this).val();
-        val = $.trim(val);
-        if (val != &quot;&quot;) {
-            var url = &quot;${pageContext.request.contextPath}/valiateUserName&quot;;
-            var args = {
-                &quot;username&quot; : val,
-                &quot;time&quot; : new Date()
-            };
-            $.post(url, args, function(data) {
-                $(&quot;#message&quot;).html(data);
-            });
-        }
-    });
-})
-</code></pre><p><br><br>post请求之后的数据直接写入到html中，当然可以看看java的代码是如何实现的：</p>
-<pre><code>List&lt;String&gt;userNames=Arrays.asList(&quot;AAA&quot;,&quot;BBB&quot;,&quot;CCC&quot;);
-    String userName=request.getParameter(&quot;username&quot;);
-    System.out.println(userName);
-    String result=null;
-    if (userNames.contains(userName)) {
-        result=&quot;&lt;font color=&apos;red&apos;&gt;该用户名已经被使用&lt;/font&gt;&quot;;
-    }else{
-        result=&quot;&lt;font color=&apos;black&apos;&gt;该用户名可以使用&lt;/font&gt;&quot;;
-    }
-    response.setContentType(&quot;text/html; charset=utf-8&quot;);
-    System.out.println(result);
-    response.getWriter().print(result);
-</code></pre><p>通过得到传过来的参数username将数据进行初始化之后，然后对比是否可以注册当前的名字来返回html的文字来作为最终的结果。</p>
+          &emsp;使用它的XMLHttpRequest请求，不需要刷新网页就可以交互数据。比如说用户的注册交互事件，大致可以分为以下几个步骤进行
+ 创建一个 jsp页面，输入页面元素文档
+ 采用jqury库中的函数对表单元素进行操作，通过采用post请求将数据转发到post请求。
+创建一个serverlt
+          ...
+
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/09/27/ajax1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/09/27/hibernate-1/" itemprop="url">
+                  hibernate中的外键1对1测试
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-27T00:28:21+08:00" content="2016-09-27">
+              2016-09-27
+            </time>
+          </span>
 
           
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/thinking/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/27/hibernate-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/27/hibernate-1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+           &emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，Department包含Manager的引用。然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改
+          ...
+
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/09/27/hibernate-1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1521,26 +1490,16 @@
       
         
           
-            <p>终于搭建了自己的个人博客，期间遇到一些一些问题，不过都解决了，网上关于这方面的教程也挺多的，主要说下要预防可能发生错误的点</p>
-<ul>
-<li>配置文本个人deploy的时候一定要记住要有空格，在type的后面记得要空一格再输入，可以选择使用notepad++勾选空格显示，否则hexo-d是不会成功的，也就是说代码push到github上是不会成功的，导致打开自己网站的时候出现404的错误。如下图所示<div align="center"><br>  <img src="http://ww1.sinaimg.cn/large/b8b72f14gw1f6uvuazme4j20fu04pglk.jpg" alt="Alt text"><br><p align="left">如果省去上面的部分代码github就连接不上了</p><br></div></li>
-<li><p>提交成功了但是也报404的错误，一度怀疑自己是不是哪里配置错误了，后来才发现自己的邮箱没有验证成功，github发了很多封邮件都当垃圾处理了，验证完成之后输入自己的网址就成功了，如我的网址是<a href="https://caoqiwen2001.github.io/">caoqiwen2001.github.io</a><br><br></p>
-<h3 id="常用的指令输入"><a href="#常用的指令输入" class="headerlink" title="常用的指令输入"></a>常用的指令输入</h3><ul>
-<li><code>hexo-clean</code> 清除原有的缓存</li>
-<li><code>hexo-g</code>  本地生成代码，将md生成对应的静态index文件。</li>
-<li><code>hexo-s</code> 本地可以预览，直接local：4000可以查看自己写的文章内容</li>
-<li><code>hexo-d</code>直接部署到github，发布后可以输入自己的网址查看内容。</li>
-</ul>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;上面这几个常用的指令已经能够满足我们日常的写作习惯了，然后用上牛逼的Markdown语法更是非常简洁和迅速。个人感觉非常不错。</p>
-<h3 id="下面是可以参考的一些博客资源"><a href="#下面是可以参考的一些博客资源" class="headerlink" title="下面是可以参考的一些博客资源"></a>下面是可以参考的一些博客资源</h3></li>
-</ul>
-<ol>
-<li><a href="http://www.jianshu.com/p/db7e64d86067" target="_blank" rel="external">使用Hexo搭建博客（三），博客配置、主题和写作</a></li>
-<li><a href="http://crazymilk.github.io/2015/12/28/GitHub-Pages-Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/#more" target="_blank" rel="external">GitHub Pages + Hexo搭建博客</a></li>
-<li><a href="http://www.cnblogs.com/zhcncn/p/4097881.html" target="_blank" rel="external">Hexo搭建Github静态博客</a></li>
-</ol>
+          终于搭建了自己的个人博客，期间遇到一些一些问题，不过都解决了，网上关于这方面的教程也挺多的，主要说下要预防可能发生错误的点
 
-          
+配置文本个人deploy的时候一定要记住要有空格，在type的后面记得要空一格再输入，可以选择使用notepad++勾选空格显示，否则hexo-d是不会成功的，也就是说代码p
+          ...
+
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/08/12/my-new-post/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1601,9 +1560,9 @@
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/uploads/avatar.jpg"
-               alt="lukywen" />
-          <p class="site-author-name" itemprop="name">lukywen</p>
-          <p class="site-description motion-element" itemprop="description">关注游戏、互联网领域。</p>
+               alt="luckywen" />
+          <p class="site-author-name" itemprop="name">luckywen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
         </div>
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
@@ -1637,6 +1596,26 @@
 
         <div class="links-of-author motion-element">
           
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
         </div>
 
         
@@ -1666,7 +1645,7 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">lukywen</span>
+  <span class="author" itemprop="copyrightHolder">luckywen</span>
 </div>
 
 <div class="powered-by">
