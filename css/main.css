@@ -455,7 +455,7 @@ body {
 .header-inner {
   margin: 0 auto;
   padding: 100px 0 70px;
-  width: 700px;
+  width: 810px;
 }
 @media (min-width: 1600px) {
   .container .header-inner {
@@ -467,7 +467,7 @@ body {
 }
 .main-inner {
   margin: 0 auto;
-  width: 700px;
+  width: 810px;
 }
 @media (min-width: 1600px) {
   .container .main-inner {
@@ -484,7 +484,7 @@ body {
 .footer-inner {
   box-sizing: border-box;
   margin: 20px auto;
-  width: 700px;
+  width: 810px;
 }
 @media (min-width: 1600px) {
   .container .footer-inner {
@@ -1032,10 +1032,20 @@ pre .javascript .function {
   -o-transform: rotate(30deg);
   transform: rotate(30deg);
 }
+.post-body p a {
+  color: #0593d3;
+  border-bottom: none;
+  border-bottom: 1px solid #0593d3;
+}
+.post-body p a:hover {
+  color: #fc6423;
+  border-bottom: none;
+  border-bottom: 1px solid #fc6423;
+}
 .posts-expand {
   padding-top: 40px;
 }
-@media (max-width: 767px) {
+@media (max-width: 1080px) {
   .posts-expand {
     margin: 0 20px;
   }
@@ -1549,7 +1559,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #fffff9;
+  background: #9600ff;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2146,7 +2156,7 @@ body {
 .header {
   position: relative;
   margin: 0 auto;
-  width: 960px;
+  width: 1080px;
 }
 @media (min-width: 768px) and (max-width: 991px) {
   .header {
@@ -2202,7 +2212,7 @@ body {
   }
 }
 .container .main-inner {
-  width: 960px;
+  width: 1080px;
 }
 @media (min-width: 768px) and (max-width: 991px) {
   .container .main-inner {
@@ -2218,7 +2228,7 @@ body {
   float: right;
   box-sizing: border-box;
   padding: 40px;
-  width: 700px;
+  width: 810px;
   background: #fff;
   min-height: 700px;
 }
@@ -2257,7 +2267,7 @@ body {
   display: none;
 }
 .footer-inner {
-  width: 960px;
+  width: 1080px;
 }
 .footer-inner:before {
   content: " ";
@@ -2519,4 +2529,17 @@ body {
   .post-body {
     text-align: justify;
   }
+}
+.site-author-image {
+  border-radius: 100%;
+  padding: 2px;
+  border: 2px dashed #fff;
+  animation: cycle 2s 0.5s forwards;
+  transition: border-radius 2s;
+}
+.site-author-name {
+  font-size: 16px;
+}
+ul {
+  list-style-type: disc;
 }

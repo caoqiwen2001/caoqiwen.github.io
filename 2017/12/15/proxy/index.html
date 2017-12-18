@@ -1,0 +1,757 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="hexo," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="代理模式代理模式的定义很简单，给某一个对象提供一个代理对象，由代理对象控制原对象的引用。
+代理模式需要的几个元素
+抽象对象角色
+目标对象角色
+代理对象角色
+
+
+具体事例通过模拟登陆网站来实现代理模式，如网易，像大型网站，采用分布式架构，我们访问的时候通过Nginx，用来做负载均衡。最终访问的路径就是
+1234graph LR A--用户访问网易--&amp;gt;BB--访问代理服务器--&amp;gt;CC--">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java设计模式-代理模式">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2017/12/15/proxy/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="代理模式代理模式的定义很简单，给某一个对象提供一个代理对象，由代理对象控制原对象的引用。
+代理模式需要的几个元素
+抽象对象角色
+目标对象角色
+代理对象角色
+
+
+具体事例通过模拟登陆网站来实现代理模式，如网易，像大型网站，采用分布式架构，我们访问的时候通过Nginx，用来做负载均衡。最终访问的路径就是
+1234graph LR A--用户访问网易--&amp;gt;BB--访问代理服务器--&amp;gt;CC--">
+<meta property="og:updated_time" content="2017-12-18T01:47:32.714Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java设计模式-代理模式">
+<meta name="twitter:description" content="代理模式代理模式的定义很简单，给某一个对象提供一个代理对象，由代理对象控制原对象的引用。
+代理模式需要的几个元素
+抽象对象角色
+目标对象角色
+代理对象角色
+
+
+具体事例通过模拟登陆网站来实现代理模式，如网易，像大型网站，采用分布式架构，我们访问的时候通过Nginx，用来做负载均衡。最终访问的路径就是
+1234graph LR A--用户访问网易--&amp;gt;BB--访问代理服务器--&amp;gt;CC--">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2017/12/15/proxy/"/>
+
+  <title> Java设计模式-代理模式 | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java设计模式-代理模式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-12-15T16:43:06+08:00" content="2017-12-15">
+              2017-12-15
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/12/15/proxy/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/15/proxy/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h3><p>代理模式的定义很简单，给某一个对象提供一个代理对象，由代理对象控制原对象的引用。</p>
+<h3 id="代理模式需要的几个元素"><a href="#代理模式需要的几个元素" class="headerlink" title="代理模式需要的几个元素"></a>代理模式需要的几个元素</h3><ul>
+<li>抽象对象角色</li>
+<li>目标对象角色</li>
+<li>代理对象角色</li>
+</ul>
+<hr>
+<h3 id="具体事例"><a href="#具体事例" class="headerlink" title="具体事例"></a>具体事例</h3><p>通过模拟登陆网站来实现代理模式，如网易，像大型网站，采用分布式架构，我们访问的时候通过Nginx，用来做负载均衡。最终访问的路径就是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">graph LR </div><div class="line">A--用户访问网易--&gt;B</div><div class="line">B--访问代理服务器--&gt;C</div><div class="line">C--最终服务器--&gt;D</div></pre></td></tr></table></figure>
+<p>首先需要一个服务器接口，获取网站的数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">public interface Server &#123;</div><div class="line">    public String getPageTitle(String url);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接着需要实现网易服务器的具体实现，获取网易的标题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class WYProxy implements Server &#123;</div><div class="line">    @Override</div><div class="line">    public String getPageTitle(String url) &#123;</div><div class="line">        if (&quot;http://www.163.com/&quot;.equals(url)) &#123;</div><div class="line">            return &quot;网易首页&quot;;</div><div class="line">        &#125;</div><div class="line">        return &quot;无网站首页&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然而需要通过代理服务器才能访问到该网站，如何访问呢，需要创建一个代理对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">package com.caoqiwen.learning.design.example5;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line">import java.util.UUID;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by caoqiwen on 2017/12/15.</div><div class="line"> * 模拟Ngix反向代理</div><div class="line"> */</div><div class="line">public class NgixProxy implements Server &#123;</div><div class="line"></div><div class="line">    private static final List&lt;String&gt; WY_SERVER_ADDRESS = new ArrayList&lt;String&gt;() &#123;&#123;</div><div class="line">        add(&quot;192.168.0.1&quot;);</div><div class="line">        add(&quot;192.168.0.2&quot;);</div><div class="line">        add(&quot;192.168.0.3&quot;);</div><div class="line">    &#125;&#125;;</div><div class="line"></div><div class="line">    public  NgixProxy(Server server)&#123;</div><div class="line">        this.server=server;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Server server;</div><div class="line"></div><div class="line">    public Server getServer() &#123;</div><div class="line">        return server;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setServer(Server server) &#123;</div><div class="line">        this.server = server;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String getPageTitle(String url) &#123;</div><div class="line">        String remoteIP = UUID.randomUUID().toString();</div><div class="line">        int index = Math.abs(remoteIP.hashCode()) % WY_SERVER_ADDRESS.size();</div><div class="line">        String realIP = WY_SERVER_ADDRESS.get(index);</div><div class="line">        return &quot;网站&quot; + server.getPageTitle(url) + &quot;[来源ip&quot; + realIP + &quot;]&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>远程IP通过UUID然后对函数取余得到具体ip地址，而实际的网站通过内部server对象获取。</p>
+<h3 id="静态代理的缺点"><a href="#静态代理的缺点" class="headerlink" title="静态代理的缺点"></a>静态代理的缺点</h3><p>采用静态模式是可以很好的解决代码耦合的问题，但是也存在一些问题。  </p>
+<ul>
+<li>只能服务于Server接口，不能复用，只能新增接口或者新增接口类的实现，会造成类的膨胀。</li>
+<li>Server接口新增一个接口，代理类也需要跟着实现该接口，无法实现类的复用。</li>
+</ul>
+<hr>
+<h3 id="JDK中动态代理的实现"><a href="#JDK中动态代理的实现" class="headerlink" title="JDK中动态代理的实现"></a>JDK中动态代理的实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class NginxInvocationHandler  implements InvocationHandler&#123;</div><div class="line">    private static final List&lt;String&gt; WY_SERVER_ADDRESS = new ArrayList&lt;String&gt;() &#123;&#123;</div><div class="line">        add(&quot;192.168.0.1&quot;);</div><div class="line">        add(&quot;192.168.0.2&quot;);</div><div class="line">        add(&quot;192.168.0.3&quot;);</div><div class="line">    &#125;&#125;;</div><div class="line">    private  Object object;</div><div class="line"></div><div class="line">    public NginxInvocationHandler(Object object)&#123;</div><div class="line">        this.object=object;</div><div class="line">    &#125;</div><div class="line">    @Override</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</div><div class="line">        String remoteIP= UUID.randomUUID().toString();</div><div class="line">        int index = Math.abs(remoteIP.hashCode()) % WY_SERVER_ADDRESS.size();</div><div class="line">        String realIP = WY_SERVER_ADDRESS.get(index);</div><div class="line">        StringBuffer stringBuffer=new StringBuffer();</div><div class="line">        stringBuffer.append(&quot;页面标题:&quot;);</div><div class="line">        stringBuffer.append(method.invoke(object,args));</div><div class="line">        stringBuffer.append(&quot;[来源地址]:&quot;);</div><div class="line">        stringBuffer.append(realIP);</div><div class="line">        return stringBuffer.toString();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>只需要实现InvocationHandler这个接口即可，通过newProxyInstance方法产生实例对象。也是Spring中实现AOP的精华之处。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Server wyServer = new WYServer();</div><div class="line">       InvocationHandler invocationHandler = new NginxInvocationHandler(wyServer);</div><div class="line">       Server server = (Server) Proxy.newProxyInstance(DynamicProxyTest.class.getClassLoader(), new Class[]&#123;Server.class&#125;, invocationHandler);</div><div class="line">       System.out.println(server.getPageTitle(&quot;http://www.163.com/&quot;));</div></pre></td></tr></table></figure>
+<p>动态代理的缺点在于只能产生接口的实例对象，如果需要实例化一个类的动态对象，我们需要用CGLIB来实现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">private static Logger logger = LoggerFactory.getLogger(UpdateSalesInfoTask.class);</div><div class="line">	</div><div class="line">	/**</div><div class="line">	 * 更新人员信息</div><div class="line">	 * </div><div class="line">	 */</div><div class="line">	public void updateSalesInfo()&#123;</div><div class="line">		WebApplicationContext ctx = ContextLoader</div><div class="line">				.getCurrentWebApplicationContext();</div><div class="line"></div><div class="line">		UpdateGZProtectedService addSalesInfoService = (UpdateGZProtectedService) ctx.getBean(&quot;updateGZProtectedService&quot;);</div><div class="line">		logger.info(&quot;---------------更新人员信息开始------------------&quot;);</div><div class="line">		try &#123;</div><div class="line">			addSalesInfoService.UpdateProtected();</div><div class="line">			addSalesInfoService.UpdateProtected1();</div><div class="line">			addSalesInfoService.UpdateProtected2();</div><div class="line">			addSalesInfoService.UpdateProtected3();</div><div class="line">			addSalesInfoService.UpdateProtected4();</div><div class="line">			addSalesInfoService.UpdateProtected5();</div><div class="line">		&#125;catch (Exception ex)&#123;</div><div class="line">			ex.printStackTrace();</div><div class="line">			logger.warn(&quot;更新数据失败....&quot;);</div><div class="line">            logger.warn(ex.getMessage());</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		logger.info(&quot;---------------更新人员信息成功------------------&quot;);</div><div class="line">		</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h3 id="CGLIB实现动态代理"><a href="#CGLIB实现动态代理" class="headerlink" title="CGLIB实现动态代理"></a>CGLIB实现动态代理</h3><p>上面说了对于没有实现接口类如何动态生成对应的对象，我们采用CGLIB就可以实现，在AOP中也用到了CGLIB的动态代理方法。首先来看CGLIB的实现方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class Dao &#123;</div><div class="line"></div><div class="line">    public void update() &#123;</div><div class="line">        System.out.println(&quot;update dao has begined&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void select() &#123;</div><div class="line">        System.out.println(&quot;select dao has  begined&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>需要定义一个实现类，而不是接口。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class DaoProxy implements MethodInterceptor &#123;</div><div class="line">    @Override</div><div class="line">    public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable &#123;</div><div class="line">        System.out.println(&quot;before method invoke&quot;);</div><div class="line">        Object object = methodProxy.invokeSuper(o, objects);</div><div class="line">        System.out.println(&quot;after method invoke&quot;);</div><div class="line">        return object;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过继承实现MethodInterceptor方法实现，可以在intercept中加入我们需要的业务逻辑。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">DaoProxy daoProxy = new DaoProxy();</div><div class="line">        Enhancer enhancer = new Enhancer();</div><div class="line">        enhancer.setSuperclass(Dao.class);</div><div class="line">        enhancer.setCallback(daoProxy);</div><div class="line">        Dao dao = (Dao) enhancer.create();</div><div class="line">        dao.update();</div><div class="line">        dao.select();</div></pre></td></tr></table></figure>
+<p>最后一步产生我们需要的类。</p>
+<h4 id="需要注意的事项"><a href="#需要注意的事项" class="headerlink" title="需要注意的事项"></a>需要注意的事项</h4><p>在maven中需要添加CGLIB的jar文件，还有asm的jar包，否则会提示报错，具体需要添加如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;cglib&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;cglib&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;3.2.1&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line"></div><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.ow2.asm&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;asm&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;5.0.4&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hexo/" rel="tag">#hexo</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/14/java-design-singleton/" rel="next" title="java设计模式之单例">
+                <i class="fa fa-chevron-left"></i> java设计模式之单例
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/12/15/proxy/"
+           data-title="Java设计模式-代理模式" data-url="http://caoqiwen2001.github.io/2017/12/15/proxy/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckywen" />
+          <p class="site-author-name" itemprop="name">luckywen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">11</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#代理模式"><span class="nav-number">1.</span> <span class="nav-text">代理模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代理模式需要的几个元素"><span class="nav-number">2.</span> <span class="nav-text">代理模式需要的几个元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#具体事例"><span class="nav-number">3.</span> <span class="nav-text">具体事例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态代理的缺点"><span class="nav-number">4.</span> <span class="nav-text">静态代理的缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDK中动态代理的实现"><span class="nav-number">5.</span> <span class="nav-text">JDK中动态代理的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CGLIB实现动态代理"><span class="nav-number">6.</span> <span class="nav-text">CGLIB实现动态代理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#需要注意的事项"><span class="nav-number">6.1.</span> <span class="nav-text">需要注意的事项</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckywen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
