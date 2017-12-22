@@ -86,7 +86,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="hexo,test," />
+  <meta name="keywords" content="hexo," />
 
 
 
@@ -102,28 +102,22 @@
 
 
 
-<meta name="description" content="在Spring中配置通知的时候需要注意以下几个点：
-
-需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。
-在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：
-123456789101112131415   &amp;lt;?xml versi">
+<meta name="description" content="外观模式外观模式可以表示一个类依赖多个不同的模块，使上层代码不必关注具体的实现细节，个人认为它的主要作用在于封装代码，用于解耦。
+具体的实例从整体世界观来说，外观模式我们可以认为对世界的一种抽象认识，比如汽车，我们认为存在这样一个具体物体，但是它由很多个中物体组成，包括车轮、方向盘，座椅、引擎等部件构成，而其中的每个部件又是由很多种部件抽象组成。
+具体代码实现首先实现三个具体模块代码，称之为Mod">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spring中配置bean需要注意的点">
-<meta property="og:url" content="http://caoqiwen2001.github.io/2016/09/30/spring-1/index.html">
+<meta property="og:title" content="Java设计模式-外观模式">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2017/12/22/Facade/index.html">
 <meta property="og:site_name" content="Coding Running">
-<meta property="og:description" content="在Spring中配置通知的时候需要注意以下几个点：
-
-需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。
-在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：
-123456789101112131415   &amp;lt;?xml versi">
-<meta property="og:updated_time" content="2016-09-30T03:46:27.141Z">
+<meta property="og:description" content="外观模式外观模式可以表示一个类依赖多个不同的模块，使上层代码不必关注具体的实现细节，个人认为它的主要作用在于封装代码，用于解耦。
+具体的实例从整体世界观来说，外观模式我们可以认为对世界的一种抽象认识，比如汽车，我们认为存在这样一个具体物体，但是它由很多个中物体组成，包括车轮、方向盘，座椅、引擎等部件构成，而其中的每个部件又是由很多种部件抽象组成。
+具体代码实现首先实现三个具体模块代码，称之为Mod">
+<meta property="og:updated_time" content="2017-12-22T07:26:19.049Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spring中配置bean需要注意的点">
-<meta name="twitter:description" content="在Spring中配置通知的时候需要注意以下几个点：
-
-需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。
-在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：
-123456789101112131415   &amp;lt;?xml versi">
+<meta name="twitter:title" content="Java设计模式-外观模式">
+<meta name="twitter:description" content="外观模式外观模式可以表示一个类依赖多个不同的模块，使上层代码不必关注具体的实现细节，个人认为它的主要作用在于封装代码，用于解耦。
+具体的实例从整体世界观来说，外观模式我们可以认为对世界的一种抽象认识，比如汽车，我们认为存在这样一个具体物体，但是它由很多个中物体组成，包括车轮、方向盘，座椅、引擎等部件构成，而其中的每个部件又是由很多种部件抽象组成。
+具体代码实现首先实现三个具体模块代码，称之为Mod">
 
 
 
@@ -144,9 +138,9 @@
 
 
 
-  <link rel="canonical" href="http://caoqiwen2001.github.io/2016/09/30/spring-1/"/>
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2017/12/22/Facade/"/>
 
-  <title> Spring中配置bean需要注意的点 | Coding Running </title>
+  <title> Java设计模式-外观模式 | Coding Running </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -295,7 +289,7 @@
   
   
 
-  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
 
     
       <header class="post-header">
@@ -306,7 +300,7 @@
             
             
               
-                Spring中配置bean需要注意的点
+                Java设计模式-外观模式
               
             
           </h1>
@@ -318,8 +312,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-30T01:40:53+08:00" content="2016-09-30">
-              2016-09-30
+            <time itemprop="dateCreated" datetime="2017-12-22T15:12:48+08:00" content="2017-12-22">
+              2017-12-22
             </time>
           </span>
 
@@ -348,8 +342,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/09/30/spring-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/30/spring-1/" itemprop="commentsCount"></span>
+                <a href="/2017/12/22/Facade/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/22/Facade/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -372,21 +366,20 @@
       
 
       
-        <p>   在Spring中配置通知的时候需要注意以下几个点：</p>
-<ul>
-<li>需要的包：将spring中libs中所有的包都包含进去，然后还要配置额外三个包,aopalliance.jar,aspectjrt.jar+aspectjweaver.jar这两个包。否则会出现报错。</li>
-<li><p>在配置对应的文件的时候，需要导入相应的命名空间，如以下配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">   &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans</div><div class="line">           http://www.springframework.org/schema/beans/spring-beans.xsd</div><div class="line">           http://www.springframework.org/schema/context</div><div class="line">           http://www.springframework.org/schema/context/spring-context-3.0.xsd</div><div class="line">           http://www.springframework.org/schema/aop</div><div class="line">           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd&quot;&gt;</div><div class="line">	&lt;context:component-scan base-package=&quot;com.caoqiwen.spring.aop&quot; &gt;</div><div class="line">        &lt;/context:component-scan&gt;</div><div class="line">        &lt;aop:aspectj-autoproxy&gt;&lt;/aop:aspectj-autoproxy&gt;</div><div class="line"> &lt;/beans&gt;</div></pre></td></tr></table></figure>
-<p>我配置了Context和aop的空间，特别注意的是在schmaLocation的配置中需要和上面的配置命名空间的顺序统一，否则也可能会报错。</p>
-</li>
+        <h3 id="外观模式"><a href="#外观模式" class="headerlink" title="外观模式"></a>外观模式</h3><p>外观模式可以表示一个类依赖多个不同的模块，使上层代码不必关注具体的实现细节，<em>个人认为它的主要作用在于封装代码，用于解耦。</em></p>
+<h4 id="具体的实例"><a href="#具体的实例" class="headerlink" title="具体的实例"></a>具体的实例</h4><p>从整体世界观来说，外观模式我们可以认为对世界的一种抽象认识，比如汽车，我们认为存在这样一个具体物体，但是它由很多个中物体组成，包括车轮、方向盘，座椅、引擎等部件构成，而其中的每个部件又是由很多种部件抽象组成。</p>
+<h4 id="具体代码实现"><a href="#具体代码实现" class="headerlink" title="具体代码实现"></a>具体代码实现</h4><p>首先实现三个具体模块代码，称之为ModuleA,ModuleB,ModuleC,每一个Module中都有自己的业务方法实现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public class ModuleA &#123;</div><div class="line">     public void testModuleA()&#123;</div><div class="line">         System.out.println(&quot;system out testModuleA&quot;);</div><div class="line">     &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public class ModuleB &#123;</div><div class="line">      public void testModuleB()&#123;</div><div class="line">          System.out.println(&quot;system out testModuleB&quot;);</div><div class="line">      &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public class ModuleC &#123;</div><div class="line">    public void  testModuleC()&#123;</div><div class="line">        System.out.println(&quot;system out testModuleC&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后轮到外观模式出厂了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">public class Facade &#123;</div><div class="line">    private ModuleA moduleA = null;</div><div class="line">    private ModuleB moduleB = null;</div><div class="line">    private ModuleC moduleC = null;</div><div class="line"></div><div class="line">    public Facade() &#123;</div><div class="line">        moduleA = new ModuleA();</div><div class="line">        moduleB = new ModuleB();</div><div class="line">        moduleC = new ModuleC();</div><div class="line">    &#125;</div><div class="line">    public void test()&#123;</div><div class="line">        moduleA.testModuleA();</div><div class="line">        moduleB.testModuleB();</div><div class="line">        moduleC.testModuleC();</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    public static void main(String[] args)&#123;</div><div class="line">        Facade facade=new Facade();</div><div class="line">        facade.test();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在Facade类中我实现了一个具体的类的实现，其中依赖了ModuleA，ModuleB，ModuleC，并调用了三个模块的方法，其中调用的逻辑可以自己自由发挥，根据你的业务而定，或者你也可以想象这样一个场景，我们在开车的时候，需要踩离合、加油门，这里就开车就是我们需要调用的方法，具体的开车步骤却被封装起来，外界看不到是怎么开车的，只看到车在动。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>外观模式可以根据自己的需求增加依赖进行封装，让子模块不依赖于父模块。</li>
+<li>父模块不需要知道子模块是怎么实现的，只需要调子模块的方法即可。</li>
+<li>可以隐藏实现的细节，把需要暴露的接口都集中于Facade类，方便客户端调用。但细节客户端并不知道。</li>
 </ul>
-<ul>
-<li>通过注解来获取对应类的实例方法</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package com.caoqiwen.spring.aop;</div><div class="line">import org.springframework.stereotype.Component;</div><div class="line"></div><div class="line">@Component(&quot;arithmeticCalculator&quot;)</div><div class="line">public class  ArithmeticCalculatorImpl implements ArithmeticCalculator &#123;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int add(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		//return 0;</div><div class="line">		int result=x+y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int sub(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x-y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int mul(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x*y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public int div(int x, int y) &#123;</div><div class="line">		// TODO Auto-generated method stub</div><div class="line">		int result=x/y;</div><div class="line">		return result;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>会根据配置去扫描com.caoqiwen.spring.aop命名空间下面的所有类</p>
-<h3 id="关于切面优先级的问题"><a href="#关于切面优先级的问题" class="headerlink" title="关于切面优先级的问题"></a>关于切面优先级的问题</h3><p>&emsp; 对于同一个切面，可以在类的前面注释一个order优先级，优先级，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">@Order(2)</div><div class="line">@Component</div><div class="line">@Aspect</div><div class="line">public class DesperateAspect &#123;</div><div class="line"></div><div class="line">	@Before(&quot;execution(public int com.caoqiwen.spring.aop.ArithmeticCalculator.*(..))&quot;)</div><div class="line">	public void beforeMethod(JoinPoint joinPoint) &#123;</div><div class="line">		String methodName = joinPoint.getSignature().getName();</div><div class="line">		Object[] args = joinPoint.getArgs();</div><div class="line">		System.out.println(&quot;the DesperateAspect&quot; + methodName + &quot;is start&quot; + Arrays.asList(args));</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>如果优先级越低，则该方法会优先执行。</p>
 
       
     </div>
@@ -411,8 +404,6 @@
           
             <a href="/tags/hexo/" rel="tag">#hexo</a>
           
-            <a href="/tags/test/" rel="tag">#test</a>
-          
         </div>
       
 
@@ -420,17 +411,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/09/27/ajax1/" rel="next" title="使用Ajax创建一个简单的网页交互">
-                <i class="fa fa-chevron-left"></i> 使用Ajax创建一个简单的网页交互
+              <a href="/2017/12/21/observer/" rel="next" title="Java设计模式-观察者模式">
+                <i class="fa fa-chevron-left"></i> Java设计模式-观察者模式
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/11/05/youxi-md/" rel="prev" title="还是离开了游戏行业">
-                还是离开了游戏行业 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -456,8 +443,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/09/30/spring-1/"
-           data-title="Spring中配置bean需要注意的点" data-url="http://caoqiwen2001.github.io/2016/09/30/spring-1/">
+      <div class="ds-thread" data-thread-key="2017/12/22/Facade/"
+           data-title="Java设计模式-外观模式" data-url="http://caoqiwen2001.github.io/2017/12/22/Facade/">
       </div>
     
   </div>
@@ -568,7 +555,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于切面优先级的问题"><span class="nav-number">1.</span> <span class="nav-text">关于切面优先级的问题</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#外观模式"><span class="nav-number">1.</span> <span class="nav-text">外观模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#具体的实例"><span class="nav-number">1.1.</span> <span class="nav-text">具体的实例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体代码实现"><span class="nav-number">1.2.</span> <span class="nav-text">具体代码实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
           </div>
         </section>
