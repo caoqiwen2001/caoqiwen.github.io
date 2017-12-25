@@ -86,7 +86,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Java,hexo," />
+  <meta name="keywords" content="Java," />
 
 
 
@@ -102,16 +102,19 @@
 
 
 
-<meta name="description" content="&amp;emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，Department包含Manager的引用。然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：1234567891011121">
+<meta name="description" content="String类型是final的？Java中的String是老生常谈的事情了，笔者比较疑惑的问题是String为啥是final的？来看下这段代码：
+1234public final class String    implements java.io.Serializable, Comparable&amp;lt;String&amp;gt;, CharSequence &amp;#123;    /** The valu">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hibernate中的外键1对1测试">
-<meta property="og:url" content="http://caoqiwen2001.github.io/2016/09/27/hibernate-1/index.html">
+<meta property="og:title" content="再谈Java中的String">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2017/12/25/string-2/index.html">
 <meta property="og:site_name" content="Coding Running">
-<meta property="og:description" content="&amp;emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，Department包含Manager的引用。然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：1234567891011121">
-<meta property="og:updated_time" content="2017-12-22T08:22:21.213Z">
+<meta property="og:description" content="String类型是final的？Java中的String是老生常谈的事情了，笔者比较疑惑的问题是String为啥是final的？来看下这段代码：
+1234public final class String    implements java.io.Serializable, Comparable&amp;lt;String&amp;gt;, CharSequence &amp;#123;    /** The valu">
+<meta property="og:updated_time" content="2017-12-25T03:28:12.382Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hibernate中的外键1对1测试">
-<meta name="twitter:description" content="&amp;emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，Department包含Manager的引用。然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：1234567891011121">
+<meta name="twitter:title" content="再谈Java中的String">
+<meta name="twitter:description" content="String类型是final的？Java中的String是老生常谈的事情了，笔者比较疑惑的问题是String为啥是final的？来看下这段代码：
+1234public final class String    implements java.io.Serializable, Comparable&amp;lt;String&amp;gt;, CharSequence &amp;#123;    /** The valu">
 
 
 
@@ -132,9 +135,9 @@
 
 
 
-  <link rel="canonical" href="http://caoqiwen2001.github.io/2016/09/27/hibernate-1/"/>
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2017/12/25/string-2/"/>
 
-  <title> Hibernate中的外键1对1测试 | Coding Running </title>
+  <title> 再谈Java中的String | Coding Running </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -294,7 +297,7 @@
             
             
               
-                Hibernate中的外键1对1测试
+                再谈Java中的String
               
             
           </h1>
@@ -306,8 +309,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-27T00:28:21+08:00" content="2016-09-27">
-              2016-09-27
+            <time itemprop="dateCreated" datetime="2017-12-25T11:10:34+08:00" content="2017-12-25">
+              2017-12-25
             </time>
           </span>
 
@@ -336,8 +339,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/09/27/hibernate-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/27/hibernate-1/" itemprop="commentsCount"></span>
+                <a href="/2017/12/25/string-2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/25/string-2/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -360,11 +363,26 @@
       
 
       
-        <p> &emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，<br>Department包含Manager的引用。<br>然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</div><div class="line">&lt;!DOCTYPE hibernate-mapping PUBLIC &quot;-//Hibernate/Hibernate Mapping DTD 3.0//EN&quot;</div><div class="line">&quot;http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd&quot;&gt;</div><div class="line">&lt;hibernate-mapping&gt;</div><div class="line">    &lt;class name=&quot;com.hiberate.one2one.foreign.Department&quot; table=&quot;DEPARTMENTS&quot;&gt;</div><div class="line">        &lt;id name=&quot;deptID&quot; type=&quot;java.lang.Integer&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_ID&quot; /&gt;</div><div class="line">            &lt;generator class=&quot;native&quot; /&gt;</div><div class="line">        &lt;/id&gt;</div><div class="line">        &lt;property name=&quot;deptName&quot; type=&quot;java.lang.String&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_NAME&quot; /&gt;</div><div class="line">        &lt;/property&gt;</div><div class="line">        &lt;many-to-one name=&quot;manager&quot; class=&quot;com.hiberate.one2one.foreign.Manager&quot;</div><div class="line">        column=&quot;MGR_ID&quot; unique=&quot;true&quot;&gt;&lt;/many-to-one&gt;</div><div class="line">    &lt;/class&gt;</div><div class="line">&lt;/hibernate-mapping&gt;</div></pre></td></tr></table></figure></p>
-<p>&emsp;</p>
-<ul>
-<li>要特别注意的是在配置property的时候一定要对上java文件中的字段，否则就会报错。</li>
-<li>配置many-to-one时需要将unique=”true”。</li>
+        <h4 id="String类型是final的？"><a href="#String类型是final的？" class="headerlink" title="String类型是final的？"></a>String类型是final的？</h4><p>Java中的String是老生常谈的事情了，笔者比较疑惑的问题是String为啥是final的？<br>来看下这段代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public final class String</div><div class="line">    implements java.io.Serializable, Comparable&lt;String&gt;, CharSequence &#123;</div><div class="line">    /** The value is used for character storage. */</div><div class="line">    private final char value[];</div></pre></td></tr></table></figure>
+<p>后来笔者经过分析和实践，得出结论：因为它是final所以不可被继承。其次，看到value数组也是final的，这个final的意思内存地址不可改变，但是它char数量里面的内容是可以改变的。<br>String在给初始化常量值的时候是在常量池中分配地址空间给它的，比如 String c=”hello”;  c+=”bbb”;<br>此时的c是指向一个新开辟的地址空间的内容。<br>再来说说我们关心字符串的追加方式问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public static String appendStr(String c)&#123;</div><div class="line">      c+=&quot;bbb&quot;;</div><div class="line">      return c;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  public static  StringBuilder  appendStrigBuilder(StringBuilder d)&#123;</div><div class="line">      return  d.append(&quot;nihao&quot;);</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">String c=&quot;hello&quot;;</div><div class="line">String d=appendStr(c);</div><div class="line">System.out.println(c);</div><div class="line">StringBuilder builder=new StringBuilder(&quot;hello&quot;);</div><div class="line">appendStrigBuilder(builder);</div><div class="line">System.out.println(builder);</div></pre></td></tr></table></figure>
+<p>如果调用appendStr的时候发现原String内容的值并没有改变，笔者的分析是，当String作为参数传递给形参时，会传递一个地址的副本过去，此时，他们都指向常量池中的字符串，调用 c+=”bbb”;的时候，副本地址指向一个新的常量字符串地址”hellobbb”,而原来c的字符串地址为final不能修改，即地址不能修改，这就是不可变性。<br>而对于StringBuilder的append方法，看下它的源码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">    public StringBuilder append(String str) &#123;</div><div class="line">        super.append(str);</div><div class="line">        return this;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>看下基类的append方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public AbstractStringBuilder append(String str) &#123;</div><div class="line">      if (str == null)</div><div class="line">          return appendNull();</div><div class="line">      int len = str.length();</div><div class="line">      ensureCapacityInternal(count + len);</div><div class="line">      str.getChars(0, len, value, count);</div><div class="line">      count += len;</div><div class="line">      return this;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>可以发现AbstractStringBuilder中的value数组不是final的，那它的地址是可以改变的。<br>重点可以看下ensureCapacityInternal这个方法，发现它调用了Arrays.copyOf这个方法的实现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public static char[] copyOf(char[] original, int newLength) &#123;</div><div class="line">       char[] copy = new char[newLength];</div><div class="line">       System.arraycopy(original, 0, copy, 0,</div><div class="line">                        Math.min(original.length, newLength));</div><div class="line">       return copy;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>可以看到，<em>新开了一个char数</em>组，调用底层的System.arraycopy方法将原来的地址指向新的数组从而达到append的效果。</p>
+<h4 id="StringBuffer与StringBuilder"><a href="#StringBuffer与StringBuilder" class="headerlink" title="StringBuffer与StringBuilder"></a>StringBuffer与StringBuilder</h4><p>   StringBuffer是线程安全的，在并发的情况下采用StringBuffer，它的原理就是在方法的前面加了synchronized关键字加锁。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">   synchronized StringBuffer append(AbstractStringBuilder asb) &#123;</div><div class="line">       toStringCache = null;</div><div class="line">       super.append(asb);</div><div class="line">       return this;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>再看看String的concat方法，它的contact方法是效率极低的做法，因为char数组地址不可变，只能每次去new一个新的String返回。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public String concat(String str) &#123;</div><div class="line">      int otherLen = str.length();</div><div class="line">      if (otherLen == 0) &#123;</div><div class="line">          return this;</div><div class="line">      &#125;</div><div class="line">      int len = value.length;</div><div class="line">      char buf[] = Arrays.copyOf(value, len + otherLen);</div><div class="line">      str.getChars(buf, len);</div><div class="line">      return new String(buf, true);</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>可以看到，每次返回的时候都是一个新的对象，如果遇到字符串拼接非常多的场景，每次都是要去申请内存，效率会非常低。所以，在拼接字符串的时候，尽量不用String.contact方法。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>String是不可变的，指的是地址不可变</li>
+<li>字符串多的时候追加尽量用StringBuilder，多线程下用StringBuffer。</li>
 </ul>
 
       
@@ -390,8 +408,6 @@
           
             <a href="/tags/Java/" rel="tag">#Java</a>
           
-            <a href="/tags/hexo/" rel="tag">#hexo</a>
-          
         </div>
       
 
@@ -399,17 +415,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/08/12/my-new-post/" rel="next" title="如何用hexo搭建个人博客">
-                <i class="fa fa-chevron-left"></i> 如何用hexo搭建个人博客
+              <a href="/2017/12/22/Facade/" rel="next" title="Java设计模式-外观模式">
+                <i class="fa fa-chevron-left"></i> Java设计模式-外观模式
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/09/27/ajax1/" rel="prev" title="使用Ajax创建一个简单的网页交互">
-                使用Ajax创建一个简单的网页交互 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -435,8 +447,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/09/27/hibernate-1/"
-           data-title="Hibernate中的外键1对1测试" data-url="http://caoqiwen2001.github.io/2016/09/27/hibernate-1/">
+      <div class="ds-thread" data-thread-key="2017/12/25/string-2/"
+           data-title="再谈Java中的String" data-url="http://caoqiwen2001.github.io/2017/12/25/string-2/">
       </div>
     
   </div>
@@ -547,7 +559,7 @@
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#String类型是final的？"><span class="nav-number">1.</span> <span class="nav-text">String类型是final的？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#StringBuffer与StringBuilder"><span class="nav-number">2.</span> <span class="nav-text">StringBuffer与StringBuilder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
           </div>
         </section>
