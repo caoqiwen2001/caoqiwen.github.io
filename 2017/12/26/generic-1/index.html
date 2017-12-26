@@ -86,7 +86,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="生活," />
+  <meta name="keywords" content="Java," />
 
 
 
@@ -102,16 +102,19 @@
 
 
 
-<meta name="description" content="&amp;nbsp; &amp;nbsp; &amp;nbsp;最近发生了一些事情，我辞掉了上家游戏开发的工作，转做java服务端的开发，中间有过迷茫有过纠结，不过最终还是决定下来去这么做了，算是决定了自己以后要走的路线，期间也多谢家人和朋友的支持和鼓励。&amp;nbsp;  &amp;nbsp; &amp;nbsp;说说我为什么要离开游戏行业，在进入这个行业之前觉得做游戏应该是一件比较开心的事，做自己喜欢的游戏，和自己的团队开发有趣的游戏，">
+<meta name="description" content="浅谈Java中的泛型泛型算是比较高级知识的了，但是作为一名合格的开发人员，泛型是必须要掌握的一门技术，熟悉掌握好它才能为以后的框架开发打好基础。在项目中泛型无处不在，只是可能我们关注的比较少而已。
+1234ArrayList&amp;lt;String&amp;gt; strings=new ArrayList&amp;lt;&amp;gt;();      strings.add(&amp;quot;123&amp;quot;);">
 <meta property="og:type" content="article">
-<meta property="og:title" content="还是离开了游戏行业">
-<meta property="og:url" content="http://caoqiwen2001.github.io/2016/11/05/youxi-md/index.html">
+<meta property="og:title" content="浅谈Java中的泛型">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2017/12/26/generic-1/index.html">
 <meta property="og:site_name" content="Coding Running">
-<meta property="og:description" content="&amp;nbsp; &amp;nbsp; &amp;nbsp;最近发生了一些事情，我辞掉了上家游戏开发的工作，转做java服务端的开发，中间有过迷茫有过纠结，不过最终还是决定下来去这么做了，算是决定了自己以后要走的路线，期间也多谢家人和朋友的支持和鼓励。&amp;nbsp;  &amp;nbsp; &amp;nbsp;说说我为什么要离开游戏行业，在进入这个行业之前觉得做游戏应该是一件比较开心的事，做自己喜欢的游戏，和自己的团队开发有趣的游戏，">
-<meta property="og:updated_time" content="2017-12-22T08:27:11.310Z">
+<meta property="og:description" content="浅谈Java中的泛型泛型算是比较高级知识的了，但是作为一名合格的开发人员，泛型是必须要掌握的一门技术，熟悉掌握好它才能为以后的框架开发打好基础。在项目中泛型无处不在，只是可能我们关注的比较少而已。
+1234ArrayList&amp;lt;String&amp;gt; strings=new ArrayList&amp;lt;&amp;gt;();      strings.add(&amp;quot;123&amp;quot;);">
+<meta property="og:updated_time" content="2017-12-26T08:55:32.432Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="还是离开了游戏行业">
-<meta name="twitter:description" content="&amp;nbsp; &amp;nbsp; &amp;nbsp;最近发生了一些事情，我辞掉了上家游戏开发的工作，转做java服务端的开发，中间有过迷茫有过纠结，不过最终还是决定下来去这么做了，算是决定了自己以后要走的路线，期间也多谢家人和朋友的支持和鼓励。&amp;nbsp;  &amp;nbsp; &amp;nbsp;说说我为什么要离开游戏行业，在进入这个行业之前觉得做游戏应该是一件比较开心的事，做自己喜欢的游戏，和自己的团队开发有趣的游戏，">
+<meta name="twitter:title" content="浅谈Java中的泛型">
+<meta name="twitter:description" content="浅谈Java中的泛型泛型算是比较高级知识的了，但是作为一名合格的开发人员，泛型是必须要掌握的一门技术，熟悉掌握好它才能为以后的框架开发打好基础。在项目中泛型无处不在，只是可能我们关注的比较少而已。
+1234ArrayList&amp;lt;String&amp;gt; strings=new ArrayList&amp;lt;&amp;gt;();      strings.add(&amp;quot;123&amp;quot;);">
 
 
 
@@ -132,9 +135,9 @@
 
 
 
-  <link rel="canonical" href="http://caoqiwen2001.github.io/2016/11/05/youxi-md/"/>
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2017/12/26/generic-1/"/>
 
-  <title> 还是离开了游戏行业 | Coding Running </title>
+  <title> 浅谈Java中的泛型 | Coding Running </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -294,7 +297,7 @@
             
             
               
-                还是离开了游戏行业
+                浅谈Java中的泛型
               
             
           </h1>
@@ -306,8 +309,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-11-05T09:05:16+08:00" content="2016-11-05">
-              2016-11-05
+            <time itemprop="dateCreated" datetime="2017-12-26T16:38:29+08:00" content="2017-12-26">
+              2017-12-26
             </time>
           </span>
 
@@ -320,8 +323,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/life/" itemprop="url" rel="index">
-                    <span itemprop="name">life</span>
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
                   </a>
                 </span>
 
@@ -336,8 +339,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/11/05/youxi-md/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/05/youxi-md/" itemprop="commentsCount"></span>
+                <a href="/2017/12/26/generic-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/26/generic-1/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -360,7 +363,30 @@
       
 
       
-        <p>&nbsp; &nbsp; &nbsp;最近发生了一些事情，我辞掉了上家游戏开发的工作，转做java服务端的开发，中间有过迷茫有过纠结，不过最终还是决定下来去这么做了，算是决定了自己以后要走的路线，期间也多谢家人和朋友的支持和鼓励。<br>&nbsp;  &nbsp; &nbsp;说说我为什么要离开游戏行业，在进入这个行业之前觉得做游戏应该是一件比较开心的事，做自己喜欢的游戏，和自己的团队开发有趣的游戏，但是进入到这个行业之后，却让我看到了这个行业暴力的一面。在2016年整个互联网遇到寒冬的时候，我看到了公司的变相裁员，因为项目流产不得不缩衣节食，被迫让自己的员工走人，员工和公司反目成仇，我才发觉这个行业是多么的残酷，公司为了压低劳动成本，招一批廉价的应届生干着没有技术的活儿，而老员工确用各种手段来卡着不让涨工资，加班确永无尽头。每次为了应付策划的奇葩需求加班，自己完全就像机器一样在工作。我在思考之后觉得这样的生活被压榨，这样的老板不值得跟随，便有了离职的想法，离职后也接触过其他的团队，广州的手游圈也大底是那一套公司团队都共用一套框架，换换皮，战斗的表现改下三个月就可以上线了，如果效益不好就裁人，项目挂了就又开新项目换皮，后面觉得国内的游戏业也就这样了，而且极度不稳定，对于这种我不能驾驭的行业来说，便有了离开游戏圈的方法。<br>&nbsp;  &nbsp;&nbsp;其实入这个行业2年了，也算完完全全跟过一个完整的项目，深知一款游戏的成功需要太多的天时地利和人和。我所在的项目是开发一款ARPG页游，公司团队还挺大的，将近40个人，但是开发的周期确将近两年，为什么会耗时这么久还没开发完成上线呢？从我亲身体验来说，一方面是公司资源的欠缺，一个美术团队要跟几个项目，导致美术团队的工作量较大，做不过来。另一方面就是公司的策划比较水，前期提的案子都是提一个初步的规划，然后技术做完做个粗糙的版本出来给大伙先玩玩先，觉得Ok了又开始让美术换UI，中途我也跟过几个大型的模块，其结果就是搞业务逻辑的技术要累死，因为要换UI，要改逻辑，一个星期的任务量可能多大3至四个中大型的需求，前端人员虽然说有10个人左右，但是根本做不完，说来说去苦的还是写逻辑的程序员，做不完就要加班，上面只管要进度，加上工期又短，这也是导致我直接离开这个行业的原因：不想在一群水笔策划纠结下去了。<br>&nbsp;  &nbsp;&nbsp;从另一个方面来说，项目负责人也有一定的责任，虽然是技术出身，但是对项目管理做的不太充分，对整个项目的周期没有一个良好的规划。每次承若说要上线了，大家再加把劲，但是待遇各方面却从来不提，甚至直接说现在公司没钱，等项目上线了才给大伙儿涨点，可怜的游戏人！项目管理的混乱导致了策划和程序的冲突不断，在公司整天都过的提心吊胆，每天都堤防自己哪个代码写错了要被说，这样子的日子想想就够了，技术方面也没有多大提高，想想每天加班到9点10点还是有干不完的活，怎么有时间去充实读书提高自己的技术？现在决定了换个加班少的行业自己做点独立游戏玩玩，或许更有乐趣一点吧~！<br>&nbsp;  &nbsp;&nbsp;那些还想往游戏行业发展的年轻人们，想好太过美好，如果是真心热爱游戏这一行，千万不要进入国内的游戏行业，算是保存着自己最初对游戏的那份美好吧。</p>
+        <h3 id="浅谈Java中的泛型"><a href="#浅谈Java中的泛型" class="headerlink" title="浅谈Java中的泛型"></a>浅谈Java中的泛型</h3><p>泛型算是比较高级知识的了，但是作为一名合格的开发人员，泛型是必须要掌握的一门技术，熟悉掌握好它才能为以后的框架开发打好基础。<br>在项目中泛型无处不在，只是可能我们关注的比较少而已。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ArrayList&lt;String&gt; strings=new ArrayList&lt;&gt;();</div><div class="line">      strings.add(&quot;123&quot;);</div><div class="line">      strings.add(&quot;234&quot;);</div><div class="line">      strings.add(&quot;444&quot;);</div></pre></td></tr></table></figure>
+<p>如上面这段代码就是我们常用的泛型方法，采用泛型主要是解决了以下几个问题：</p>
+<ol>
+<li>类型安全，类型错误在编译期间就确定了，更容易找到错误。</li>
+<li>消除了代码强制转换，增强了代码的可读性。</li>
+<li>提升了代码的性能。</li>
+</ol>
+<h4 id="泛型方法的定义"><a href="#泛型方法的定义" class="headerlink" title="泛型方法的定义"></a>泛型方法的定义</h4><p>静态方法中泛型的定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">static &lt;T&gt;  void  writeWithWildcard(List&lt;? super T&gt; list, T item) &#123;</div><div class="line">        list.add(item);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>静态方法中有T,如果我们去掉T会怎么样呢？它会报无法识别的错误，所以静态方法是必须加<t>的。<br>而在常量方法中则不需要添加T，否则会报错。</t></p>
+<h4 id="泛型作为参数的用法"><a href="#泛型作为参数的用法" class="headerlink" title="泛型作为参数的用法"></a>泛型作为参数的用法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">class Fruit &#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">class Apple extends Fruit &#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">class Jonathan extends Apple &#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line"></div><div class="line">class Orange extends Fruit &#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>代码定义了一个基类Fruit和它的几个派生类，下面可以用泛型来测试一下。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">static &lt;T&gt; T readExact(List&lt;? extends  T&gt; list) &#123;</div><div class="line">       return list.get(0);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>? extends  T是指<strong><em>上界通配符</em></strong>，它能保证所有类型至少是T类型或者是T类型的派生类型，在get的时候至少可以保证该类型是安全的。 以上面的水果为例，可以这样写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">static List&lt;Apple&gt; apples = Arrays.asList(new Apple());</div><div class="line">   static List&lt;Fruit&gt; fruit = Arrays.asList(new Fruit());</div><div class="line">       static void f1() &#123;</div><div class="line">       Apple a = readExact(apples);</div><div class="line">       Fruit f = readExact(fruit);</div><div class="line">       f = readExact(apples);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>基类是什么类型，则取出来的类型不能低于基类，否则会报类型不匹配错误。<br>而? super  T是指<strong><em>下界通配符</em></strong>，它决定了下界，能放入的类型只能是该类型及该类型的派生类。存入元素的时候是安全的。以上面的水果为例，测试添加水果类。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">static &lt;T&gt; void writeExact(List&lt;? super T&gt; list, T item) &#123;</div><div class="line">      list.add(item);</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">static List&lt;Apple&gt; apples = new ArrayList&lt;Apple&gt;();</div><div class="line">   static List&lt;Fruit&gt; fruit = new ArrayList&lt;Fruit&gt;();</div><div class="line">       static void f1() &#123;</div><div class="line">       writeExact(apples, new Apple());</div><div class="line">       writeExact(fruit, new Apple()); </div><div class="line">  </div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>可以往列表中插入一系列的水果，它的下界是Fruit，即可以是Fruit和它派生类等一系列对象。如果T类型是Apple，则插入的对象只能是Apple和派生自Apple类型了。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>频繁往外读取内容的，适合用上界extends</li>
+<li>需要往内插入数据的，适合用下界super</li>
+</ul>
 
       
     </div>
@@ -383,7 +409,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/生活/" rel="tag">#生活</a>
+            <a href="/tags/Java/" rel="tag">#Java</a>
           
         </div>
       
@@ -392,17 +418,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/09/30/spring-1/" rel="next" title="Spring中配置bean需要注意的点">
-                <i class="fa fa-chevron-left"></i> Spring中配置bean需要注意的点
+              <a href="/2017/12/25/string-2/" rel="next" title="再谈Java中的String">
+                <i class="fa fa-chevron-left"></i> 再谈Java中的String
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/11/12/Idea/" rel="prev" title="idea神器配置和使用">
-                idea神器配置和使用 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -428,8 +450,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/11/05/youxi-md/"
-           data-title="还是离开了游戏行业" data-url="http://caoqiwen2001.github.io/2016/11/05/youxi-md/">
+      <div class="ds-thread" data-thread-key="2017/12/26/generic-1/"
+           data-title="浅谈Java中的泛型" data-url="http://caoqiwen2001.github.io/2017/12/26/generic-1/">
       </div>
     
   </div>
@@ -540,7 +562,7 @@
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#浅谈Java中的泛型"><span class="nav-number">1.</span> <span class="nav-text">浅谈Java中的泛型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#泛型方法的定义"><span class="nav-number">1.1.</span> <span class="nav-text">泛型方法的定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#泛型作为参数的用法"><span class="nav-number">1.2.</span> <span class="nav-text">泛型作为参数的用法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
