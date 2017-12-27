@@ -86,7 +86,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="生活," />
+  <meta name="keywords" content="Java," />
 
 
 
@@ -102,16 +102,34 @@
 
 
 
-<meta name="description" content="&amp;nbsp; &amp;nbsp; &amp;nbsp;最近发生了一些事情，我辞掉了上家游戏开发的工作，转做java服务端的开发，中间有过迷茫有过纠结，不过最终还是决定下来去这么做了，算是决定了自己以后要走的路线，期间也多谢家人和朋友的支持和鼓励。&amp;nbsp;  &amp;nbsp; &amp;nbsp;说说我为什么要离开游戏行业，在进入这个行业之前觉得做游戏应该是一件比较开心的事，做自己喜欢的游戏，和自己的团队开发有趣的游戏，">
+<meta name="description" content="装饰器模式装饰器主要给模块添加额外的功能，可以通过派生或者组合来生成。如果通过直接修改对应类的来实现并不可取，造成很多冗余代码，在平常写代码的时候，尽可能用组合来实现。
+装饰器实现的主要主要角色：
+
+抽象构件角色一个抽象接口，以规范准备接受附加责任角色。
+具体构件角色定义一个将要接受附加责任的类。
+装饰角色持有构件角色实例，并定义与一个抽象构件接口的实例。
+具体装饰角色给构件角色贴上对应的责任。总">
 <meta property="og:type" content="article">
-<meta property="og:title" content="还是离开了游戏行业">
-<meta property="og:url" content="http://caoqiwen2001.github.io/2016/11/05/youxi-md/index.html">
+<meta property="og:title" content="Java设计模式-装饰器模式">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2017/12/27/decorator/index.html">
 <meta property="og:site_name" content="Coding Running">
-<meta property="og:description" content="&amp;nbsp; &amp;nbsp; &amp;nbsp;最近发生了一些事情，我辞掉了上家游戏开发的工作，转做java服务端的开发，中间有过迷茫有过纠结，不过最终还是决定下来去这么做了，算是决定了自己以后要走的路线，期间也多谢家人和朋友的支持和鼓励。&amp;nbsp;  &amp;nbsp; &amp;nbsp;说说我为什么要离开游戏行业，在进入这个行业之前觉得做游戏应该是一件比较开心的事，做自己喜欢的游戏，和自己的团队开发有趣的游戏，">
-<meta property="og:updated_time" content="2017-12-22T08:27:11.310Z">
+<meta property="og:description" content="装饰器模式装饰器主要给模块添加额外的功能，可以通过派生或者组合来生成。如果通过直接修改对应类的来实现并不可取，造成很多冗余代码，在平常写代码的时候，尽可能用组合来实现。
+装饰器实现的主要主要角色：
+
+抽象构件角色一个抽象接口，以规范准备接受附加责任角色。
+具体构件角色定义一个将要接受附加责任的类。
+装饰角色持有构件角色实例，并定义与一个抽象构件接口的实例。
+具体装饰角色给构件角色贴上对应的责任。总">
+<meta property="og:updated_time" content="2017-12-27T01:44:33.404Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="还是离开了游戏行业">
-<meta name="twitter:description" content="&amp;nbsp; &amp;nbsp; &amp;nbsp;最近发生了一些事情，我辞掉了上家游戏开发的工作，转做java服务端的开发，中间有过迷茫有过纠结，不过最终还是决定下来去这么做了，算是决定了自己以后要走的路线，期间也多谢家人和朋友的支持和鼓励。&amp;nbsp;  &amp;nbsp; &amp;nbsp;说说我为什么要离开游戏行业，在进入这个行业之前觉得做游戏应该是一件比较开心的事，做自己喜欢的游戏，和自己的团队开发有趣的游戏，">
+<meta name="twitter:title" content="Java设计模式-装饰器模式">
+<meta name="twitter:description" content="装饰器模式装饰器主要给模块添加额外的功能，可以通过派生或者组合来生成。如果通过直接修改对应类的来实现并不可取，造成很多冗余代码，在平常写代码的时候，尽可能用组合来实现。
+装饰器实现的主要主要角色：
+
+抽象构件角色一个抽象接口，以规范准备接受附加责任角色。
+具体构件角色定义一个将要接受附加责任的类。
+装饰角色持有构件角色实例，并定义与一个抽象构件接口的实例。
+具体装饰角色给构件角色贴上对应的责任。总">
 
 
 
@@ -132,9 +150,9 @@
 
 
 
-  <link rel="canonical" href="http://caoqiwen2001.github.io/2016/11/05/youxi-md/"/>
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2017/12/27/decorator/"/>
 
-  <title> 还是离开了游戏行业 | Coding Running </title>
+  <title> Java设计模式-装饰器模式 | Coding Running </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -294,7 +312,7 @@
             
             
               
-                还是离开了游戏行业
+                Java设计模式-装饰器模式
               
             
           </h1>
@@ -306,8 +324,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-11-05T09:05:16+08:00" content="2016-11-05">
-              2016-11-05
+            <time itemprop="dateCreated" datetime="2017-12-27T09:22:26+08:00" content="2017-12-27">
+              2017-12-27
             </time>
           </span>
 
@@ -320,8 +338,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/life/" itemprop="url" rel="index">
-                    <span itemprop="name">life</span>
+                  <a href="/categories/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
                   </a>
                 </span>
 
@@ -336,8 +354,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/11/05/youxi-md/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/05/youxi-md/" itemprop="commentsCount"></span>
+                <a href="/2017/12/27/decorator/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/27/decorator/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -360,7 +378,34 @@
       
 
       
-        <p>&nbsp; &nbsp; &nbsp;最近发生了一些事情，我辞掉了上家游戏开发的工作，转做java服务端的开发，中间有过迷茫有过纠结，不过最终还是决定下来去这么做了，算是决定了自己以后要走的路线，期间也多谢家人和朋友的支持和鼓励。<br>&nbsp;  &nbsp; &nbsp;说说我为什么要离开游戏行业，在进入这个行业之前觉得做游戏应该是一件比较开心的事，做自己喜欢的游戏，和自己的团队开发有趣的游戏，但是进入到这个行业之后，却让我看到了这个行业暴力的一面。在2016年整个互联网遇到寒冬的时候，我看到了公司的变相裁员，因为项目流产不得不缩衣节食，被迫让自己的员工走人，员工和公司反目成仇，我才发觉这个行业是多么的残酷，公司为了压低劳动成本，招一批廉价的应届生干着没有技术的活儿，而老员工确用各种手段来卡着不让涨工资，加班确永无尽头。每次为了应付策划的奇葩需求加班，自己完全就像机器一样在工作。我在思考之后觉得这样的生活被压榨，这样的老板不值得跟随，便有了离职的想法，离职后也接触过其他的团队，广州的手游圈也大底是那一套公司团队都共用一套框架，换换皮，战斗的表现改下三个月就可以上线了，如果效益不好就裁人，项目挂了就又开新项目换皮，后面觉得国内的游戏业也就这样了，而且极度不稳定，对于这种我不能驾驭的行业来说，便有了离开游戏圈的方法。<br>&nbsp;  &nbsp;&nbsp;其实入这个行业2年了，也算完完全全跟过一个完整的项目，深知一款游戏的成功需要太多的天时地利和人和。我所在的项目是开发一款ARPG页游，公司团队还挺大的，将近40个人，但是开发的周期确将近两年，为什么会耗时这么久还没开发完成上线呢？从我亲身体验来说，一方面是公司资源的欠缺，一个美术团队要跟几个项目，导致美术团队的工作量较大，做不过来。另一方面就是公司的策划比较水，前期提的案子都是提一个初步的规划，然后技术做完做个粗糙的版本出来给大伙先玩玩先，觉得Ok了又开始让美术换UI，中途我也跟过几个大型的模块，其结果就是搞业务逻辑的技术要累死，因为要换UI，要改逻辑，一个星期的任务量可能多大3至四个中大型的需求，前端人员虽然说有10个人左右，但是根本做不完，说来说去苦的还是写逻辑的程序员，做不完就要加班，上面只管要进度，加上工期又短，这也是导致我直接离开这个行业的原因：不想在一群水笔策划纠结下去了。<br>&nbsp;  &nbsp;&nbsp;从另一个方面来说，项目负责人也有一定的责任，虽然是技术出身，但是对项目管理做的不太充分，对整个项目的周期没有一个良好的规划。每次承若说要上线了，大家再加把劲，但是待遇各方面却从来不提，甚至直接说现在公司没钱，等项目上线了才给大伙儿涨点，可怜的游戏人！项目管理的混乱导致了策划和程序的冲突不断，在公司整天都过的提心吊胆，每天都堤防自己哪个代码写错了要被说，这样子的日子想想就够了，技术方面也没有多大提高，想想每天加班到9点10点还是有干不完的活，怎么有时间去充实读书提高自己的技术？现在决定了换个加班少的行业自己做点独立游戏玩玩，或许更有乐趣一点吧~！<br>&nbsp;  &nbsp;&nbsp;那些还想往游戏行业发展的年轻人们，想好太过美好，如果是真心热爱游戏这一行，千万不要进入国内的游戏行业，算是保存着自己最初对游戏的那份美好吧。</p>
+        <h3 id="装饰器模式"><a href="#装饰器模式" class="headerlink" title="装饰器模式"></a>装饰器模式</h3><p>装饰器主要给模块添加额外的功能，可以通过派生或者组合来生成。如果通过直接修改对应类的来实现并不可取，造成很多冗余代码，在平常写代码的时候，尽可能用组合来实现。</p>
+<p>装饰器实现的主要主要角色：</p>
+<ol>
+<li>抽象构件角色<br>一个抽象接口，以规范准备接受附加责任角色。</li>
+<li>具体构件角色<br>定义一个将要接受附加责任的类。</li>
+<li>装饰角色<br>持有构件角色实例，并定义与一个抽象构件接口的实例。</li>
+<li>具体装饰角色<br>给构件角色贴上对应的责任。<br>总结一句话：保持接口，增强性能。</li>
+</ol>
+<h4 id="装饰器的具体实现"><a href="#装饰器的具体实现" class="headerlink" title="装饰器的具体实现"></a>装饰器的具体实现</h4><p>最近荒野行动这款吃鸡游戏很流行，国内盛行的抄袭风又开始了，如小米枪战，腾讯吃鸡手游，都是圈钱的机器，笔者就以这个举例来实现，首先我们需要一个具体吃鸡的接口：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Created by caoqiwen on 2017/12/26.</div><div class="line"> * 模拟吃鸡</div><div class="line"> */</div><div class="line">public interface Chicken &#123;</div><div class="line">     void eatChicken();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>那么在进入游戏时，给个吃鸡的提示，可以给一个具体的提示如“大吉大利，今晚吃鸡”，给具体的构件角色：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public class ConChicken implements  Chicken&#123;</div><div class="line">    @Override</div><div class="line">    public void eatChicken() &#123;</div><div class="line">            System.out.println(&quot;大吉大利，今晚吃鸡&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>大家都知道，在进入游戏点击的时候，肯定是少不了广告的，如腾讯公司可能会中插一段视频推销自己的最新游戏产品，而小米公司可能会推销自己最新出了几款新手机，笔者就以两家的广告营销为例作为增强吃鸡的功能。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class MiChicken  implements  Chicken&#123;</div><div class="line"></div><div class="line">    private Chicken chicken;</div><div class="line">    public  MiChicken(Chicken chicken)&#123;</div><div class="line">        super();</div><div class="line">        this.chicken=chicken;</div><div class="line">    &#125;</div><div class="line">    @Override</div><div class="line">    public void eatChicken() &#123;</div><div class="line">        System.out.println(&quot;小米吃鸡游戏放点小米官网的广告&quot;);</div><div class="line">        chicken.eatChicken();</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class TenCentChicken implements Chicken&#123;</div><div class="line">    private Chicken chicken;</div><div class="line">    public TenCentChicken(Chicken chicken)&#123;</div><div class="line">        super();</div><div class="line">        this.chicken=chicken;</div><div class="line">    &#125;</div><div class="line">    @Override</div><div class="line">    public void eatChicken() &#123;</div><div class="line">        System.out.println(&quot;腾讯吃鸡游戏放点马化腾的广告&quot;);</div><div class="line">        chicken.eatChicken();</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>等玩家点击游戏打开APP时，此时可以这样调用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Chicken chicken=new MiChicken(new ConChicken());</div><div class="line"> chicken.eatChicken();</div><div class="line"></div><div class="line"> Chicken chicken2=new TenCentChicken(new ConChicken());</div><div class="line"> chicken2.eatChicken();</div></pre></td></tr></table></figure>
+<p>此时输出为：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">小米吃鸡游戏放点小米官网的广告  </div><div class="line">大吉大利，今晚吃鸡  </div><div class="line">腾讯吃鸡游戏放点马化腾的广告  </div><div class="line">大吉大利，今晚吃鸡</div></pre></td></tr></table></figure>
+<p>小米公司和腾讯达成协议，要在腾讯游戏中植入小米手机的营销广告，此时，我们可以这样调用代码进行增强：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Chicken chicken1=new TenCentChicken(new MiChicken(new ConChicken()));</div><div class="line">        chicken1.eatChicken();</div></pre></td></tr></table></figure>
+<p>此时输入为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">腾讯吃鸡游戏放点马化腾的广告</div><div class="line">小米吃鸡游戏放点小米官网的广告</div><div class="line">大吉大利，今晚吃鸡</div></pre></td></tr></table></figure>
+<h4 id="装饰模式与代理模式的对比"><a href="#装饰模式与代理模式的对比" class="headerlink" title="装饰模式与代理模式的对比"></a>装饰模式与代理模式的对比</h4><p>笔者认为这两个设计模式的实现是非常类似的，只不过两个模式的侧重点不同，代理模式是委托实现该类的功能，屏蔽自身类，而装饰模式则是对原类方法的功能进行增强，在I/O流中就用到了很多装饰模式。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>装饰模式通过继承和引用来扩展功能，它可以提供更多的灵活性。</li>
+<li>通过不同的具体装饰器以及装饰排列组合，设计师可以创造出不同的组合来满足不同的业务需求。</li>
+</ul>
 
       
     </div>
@@ -383,7 +428,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/生活/" rel="tag">#生活</a>
+            <a href="/tags/Java/" rel="tag">#Java</a>
           
         </div>
       
@@ -392,17 +437,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/09/30/spring-1/" rel="next" title="Spring中配置bean需要注意的点">
-                <i class="fa fa-chevron-left"></i> Spring中配置bean需要注意的点
+              <a href="/2017/12/26/generic-1/" rel="next" title="浅谈Java中的泛型">
+                <i class="fa fa-chevron-left"></i> 浅谈Java中的泛型
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/11/12/Idea/" rel="prev" title="idea神器配置和使用">
-                idea神器配置和使用 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -428,8 +469,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/11/05/youxi-md/"
-           data-title="还是离开了游戏行业" data-url="http://caoqiwen2001.github.io/2016/11/05/youxi-md/">
+      <div class="ds-thread" data-thread-key="2017/12/27/decorator/"
+           data-title="Java设计模式-装饰器模式" data-url="http://caoqiwen2001.github.io/2017/12/27/decorator/">
       </div>
     
   </div>
@@ -540,7 +581,7 @@
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#装饰器模式"><span class="nav-number">1.</span> <span class="nav-text">装饰器模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#装饰器的具体实现"><span class="nav-number">1.1.</span> <span class="nav-text">装饰器的具体实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#装饰模式与代理模式的对比"><span class="nav-number">1.2.</span> <span class="nav-text">装饰模式与代理模式的对比</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
