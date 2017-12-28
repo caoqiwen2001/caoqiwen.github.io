@@ -1,0 +1,827 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="ArrayList源码分析ArrayList 是我们最常见的集合框架了，顾名思义，ArrayList以数组形式实现的组合，它是基于数组实现的。它基本属性包括以下几点：
+
+
+
+关注
+结论
+
+
+
+
+是否为空
+允许
+
+
+是否重复数据
+允许
+
+
+是否有序
+有序
+
+
+是否线程安全
+非线程安全
+
+
+
+最常用的几个方法莫过于添加、删除、判断是否相等等几个判断。首先来看看源码，一般关心的是它的默认容量，源码给出了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Arraylist源码分析">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2017/12/28/arraylist/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="ArrayList源码分析ArrayList 是我们最常见的集合框架了，顾名思义，ArrayList以数组形式实现的组合，它是基于数组实现的。它基本属性包括以下几点：
+
+
+
+关注
+结论
+
+
+
+
+是否为空
+允许
+
+
+是否重复数据
+允许
+
+
+是否有序
+有序
+
+
+是否线程安全
+非线程安全
+
+
+
+最常用的几个方法莫过于添加、删除、判断是否相等等几个判断。首先来看看源码，一般关心的是它的默认容量，源码给出了">
+<meta property="og:updated_time" content="2017-12-28T01:00:39.613Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Arraylist源码分析">
+<meta name="twitter:description" content="ArrayList源码分析ArrayList 是我们最常见的集合框架了，顾名思义，ArrayList以数组形式实现的组合，它是基于数组实现的。它基本属性包括以下几点：
+
+
+
+关注
+结论
+
+
+
+
+是否为空
+允许
+
+
+是否重复数据
+允许
+
+
+是否有序
+有序
+
+
+是否线程安全
+非线程安全
+
+
+
+最常用的几个方法莫过于添加、删除、判断是否相等等几个判断。首先来看看源码，一般关心的是它的默认容量，源码给出了">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2017/12/28/arraylist/"/>
+
+  <title> Arraylist源码分析 | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Arraylist源码分析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-12-28T08:54:05+08:00" content="2017-12-28">
+              2017-12-28
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java集合框架/" itemprop="url" rel="index">
+                    <span itemprop="name">Java集合框架</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/12/28/arraylist/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/28/arraylist/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="ArrayList源码分析"><a href="#ArrayList源码分析" class="headerlink" title="ArrayList源码分析"></a>ArrayList源码分析</h3><p>ArrayList 是我们最常见的集合框架了，顾名思义，ArrayList以数组形式实现的组合，它是基于数组实现的。<br>它基本属性包括以下几点：</p>
+<table>
+<thead>
+<tr>
+<th>关注</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>是否为空</td>
+<td>允许</td>
+</tr>
+<tr>
+<td>是否重复数据</td>
+<td>允许</td>
+</tr>
+<tr>
+<td>是否有序</td>
+<td>有序</td>
+</tr>
+<tr>
+<td>是否线程安全</td>
+<td>非线程安全</td>
+</tr>
+</tbody>
+</table>
+<p>最常用的几个方法莫过于添加、删除、判断是否相等等几个判断。首先来看看源码，一般关心的是它的默认容量，源码给出了具体的容量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">    * Default initial capacity.</div><div class="line">    */</div><div class="line">   private static final int DEFAULT_CAPACITY = 10;</div></pre></td></tr></table></figure>
+<h4 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h4><p>再来看看它的add方法是怎样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public boolean add(E e) &#123;</div><div class="line">      ensureCapacityInternal(size + 1);  // Increments modCount!!</div><div class="line">      elementData[size++] = e;</div><div class="line">      return true;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>可以看到是往elementData这个数组中塞进数据了。<br>重点来看下ensureCapacityInternal这个方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">private void grow(int minCapacity) &#123;</div><div class="line">       // overflow-conscious code</div><div class="line">       int oldCapacity = elementData.length;</div><div class="line">       int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1);</div><div class="line">       if (newCapacity - minCapacity &lt; 0)</div><div class="line">           newCapacity = minCapacity;</div><div class="line">       if (newCapacity - MAX_ARRAY_SIZE &gt; 0)</div><div class="line">           newCapacity = hugeCapacity(minCapacity);</div><div class="line">       // minCapacity is usually close to size, so this is a win:</div><div class="line">       elementData = Arrays.copyOf(elementData, newCapacity);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>发现每次扩容的数据大小为原来数据容量的一半加原来的总容量的和，最大的容量为0x7fffffff。每次扩容的容量大小的限制是JDK开发人员经过慎重考虑才这样决定的（从内存空间和程序的运行效率来考虑）。确定了容量之后调用copyof方法将数据复制到新的数组里面，elementData会指向新的数组地址。</p>
+<h4 id="删除元素"><a href="#删除元素" class="headerlink" title="删除元素"></a>删除元素</h4><p>ArrayList的删除元素按照下标删除或者按照元素删除，它们调用的源码如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public E remove(int index) &#123;</div><div class="line">     rangeCheck(index);</div><div class="line"></div><div class="line">     modCount++;</div><div class="line">     E oldValue = elementData(index);</div><div class="line"></div><div class="line">     int numMoved = size - index - 1;</div><div class="line">     if (numMoved &gt; 0)</div><div class="line">         System.arraycopy(elementData, index+1, elementData, index,</div><div class="line">                          numMoved);</div><div class="line">     elementData[--size] = null; // clear to let GC do its work</div><div class="line"></div><div class="line">     return oldValue;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>可以看到：删除数据是直接将后面的数据复制到前一个位置。最后一个元素的位置为null，好让垃圾回收机制回收不必要的垃圾。</p>
+<h4 id="查找元素"><a href="#查找元素" class="headerlink" title="查找元素"></a>查找元素</h4><p>ArrayList中的indexOf方法可以查找对应的元素，这个方法也用的比较多。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public int indexOf(Object o) &#123;</div><div class="line">     if (o == null) &#123;</div><div class="line">         for (int i = 0; i &lt; size; i++)</div><div class="line">             if (elementData[i]==null)</div><div class="line">                 return i;</div><div class="line">     &#125; else &#123;</div><div class="line">         for (int i = 0; i &lt; size; i++)</div><div class="line">             if (o.equals(elementData[i]))</div><div class="line">                 return i;</div><div class="line">     &#125;</div><div class="line">     return -1;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>如果元素为null，则找到对应位置为null的index返回，如果数组中没有包含对应的元素，则直接返回-1。</p>
+<h4 id="关于数据的序列化"><a href="#关于数据的序列化" class="headerlink" title="关于数据的序列化"></a>关于数据的序列化</h4><p>ArrayList中实现了Serializable接口，源码中elementData是用transient进行修饰的。它的意思是不希望数组被序列化，因为数组中有些位置可能是空的，这些无用的数据是没必要进行序列化的。在ArrayList用writeObject方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">private void writeObject(java.io.ObjectOutputStream s)</div><div class="line">      throws java.io.IOException&#123;</div><div class="line">      // Write out element count, and any hidden stuff</div><div class="line">      int expectedModCount = modCount;</div><div class="line">      s.defaultWriteObject();</div><div class="line"></div><div class="line">      // Write out size as capacity for behavioural compatibility with clone()</div><div class="line">      s.writeInt(size);</div><div class="line"></div><div class="line">      // Write out all elements in the proper order.</div><div class="line">      for (int i=0; i&lt;size; i++) &#123;</div><div class="line">          s.writeObject(elementData[i]);</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      if (modCount != expectedModCount) &#123;</div><div class="line">          throw new ConcurrentModificationException();</div><div class="line">      &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>接着需要从流中读取对应的数据，代码是这样子的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">private void readObject(java.io.ObjectInputStream s)</div><div class="line">    throws java.io.IOException, ClassNotFoundException &#123;</div><div class="line">    elementData = EMPTY_ELEMENTDATA;</div><div class="line"></div><div class="line">    // Read in size, and any hidden stuff</div><div class="line">    s.defaultReadObject();</div><div class="line"></div><div class="line">    // Read in capacity</div><div class="line">    s.readInt(); // ignored</div><div class="line"></div><div class="line">    if (size &gt; 0) &#123;</div><div class="line">        // be like clone(), allocate array based upon size not capacity</div><div class="line">        int capacity = calculateCapacity(elementData, size);</div><div class="line">        SharedSecrets.getJavaOISAccess().checkArray(s, Object[].class, capacity);</div><div class="line">        ensureCapacityInternal(size);</div><div class="line"></div><div class="line">        Object[] a = elementData;</div><div class="line">        // Read in all elements in the proper order.</div><div class="line">        for (int i=0; i&lt;size; i++) &#123;</div><div class="line">            a[i] = s.readObject();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先定义一个空的elementData数组，通过ObjectOutputStream的readObject方法将数据写回数组。<br>这种方法减少了序列化文件的大小。相应的序列化的速度也可以加快。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>ArrayList底层是数组实现，是一种随机访问模式，查找速度非常快</li>
+<li>删除元素的时候涉及到数组元素的复制，如果元素非常多，会非常消耗性能。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/27/decorator/" rel="next" title="Java设计模式-装饰器模式">
+                <i class="fa fa-chevron-left"></i> Java设计模式-装饰器模式
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/12/28/arraylist/"
+           data-title="Arraylist源码分析" data-url="http://caoqiwen2001.github.io/2017/12/28/arraylist/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckywen" />
+          <p class="site-author-name" itemprop="name">luckywen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList源码分析"><span class="nav-number">1.</span> <span class="nav-text">ArrayList源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#添加元素"><span class="nav-number">1.1.</span> <span class="nav-text">添加元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除元素"><span class="nav-number">1.2.</span> <span class="nav-text">删除元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查找元素"><span class="nav-number">1.3.</span> <span class="nav-text">查找元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于数据的序列化"><span class="nav-number">1.4.</span> <span class="nav-text">关于数据的序列化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckywen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
