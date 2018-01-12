@@ -1,0 +1,733 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="前言前面说过HashMap不是线程安全的，如果在高并发的情况下采用ConcurrentHashMap比较安全，它也是属于并发包中的一员，在Jdk1.8中还是采用“数组”+“链表”+“红黑树”的形式进行构造的，下面来看具体的形式。
+Node类Node类与HashMap中有一定的不同，他的next，val都是有家volatile关键字，在多个线程读的时候可以正确同步，保证值的可见性。
+12345678">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ConcurrentHashMap源码分析">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2018/01/12/concurrentHashMap/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="前言前面说过HashMap不是线程安全的，如果在高并发的情况下采用ConcurrentHashMap比较安全，它也是属于并发包中的一员，在Jdk1.8中还是采用“数组”+“链表”+“红黑树”的形式进行构造的，下面来看具体的形式。
+Node类Node类与HashMap中有一定的不同，他的next，val都是有家volatile关键字，在多个线程读的时候可以正确同步，保证值的可见性。
+12345678">
+<meta property="og:updated_time" content="2018-01-12T12:15:12.052Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ConcurrentHashMap源码分析">
+<meta name="twitter:description" content="前言前面说过HashMap不是线程安全的，如果在高并发的情况下采用ConcurrentHashMap比较安全，它也是属于并发包中的一员，在Jdk1.8中还是采用“数组”+“链表”+“红黑树”的形式进行构造的，下面来看具体的形式。
+Node类Node类与HashMap中有一定的不同，他的next，val都是有家volatile关键字，在多个线程读的时候可以正确同步，保证值的可见性。
+12345678">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2018/01/12/concurrentHashMap/"/>
+
+  <title> ConcurrentHashMap源码分析 | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ConcurrentHashMap源码分析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-01-12T19:43:00+08:00" content="2018-01-12">
+              2018-01-12
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java集合框架/" itemprop="url" rel="index">
+                    <span itemprop="name">Java集合框架</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/01/12/concurrentHashMap/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/01/12/concurrentHashMap/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>前面说过HashMap不是线程安全的，如果在高并发的情况下采用ConcurrentHashMap比较安全，它也是属于并发包中的一员，在Jdk1.8中还是采用“数组”+“链表”+“红黑树”的形式进行构造的，下面来看具体的形式。</p>
+<h4 id="Node类"><a href="#Node类" class="headerlink" title="Node类"></a>Node类</h4><p>Node类与HashMap中有一定的不同，他的next，val都是有家volatile关键字，在多个线程读的时候可以正确同步，保证值的可见性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; &#123;</div><div class="line">        final int hash;</div><div class="line">        final K key;</div><div class="line">        volatile V val;</div><div class="line">        volatile Node&lt;K,V&gt; next;</div><div class="line"></div><div class="line">        Node(int hash, K key, V val, Node&lt;K,V&gt; next) &#123;</div><div class="line">            this.hash = hash;</div><div class="line">            this.key = key;</div><div class="line">            this.val = val;</div><div class="line">            this.next = next;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        public final K getKey()       &#123; return key; &#125;</div><div class="line">        public final V getValue()     &#123; return val; &#125;</div><div class="line">        public final int hashCode()   &#123; return key.hashCode() ^ val.hashCode(); &#125;</div><div class="line">        public final String toString()&#123; return key + &quot;=&quot; + val; &#125;</div><div class="line">        public final V setValue(V value) &#123;</div><div class="line">            throw new UnsupportedOperationException();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        public final boolean equals(Object o) &#123;</div><div class="line">            Object k, v, u; Map.Entry&lt;?,?&gt; e;</div><div class="line">            return ((o instanceof Map.Entry) &amp;&amp;</div><div class="line">                    (k = (e = (Map.Entry&lt;?,?&gt;)o).getKey()) != null &amp;&amp;</div><div class="line">                    (v = e.getValue()) != null &amp;&amp;</div><div class="line">                    (k == key || k.equals(key)) &amp;&amp;</div><div class="line">                    (v == (u = val) || v.equals(u)));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        /**</div><div class="line">         * Virtualized support for map.get(); overridden in subclasses.</div><div class="line">         */</div><div class="line">        Node&lt;K,V&gt; find(int h, Object k) &#123;</div><div class="line">            Node&lt;K,V&gt; e = this;</div><div class="line">            if (k != null) &#123;</div><div class="line">                do &#123;</div><div class="line">                    K ek;</div><div class="line">                    if (e.hash == h &amp;&amp;</div><div class="line">                        ((ek = e.key) == k || (ek != null &amp;&amp; k.equals(ek))))</div><div class="line">                        return e;</div><div class="line">                &#125; while ((e = e.next) != null);</div><div class="line">            &#125;</div><div class="line">            return null;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>可以看到setValue方法会抛出异常，因为在多线程环境下不能确保数据的唯一性，新增了一个find方法找对应的Node节点，与hashMap的方法类似，通过hash和key结合的方法去寻找对应的节点。</p>
+<h4 id="有趣的原子操作"><a href="#有趣的原子操作" class="headerlink" title="有趣的原子操作"></a>有趣的原子操作</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">@SuppressWarnings(&quot;unchecked&quot;)</div><div class="line">  static final &lt;K,V&gt; Node&lt;K,V&gt; tabAt(Node&lt;K,V&gt;[] tab, int i) &#123;</div><div class="line">      return (Node&lt;K,V&gt;)U.getObjectVolatile(tab, ((long)i &lt;&lt; ASHIFT) + ABASE);</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  static final &lt;K,V&gt; boolean casTabAt(Node&lt;K,V&gt;[] tab, int i,</div><div class="line">                                      Node&lt;K,V&gt; c, Node&lt;K,V&gt; v) &#123;</div><div class="line">      return U.compareAndSwapObject(tab, ((long)i &lt;&lt; ASHIFT) + ABASE, c, v);</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  static final &lt;K,V&gt; void setTabAt(Node&lt;K,V&gt;[] tab, int i, Node&lt;K,V&gt; v) &#123;</div><div class="line">      U.putObjectVolatile(tab, ((long)i &lt;&lt; ASHIFT) + ABASE, v);</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>可以看到compareAndSwapObject调用了CAS操作来确保数据的一致性。而getObjectVolatile方法能确保当前tab上的Node是最新的。putObjectVolatile保证了其他线程对该tab上Node的可见性。其中充分运用到了Unsafe类获取地址便宜量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"> static &#123;</div><div class="line">        try &#123;</div><div class="line">            U = sun.misc.Unsafe.getUnsafe();</div><div class="line">            Class&lt;?&gt; k = ConcurrentHashMap.class;</div><div class="line">            SIZECTL = U.objectFieldOffset</div><div class="line">                (k.getDeclaredField(&quot;sizeCtl&quot;));</div><div class="line">            TRANSFERINDEX = U.objectFieldOffset</div><div class="line">                (k.getDeclaredField(&quot;transferIndex&quot;));</div><div class="line">            BASECOUNT = U.objectFieldOffset</div><div class="line">                (k.getDeclaredField(&quot;baseCount&quot;));</div><div class="line">            CELLSBUSY = U.objectFieldOffset</div><div class="line">                (k.getDeclaredField(&quot;cellsBusy&quot;));</div><div class="line">            Class&lt;?&gt; ck = CounterCell.class;</div><div class="line">            CELLVALUE = U.objectFieldOffset</div><div class="line">                (ck.getDeclaredField(&quot;value&quot;));</div><div class="line">            Class&lt;?&gt; ak = Node[].class;</div><div class="line">            ABASE = U.arrayBaseOffset(ak);</div><div class="line">            int scale = U.arrayIndexScale(ak);</div><div class="line">            if ((scale &amp; (scale - 1)) != 0)</div><div class="line">                throw new Error(&quot;data type scale not a power of two&quot;);</div><div class="line">            ASHIFT = 31 - Integer.numberOfLeadingZeros(scale);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            throw new Error(e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到调用objectFieldOffset方法来获取字典在内存地址的偏移量。</p>
+<h4 id="put方法"><a href="#put方法" class="headerlink" title="put方法"></a>put方法</h4><p>来看看put方法的源码实现，首先来看看initTable方法，它是put方法的基础，用来做初始化容器的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">private final Node&lt;K,V&gt;[] initTable() &#123;</div><div class="line">    Node&lt;K,V&gt;[] tab; int sc;</div><div class="line">    while ((tab = table) == null || tab.length == 0) &#123;</div><div class="line">        if ((sc = sizeCtl) &lt; 0)</div><div class="line">            Thread.yield(); // lost initialization race; just spin</div><div class="line">        else if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) &#123;</div><div class="line">            try &#123;</div><div class="line">                if ((tab = table) == null || tab.length == 0) &#123;</div><div class="line">                    int n = (sc &gt; 0) ? sc : DEFAULT_CAPACITY;</div><div class="line">                    @SuppressWarnings(&quot;unchecked&quot;)</div><div class="line">                    Node&lt;K,V&gt;[] nt = (Node&lt;K,V&gt;[])new Node&lt;?,?&gt;[n];</div><div class="line">                    table = tab = nt;</div><div class="line">                    sc = n - (n &gt;&gt;&gt; 2);</div><div class="line">                &#125;</div><div class="line">            &#125; finally &#123;</div><div class="line">                sizeCtl = sc;</div><div class="line">            &#125;</div><div class="line">            break;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return tab;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到当table为空的时候，第一步首先判断sizeCtl是否小于0，小于0则表示当前已经初始化了，则让当前线程保持就绪状态，等待cpu调度。否则就调用compareAndSwapInt方法判断内存的值与sc是否一致，一致则赋值为-1，这里又判断了一次table是否为空，加强严谨性，接着初始化长度为n的Node数组给table，sizeCtl的值变为原来的0.75，变为扩容的阈值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line">final V putVal(K key, V value, boolean onlyIfAbsent) &#123;</div><div class="line">       if (key == null || value == null) throw new NullPointerException();</div><div class="line">       int hash = spread(key.hashCode());</div><div class="line">       int binCount = 0;</div><div class="line">       for (Node&lt;K,V&gt;[] tab = table;;) &#123;</div><div class="line">           Node&lt;K,V&gt; f; int n, i, fh;</div><div class="line">           if (tab == null || (n = tab.length) == 0)</div><div class="line">               tab = initTable();</div><div class="line">           else if ((f = tabAt(tab, i = (n - 1) &amp; hash)) == null) &#123;</div><div class="line">               if (casTabAt(tab, i, null,</div><div class="line">                            new Node&lt;K,V&gt;(hash, key, value, null)))</div><div class="line">                   break;                   // no lock when adding to empty bin</div><div class="line">           &#125;</div><div class="line">           else if ((fh = f.hash) == MOVED)</div><div class="line">               tab = helpTransfer(tab, f);</div><div class="line">           else &#123;</div><div class="line">               V oldVal = null;</div><div class="line">               synchronized (f) &#123;</div><div class="line">                   if (tabAt(tab, i) == f) &#123;</div><div class="line">                       if (fh &gt;= 0) &#123;</div><div class="line">                           binCount = 1;</div><div class="line">                           for (Node&lt;K,V&gt; e = f;; ++binCount) &#123;</div><div class="line">                               K ek;</div><div class="line">                               if (e.hash == hash &amp;&amp;</div><div class="line">                                   ((ek = e.key) == key ||</div><div class="line">                                    (ek != null &amp;&amp; key.equals(ek)))) &#123;</div><div class="line">                                   oldVal = e.val;</div><div class="line">                                   if (!onlyIfAbsent)</div><div class="line">                                       e.val = value;</div><div class="line">                                   break;</div><div class="line">                               &#125;</div><div class="line">                               Node&lt;K,V&gt; pred = e;</div><div class="line">                               if ((e = e.next) == null) &#123;</div><div class="line">                                   pred.next = new Node&lt;K,V&gt;(hash, key,</div><div class="line">                                                             value, null);</div><div class="line">                                   break;</div><div class="line">                               &#125;</div><div class="line">                           &#125;</div><div class="line">                       &#125;</div><div class="line">                       else if (f instanceof TreeBin) &#123;</div><div class="line">                           Node&lt;K,V&gt; p;</div><div class="line">                           binCount = 2;</div><div class="line">                           if ((p = ((TreeBin&lt;K,V&gt;)f).putTreeVal(hash, key,</div><div class="line">                                                          value)) != null) &#123;</div><div class="line">                               oldVal = p.val;</div><div class="line">                               if (!onlyIfAbsent)</div><div class="line">                                   p.val = value;</div><div class="line">                           &#125;</div><div class="line">                       &#125;</div><div class="line">                   &#125;</div><div class="line">               &#125;</div><div class="line">               if (binCount != 0) &#123;</div><div class="line">                   if (binCount &gt;= TREEIFY_THRESHOLD)</div><div class="line">                       treeifyBin(tab, i);</div><div class="line">                   if (oldVal != null)</div><div class="line">                       return oldVal;</div><div class="line">                   break;</div><div class="line">               &#125;</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">       addCount(1L, binCount);</div><div class="line">       return null;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>可以看到在并发的情况下，put方法还是比较复杂的，因为涉及到多个线程对Node数组的操作，塞数据的时候首先判断该数据的key和val是不是空，为空直接抛出异常了。</li>
+<li>接着获取到hash的值，为啥后面有一个for死循环了，因为可能存在扩容的可能性。</li>
+<li>当前tab是否为空，为空则调用initTable方法。</li>
+<li>不为空判断(n - 1) &amp; hash)的位置上是否为空，为空则直接插入</li>
+<li>如果f.hash为MOVED,则要进行扩容处理。</li>
+<li>否则要锁住当前节点，往后续遍历，如果遇到相同的key则覆盖并返回oldVal，没有相同的值则在尾部插入新的节点。</li>
+<li>如果是红黑树节点就去红黑树节点添加。</li>
+<li>如果当前节点所在的链表长度超过8个了，需要将该链表转换为红黑树。</li>
+<li>将当前ConcurrentHashMap的元素数量加1。<br>笔者好奇的是它是如何实现扩容的，进入helpTransfer看看扩容机制：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">final Node&lt;K,V&gt;[] helpTransfer(Node&lt;K,V&gt;[] tab, Node&lt;K,V&gt; f) &#123;</div><div class="line">     Node&lt;K,V&gt;[] nextTab; int sc;</div><div class="line">     if (tab != null &amp;&amp; (f instanceof ForwardingNode) &amp;&amp;</div><div class="line">         (nextTab = ((ForwardingNode&lt;K,V&gt;)f).nextTable) != null) &#123;</div><div class="line">         int rs = resizeStamp(tab.length);</div><div class="line">         while (nextTab == nextTable &amp;&amp; table == tab &amp;&amp;</div><div class="line">                (sc = sizeCtl) &lt; 0) &#123;</div><div class="line">             if ((sc &gt;&gt;&gt; RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 ||</div><div class="line">                 sc == rs + MAX_RESIZERS || transferIndex &lt;= 0)</div><div class="line">                 break;</div><div class="line">             if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)) &#123;</div><div class="line">                 transfer(tab, nextTab);</div><div class="line">                 break;</div><div class="line">             &#125;</div><div class="line">         &#125;</div><div class="line">         return nextTab;</div><div class="line">     &#125;</div><div class="line">     return table;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>这段代码是检测当前正在扩容时，可以帮忙去扩容，可以看到最终还是调用了transfer方法，看看transfer方法的实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div></pre></td><td class="code"><pre><div class="line">private final void transfer(Node&lt;K,V&gt;[] tab, Node&lt;K,V&gt;[] nextTab) &#123;</div><div class="line">        int n = tab.length, stride;</div><div class="line">        if ((stride = (NCPU &gt; 1) ? (n &gt;&gt;&gt; 3) / NCPU : n) &lt; MIN_TRANSFER_STRIDE)</div><div class="line">            stride = MIN_TRANSFER_STRIDE; // subdivide range</div><div class="line">        if (nextTab == null) &#123;            // initiating</div><div class="line">            try &#123;</div><div class="line">                @SuppressWarnings(&quot;unchecked&quot;)</div><div class="line">                Node&lt;K,V&gt;[] nt = (Node&lt;K,V&gt;[])new Node&lt;?,?&gt;[n &lt;&lt; 1];</div><div class="line">                nextTab = nt;</div><div class="line">            &#125; catch (Throwable ex) &#123;      // try to cope with OOME</div><div class="line">                sizeCtl = Integer.MAX_VALUE;</div><div class="line">                return;</div><div class="line">            &#125;</div><div class="line">            nextTable = nextTab;</div><div class="line">            transferIndex = n;</div><div class="line">        &#125;</div><div class="line">        int nextn = nextTab.length;</div><div class="line">        ForwardingNode&lt;K,V&gt; fwd = new ForwardingNode&lt;K,V&gt;(nextTab);</div><div class="line">        boolean advance = true;</div><div class="line">        boolean finishing = false; // to ensure sweep before committing nextTab</div><div class="line">        for (int i = 0, bound = 0;;) &#123;</div><div class="line">            Node&lt;K,V&gt; f; int fh;</div><div class="line">            while (advance) &#123;</div><div class="line">                int nextIndex, nextBound;</div><div class="line">                if (--i &gt;= bound || finishing)</div><div class="line">                    advance = false;</div><div class="line">                else if ((nextIndex = transferIndex) &lt;= 0) &#123;</div><div class="line">                    i = -1;</div><div class="line">                    advance = false;</div><div class="line">                &#125;</div><div class="line">                else if (U.compareAndSwapInt</div><div class="line">                         (this, TRANSFERINDEX, nextIndex,</div><div class="line">                          nextBound = (nextIndex &gt; stride ?</div><div class="line">                                       nextIndex - stride : 0))) &#123;</div><div class="line">                    bound = nextBound;</div><div class="line">                    i = nextIndex - 1;</div><div class="line">                    advance = false;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            if (i &lt; 0 || i &gt;= n || i + n &gt;= nextn) &#123;</div><div class="line">                int sc;</div><div class="line">                if (finishing) &#123;</div><div class="line">                    nextTable = null;</div><div class="line">                    table = nextTab;</div><div class="line">                    sizeCtl = (n &lt;&lt; 1) - (n &gt;&gt;&gt; 1);</div><div class="line">                    return;</div><div class="line">                &#125;</div><div class="line">                if (U.compareAndSwapInt(this, SIZECTL, sc = sizeCtl, sc - 1)) &#123;</div><div class="line">                    if ((sc - 2) != resizeStamp(n) &lt;&lt; RESIZE_STAMP_SHIFT)</div><div class="line">                        return;</div><div class="line">                    finishing = advance = true;</div><div class="line">                    i = n; // recheck before commit</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            else if ((f = tabAt(tab, i)) == null)</div><div class="line">                advance = casTabAt(tab, i, null, fwd);</div><div class="line">            else if ((fh = f.hash) == MOVED)</div><div class="line">                advance = true; // already processed</div><div class="line">            else &#123;</div><div class="line">                synchronized (f) &#123;</div><div class="line">                    if (tabAt(tab, i) == f) &#123;</div><div class="line">                        Node&lt;K,V&gt; ln, hn;</div><div class="line">                        if (fh &gt;= 0) &#123;</div><div class="line">                            int runBit = fh &amp; n;</div><div class="line">                            Node&lt;K,V&gt; lastRun = f;</div><div class="line">                            for (Node&lt;K,V&gt; p = f.next; p != null; p = p.next) &#123;</div><div class="line">                                int b = p.hash &amp; n;</div><div class="line">                                if (b != runBit) &#123;</div><div class="line">                                    runBit = b;</div><div class="line">                                    lastRun = p;</div><div class="line">                                &#125;</div><div class="line">                            &#125;</div><div class="line">                            if (runBit == 0) &#123;</div><div class="line">                                ln = lastRun;</div><div class="line">                                hn = null;</div><div class="line">                            &#125;</div><div class="line">                            else &#123;</div><div class="line">                                hn = lastRun;</div><div class="line">                                ln = null;</div><div class="line">                            &#125;</div><div class="line">                            for (Node&lt;K,V&gt; p = f; p != lastRun; p = p.next) &#123;</div><div class="line">                                int ph = p.hash; K pk = p.key; V pv = p.val;</div><div class="line">                                if ((ph &amp; n) == 0)</div><div class="line">                                    ln = new Node&lt;K,V&gt;(ph, pk, pv, ln);   //高位与二进制n按位与得到0</div><div class="line">                                else</div><div class="line">                                    hn = new Node&lt;K,V&gt;(ph, pk, pv, hn);     //说明该节点需要移动到i+n的位置，解决扩容问题</div><div class="line">                            &#125;</div><div class="line">                            setTabAt(nextTab, i, ln);</div><div class="line">                            setTabAt(nextTab, i + n, hn);</div><div class="line">                            setTabAt(tab, i, fwd);</div><div class="line">                            advance = true;</div><div class="line">                        &#125;</div><div class="line">                        else if (f instanceof TreeBin) &#123;</div><div class="line">                            TreeBin&lt;K,V&gt; t = (TreeBin&lt;K,V&gt;)f;</div><div class="line">                            TreeNode&lt;K,V&gt; lo = null, loTail = null;</div><div class="line">                            TreeNode&lt;K,V&gt; hi = null, hiTail = null;</div><div class="line">                            int lc = 0, hc = 0;</div><div class="line">                            for (Node&lt;K,V&gt; e = t.first; e != null; e = e.next) &#123;</div><div class="line">                                int h = e.hash;</div><div class="line">                                TreeNode&lt;K,V&gt; p = new TreeNode&lt;K,V&gt;</div><div class="line">                                    (h, e.key, e.val, null, null);</div><div class="line">                                if ((h &amp; n) == 0) &#123;</div><div class="line">                                    if ((p.prev = loTail) == null)</div><div class="line">                                        lo = p;</div><div class="line">                                    else</div><div class="line">                                        loTail.next = p;</div><div class="line">                                    loTail = p;</div><div class="line">                                    ++lc;</div><div class="line">                                &#125;</div><div class="line">                                else &#123;</div><div class="line">                                    if ((p.prev = hiTail) == null)</div><div class="line">                                        hi = p;</div><div class="line">                                    else</div><div class="line">                                        hiTail.next = p;</div><div class="line">                                    hiTail = p;</div><div class="line">                                    ++hc;</div><div class="line">                                &#125;</div><div class="line">                            &#125;</div><div class="line">                            ln = (lc &lt;= UNTREEIFY_THRESHOLD) ? untreeify(lo) :</div><div class="line">                                (hc != 0) ? new TreeBin&lt;K,V&gt;(lo) : t;   </div><div class="line">                            hn = (hc &lt;= UNTREEIFY_THRESHOLD) ? untreeify(hi) :</div><div class="line">                                (lc != 0) ? new TreeBin&lt;K,V&gt;(hi) : t;</div><div class="line">                            setTabAt(nextTab, i, ln);</div><div class="line">                            setTabAt(nextTab, i + n, hn);</div><div class="line">                            setTabAt(tab, i, fwd);</div><div class="line">                            advance = true;</div><div class="line">                        &#125;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>可以看到transfer方法是非常复杂的，但是它的思路还是和HashMap差不多的，通过将原tab的数据依次复制到新的tab上，都是通过CAS操作在nextTab中的i位置和i+n的位置插入原来的节点，完成扩容任务。</p>
+<h4 id="get方法"><a href="#get方法" class="headerlink" title="get方法"></a>get方法</h4><p>get方法的源码就比上面的简单多了，来看下具体的流程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public V get(Object key) &#123;</div><div class="line">      Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; e, p; int n, eh; K ek;</div><div class="line">      int h = spread(key.hashCode());</div><div class="line">      if ((tab = table) != null &amp;&amp; (n = tab.length) &gt; 0 &amp;&amp;</div><div class="line">          (e = tabAt(tab, (n - 1) &amp; h)) != null) &#123;</div><div class="line">          if ((eh = e.hash) == h) &#123;</div><div class="line">              if ((ek = e.key) == key || (ek != null &amp;&amp; key.equals(ek)))</div><div class="line">                  return e.val;</div><div class="line">          &#125;</div><div class="line">          else if (eh &lt; 0)</div><div class="line">              return (p = e.find(h, key)) != null ? p.val : null;</div><div class="line">          while ((e = e.next) != null) &#123;</div><div class="line">              if (e.hash == h &amp;&amp;</div><div class="line">                  ((ek = e.key) == key || (ek != null &amp;&amp; key.equals(ek))))</div><div class="line">                  return e.val;</div><div class="line">          &#125;</div><div class="line">      &#125;</div><div class="line">      return null;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>可以看到，首先去拿在table中的位置h，如果table中存在这个key，且是头节点的话直接返回val，如果h小于0，则去树中和链表中寻找。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>jdk1.8的ConcurrentHashMap进行大量的优化，它的锁力度更小，锁到Node上面来了，通过大量的CAS操作保证多线程数据的一致性，但是原理方面与HashMap大体是一致的，值得好好研究。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/10/ajax2/" rel="next" title="Ajax中几种请求数据方式">
+                <i class="fa fa-chevron-left"></i> Ajax中几种请求数据方式
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/01/12/concurrentHashMap/"
+           data-title="ConcurrentHashMap源码分析" data-url="http://caoqiwen2001.github.io/2018/01/12/concurrentHashMap/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckywen" />
+          <p class="site-author-name" itemprop="name">luckywen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Node类"><span class="nav-number">1.1.</span> <span class="nav-text">Node类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有趣的原子操作"><span class="nav-number">1.2.</span> <span class="nav-text">有趣的原子操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#put方法"><span class="nav-number">1.3.</span> <span class="nav-text">put方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#get方法"><span class="nav-number">1.4.</span> <span class="nav-text">get方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckywen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
