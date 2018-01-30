@@ -86,7 +86,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="hexo,Java," />
+  <meta name="keywords" content="Java," />
 
 
 
@@ -102,16 +102,28 @@
 
 
 
-<meta name="description" content="&amp;emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，Department包含Manager的引用。然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：1234567891011121">
+<meta name="description" content="I/O的基本概念
+同步和异步的概念：所谓的同步就是在发出一个请求的时候，如果没有得到结果，就不返回。即调用者主动等待返回结果。做完一件事情在做另一件事情。所谓的异步：调用之后直接返回结果，一般通过回调函数来处理这个应用。可以同时做多件事情。
+阻塞和非阻塞的概念：阻塞：在调用没有得到结果之前，当前线程会被挂起。调用线程得到结果之后才会返回。非阻塞：不能得到结果之前，该调用不会阻塞住当前的线程。
+
+缓">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hibernate中的外键1对1测试">
-<meta property="og:url" content="http://caoqiwen2001.github.io/2016/09/27/hibernate-1/index.html">
+<meta property="og:title" content="NIO（一）缓冲区">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2018/01/30/nio-1/index.html">
 <meta property="og:site_name" content="Coding Running">
-<meta property="og:description" content="&amp;emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，Department包含Manager的引用。然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：1234567891011121">
-<meta property="og:updated_time" content="2017-12-22T08:22:21.213Z">
+<meta property="og:description" content="I/O的基本概念
+同步和异步的概念：所谓的同步就是在发出一个请求的时候，如果没有得到结果，就不返回。即调用者主动等待返回结果。做完一件事情在做另一件事情。所谓的异步：调用之后直接返回结果，一般通过回调函数来处理这个应用。可以同时做多件事情。
+阻塞和非阻塞的概念：阻塞：在调用没有得到结果之前，当前线程会被挂起。调用线程得到结果之后才会返回。非阻塞：不能得到结果之前，该调用不会阻塞住当前的线程。
+
+缓">
+<meta property="og:updated_time" content="2018-01-30T09:41:51.872Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hibernate中的外键1对1测试">
-<meta name="twitter:description" content="&amp;emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，Department包含Manager的引用。然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：1234567891011121">
+<meta name="twitter:title" content="NIO（一）缓冲区">
+<meta name="twitter:description" content="I/O的基本概念
+同步和异步的概念：所谓的同步就是在发出一个请求的时候，如果没有得到结果，就不返回。即调用者主动等待返回结果。做完一件事情在做另一件事情。所谓的异步：调用之后直接返回结果，一般通过回调函数来处理这个应用。可以同时做多件事情。
+阻塞和非阻塞的概念：阻塞：在调用没有得到结果之前，当前线程会被挂起。调用线程得到结果之后才会返回。非阻塞：不能得到结果之前，该调用不会阻塞住当前的线程。
+
+缓">
 
 
 
@@ -132,9 +144,9 @@
 
 
 
-  <link rel="canonical" href="http://caoqiwen2001.github.io/2016/09/27/hibernate-1/"/>
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2018/01/30/nio-1/"/>
 
-  <title> Hibernate中的外键1对1测试 | Coding Running </title>
+  <title> NIO（一）缓冲区 | Coding Running </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -294,7 +306,7 @@
             
             
               
-                Hibernate中的外键1对1测试
+                NIO（一）缓冲区
               
             
           </h1>
@@ -306,8 +318,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-27T00:28:21+08:00" content="2016-09-27">
-              2016-09-27
+            <time itemprop="dateCreated" datetime="2018-01-30T17:23:56+08:00" content="2018-01-30">
+              2018-01-30
             </time>
           </span>
 
@@ -320,8 +332,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
+                  <a href="/categories/NIO/" itemprop="url" rel="index">
+                    <span itemprop="name">NIO</span>
                   </a>
                 </span>
 
@@ -336,8 +348,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/09/27/hibernate-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/27/hibernate-1/" itemprop="commentsCount"></span>
+                <a href="/2018/01/30/nio-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/01/30/nio-1/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -360,12 +372,25 @@
       
 
       
-        <p> &emsp;首先创建一个Manager和一个Department类，因为是1对1的映射，所以要在每个类的字段中包含不同的类。即Manager中包含Department的引用，<br>Department包含Manager的引用。<br>然后最主要的就是配置的问题，由于eclipse已经帮我们配置好了，只需稍微修改下即可，注意的点是在配置属性的时候要对应上类中的字段名。来看个配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</div><div class="line">&lt;!DOCTYPE hibernate-mapping PUBLIC &quot;-//Hibernate/Hibernate Mapping DTD 3.0//EN&quot;</div><div class="line">&quot;http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd&quot;&gt;</div><div class="line">&lt;hibernate-mapping&gt;</div><div class="line">    &lt;class name=&quot;com.hiberate.one2one.foreign.Department&quot; table=&quot;DEPARTMENTS&quot;&gt;</div><div class="line">        &lt;id name=&quot;deptID&quot; type=&quot;java.lang.Integer&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_ID&quot; /&gt;</div><div class="line">            &lt;generator class=&quot;native&quot; /&gt;</div><div class="line">        &lt;/id&gt;</div><div class="line">        &lt;property name=&quot;deptName&quot; type=&quot;java.lang.String&quot;&gt;</div><div class="line">            &lt;column name=&quot;DEPT_NAME&quot; /&gt;</div><div class="line">        &lt;/property&gt;</div><div class="line">        &lt;many-to-one name=&quot;manager&quot; class=&quot;com.hiberate.one2one.foreign.Manager&quot;</div><div class="line">        column=&quot;MGR_ID&quot; unique=&quot;true&quot;&gt;&lt;/many-to-one&gt;</div><div class="line">    &lt;/class&gt;</div><div class="line">&lt;/hibernate-mapping&gt;</div></pre></td></tr></table></figure></p>
-<p>&emsp;</p>
-<ul>
-<li>要特别注意的是在配置property的时候一定要对上java文件中的字段，否则就会报错。</li>
-<li>配置many-to-one时需要将unique=”true”。</li>
-</ul>
+        <h3 id="I-O的基本概念"><a href="#I-O的基本概念" class="headerlink" title="I/O的基本概念"></a>I/O的基本概念</h3><ol>
+<li>同步和异步的概念：<br>所谓的同步就是在发出一个请求的时候，如果没有得到结果，就不返回。即调用者主动等待返回结果。做完一件事情在做另一件事情。<br>所谓的异步：调用之后直接返回结果，一般通过回调函数来处理这个应用。可以同时做多件事情。</li>
+<li>阻塞和非阻塞的概念：<br>阻塞：在调用没有得到结果之前，当前线程会被挂起。调用线程得到结果之后才会返回。<br>非阻塞：不能得到结果之前，该调用不会阻塞住当前的线程。</li>
+</ol>
+<h3 id="缓冲区"><a href="#缓冲区" class="headerlink" title="缓冲区"></a>缓冲区</h3><p>缓冲区其实就是一块数组，然后对这一块数组进行一系列的操作，它包括以下几个常用的方法： </p>
+<p>1分配空间给缓冲区<br>2.往缓冲区中添加数据调用put方法<br>3.调用flip方法切换为读状态<br>4.读取完毕调用clear方法重新设置位置为0。</p>
+<h3 id="常用方法解析"><a href="#常用方法解析" class="headerlink" title="常用方法解析"></a>常用方法解析</h3><p>1.clear方法不清除数据，只是改变当前limit值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public final Buffer clear() &#123;</div><div class="line">      position = 0;</div><div class="line">      limit = capacity;</div><div class="line">      mark = -1;</div><div class="line">      return this;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>2.flip方法允许输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public final Buffer flip() &#123;</div><div class="line">       limit = position;</div><div class="line">       position = 0;</div><div class="line">       mark = -1;</div><div class="line">       return this;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>3.rewind方法使posotion方法置为0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public final Buffer rewind() &#123;</div><div class="line">       position = 0;</div><div class="line">       mark = -1;</div><div class="line">       return this;</div><div class="line">   &#125;</div></pre></td></tr></table></figure></p>
+<p>4.判断两个缓冲区是否相等的方法，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public boolean equals(Object ob) &#123;</div><div class="line">    if (this == ob)</div><div class="line">        return true;</div><div class="line">    if (!(ob instanceof CharBuffer))</div><div class="line">        return false;</div><div class="line">    CharBuffer that = (CharBuffer)ob;</div><div class="line">    if (this.remaining() != that.remaining())</div><div class="line">        return false;</div><div class="line">    int p = this.position();</div><div class="line">    for (int i = this.limit() - 1, j = that.limit() - 1; i &gt;= p; i--, j--)</div><div class="line">        if (!equals(this.get(i), that.get(j)))</div><div class="line">            return false;</div><div class="line">    return true;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>要满足几下条件才能算相等。<br>1、对象的类型要相同<br>2、剩余的空间要相同<br>3、从position到limit区间的数据要相等才能确认数据是否相等。</p>
+<h4 id="字节流缓冲区"><a href="#字节流缓冲区" class="headerlink" title="字节流缓冲区"></a>字节流缓冲区</h4><p>字节流缓冲区是开发中经常用到的一个缓冲区，下面来看下它的源代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public static ByteBuffer allocate(int capacity) &#123;</div><div class="line">      if (capacity &lt; 0)</div><div class="line">          throw new IllegalArgumentException();</div><div class="line">      return new HeapByteBuffer(capacity, capacity);</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>可以看到它是通过HeapByteBuffer的构造来实现的，而HeapByteBuffer是继承自ByteBuffer，它是分配在堆上面的，由JVM负责垃圾回收。<br>还有一个allocateDirect的静态方法，它是在虚拟机的内存外分配一块缓冲区，可以通过指令设置对该区域进行设置，但该方法一般用在周期长,文件大的传输过程中，一般情况下不建议使用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public static ByteBuffer allocateDirect(int capacity) &#123;</div><div class="line">    return new DirectByteBuffer(capacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>DirectByteBuffer 方法默认是一个构造方法，可以看到调用unsafe.allocateMemory方法返回内存的一个基地址，以后的操作都是基于这个地址进行的。因为它每次回收依赖于Full GC,回收效率不高，可能会导致内存溢出。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">DirectByteBuffer(int cap) &#123;                   // package-private</div><div class="line"></div><div class="line">     super(-1, 0, cap, cap);</div><div class="line">     boolean pa = VM.isDirectMemoryPageAligned();</div><div class="line">     int ps = Bits.pageSize();</div><div class="line">     long size = Math.max(1L, (long)cap + (pa ? ps : 0));</div><div class="line">     Bits.reserveMemory(size, cap);</div><div class="line"></div><div class="line">     long base = 0;</div><div class="line">     try &#123;</div><div class="line">         base = unsafe.allocateMemory(size);</div><div class="line">     &#125; catch (OutOfMemoryError x) &#123;</div><div class="line">         Bits.unreserveMemory(size, cap);</div><div class="line">         throw x;</div><div class="line">     &#125;</div><div class="line">     unsafe.setMemory(base, size, (byte) 0);</div><div class="line">     if (pa &amp;&amp; (base % ps != 0)) &#123;</div><div class="line">         // Round up to page boundary</div><div class="line">         address = base + ps - (base &amp; (ps - 1));</div><div class="line">     &#125; else &#123;</div><div class="line">         address = base;</div><div class="line">     &#125;</div><div class="line">     cleaner = Cleaner.create(this, new Deallocator(base, size, cap));</div><div class="line">     att = null;</div><div class="line"></div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -388,8 +413,6 @@
       
         <div class="post-tags">
           
-            <a href="/tags/hexo/" rel="tag">#hexo</a>
-          
             <a href="/tags/Java/" rel="tag">#Java</a>
           
         </div>
@@ -399,17 +422,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/09/27/ajax1/" rel="next" title="使用Ajax创建一个简单的网页交互">
-                <i class="fa fa-chevron-left"></i> 使用Ajax创建一个简单的网页交互
+              <a href="/2018/01/12/concurrentHashMap/" rel="next" title="ConcurrentHashMap源码分析">
+                <i class="fa fa-chevron-left"></i> ConcurrentHashMap源码分析
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/09/30/spring-1/" rel="prev" title="Spring中配置bean需要注意的点">
-                Spring中配置bean需要注意的点 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -435,8 +454,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/09/27/hibernate-1/"
-           data-title="Hibernate中的外键1对1测试" data-url="http://caoqiwen2001.github.io/2016/09/27/hibernate-1/">
+      <div class="ds-thread" data-thread-key="2018/01/30/nio-1/"
+           data-title="NIO（一）缓冲区" data-url="http://caoqiwen2001.github.io/2018/01/30/nio-1/">
       </div>
     
   </div>
@@ -547,7 +566,7 @@
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O的基本概念"><span class="nav-number">1.</span> <span class="nav-text">I/O的基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓冲区"><span class="nav-number">2.</span> <span class="nav-text">缓冲区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用方法解析"><span class="nav-number">3.</span> <span class="nav-text">常用方法解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#字节流缓冲区"><span class="nav-number">3.1.</span> <span class="nav-text">字节流缓冲区</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
