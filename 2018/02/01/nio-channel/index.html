@@ -1,0 +1,760 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="NIO的通道NIO的通道是IO基础上的创新，类似于原I/O中的流，它通过和缓冲区结合，可以使用最小的开销来访问操作系统本身的I/O服务。目前已知的Channel的实现类有这些：
+
+FileChannel
+DatagramChannel
+SocketChannel
+ServerSocketChannel来看一下FileChannel通道的继承关系图  
+
+先来看看Channel类代码的实现：
+123">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NIO(二) 通道">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2018/02/01/nio-channel/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="NIO的通道NIO的通道是IO基础上的创新，类似于原I/O中的流，它通过和缓冲区结合，可以使用最小的开销来访问操作系统本身的I/O服务。目前已知的Channel的实现类有这些：
+
+FileChannel
+DatagramChannel
+SocketChannel
+ServerSocketChannel来看一下FileChannel通道的继承关系图  
+
+先来看看Channel类代码的实现：
+123">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/16ff7aad6bffa41a21a5feb77e28578f/xmlnote/DDD513791CB04B5F9A74E3E353E37ACF/11253">
+<meta property="og:updated_time" content="2018-02-01T09:33:10.117Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NIO(二) 通道">
+<meta name="twitter:description" content="NIO的通道NIO的通道是IO基础上的创新，类似于原I/O中的流，它通过和缓冲区结合，可以使用最小的开销来访问操作系统本身的I/O服务。目前已知的Channel的实现类有这些：
+
+FileChannel
+DatagramChannel
+SocketChannel
+ServerSocketChannel来看一下FileChannel通道的继承关系图  
+
+先来看看Channel类代码的实现：
+123">
+<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/16ff7aad6bffa41a21a5feb77e28578f/xmlnote/DDD513791CB04B5F9A74E3E353E37ACF/11253">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2018/02/01/nio-channel/"/>
+
+  <title> NIO(二) 通道 | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                NIO(二) 通道
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-02-01T16:59:05+08:00" content="2018-02-01">
+              2018-02-01
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/NIO/" itemprop="url" rel="index">
+                    <span itemprop="name">NIO</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/02/01/nio-channel/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/02/01/nio-channel/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="NIO的通道"><a href="#NIO的通道" class="headerlink" title="NIO的通道"></a>NIO的通道</h2><p>NIO的通道是IO基础上的创新，类似于原I/O中的流，它通过和缓冲区结合，可以使用最小的开销来访问操作系统本身的I/O服务。<br>目前已知的Channel的实现类有这些：</p>
+<ul>
+<li>FileChannel</li>
+<li>DatagramChannel</li>
+<li>SocketChannel</li>
+<li>ServerSocketChannel<br>来看一下FileChannel通道的继承关系图  </li>
+</ul>
+<p><img src="http://note.youdao.com/yws/public/resource/16ff7aad6bffa41a21a5feb77e28578f/xmlnote/DDD513791CB04B5F9A74E3E353E37ACF/11253" alt="image"><br>先来看看Channel类代码的实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">public interface Channel extends Closeable &#123;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * Tells whether or not this channel is open.</div><div class="line">     *</div><div class="line">     * @return &lt;tt&gt;true&lt;/tt&gt; if, and only if, this channel is open</div><div class="line">     */</div><div class="line">    public boolean isOpen();</div><div class="line"></div><div class="line">    /**</div><div class="line">     * Closes this channel.</div><div class="line">     *</div><div class="line">     * &lt;p&gt; After a channel is closed, any further attempt to invoke I/O</div><div class="line">     * operations upon it will cause a &#123;@link ClosedChannelException&#125; to be</div><div class="line">     * thrown.</div><div class="line">     *</div><div class="line">     * &lt;p&gt; If this channel is already closed then invoking this method has no</div><div class="line">     * effect.</div><div class="line">     *</div><div class="line">     * &lt;p&gt; This method may be invoked at any time.  If some other thread has</div><div class="line">     * already invoked it, however, then another invocation will block until</div><div class="line">     * the first invocation is complete, after which it will return without</div><div class="line">     * effect. &lt;/p&gt;</div><div class="line">     *</div><div class="line">     * @throws  IOException  If an I/O error occurs</div><div class="line">     */</div><div class="line">    public void close() throws IOException;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>发现通道都是用接口实现的，然后只有两个方法，一个打开，一个关闭。至于为什么要用接口，对于不同的通道有不同的打开或者关闭操作。子接口ReadableByteChannel和WritableByteChannel的read和write方法都是基于ByteBuffer,基于字节来操作的。<br>再来看下ReadableByteChannel和WritableByteChannel的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public interface ReadableByteChannel extends Channel &#123;</div><div class="line"></div><div class="line">    public int read(ByteBuffer dst) throws IOException;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public interface WritableByteChannel</div><div class="line">    extends Channel</div><div class="line">&#123;</div><div class="line"></div><div class="line">    public int write(ByteBuffer src) throws IOException;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通道通过继承ReadableByteChannel和WritableByteChannel使得可以进行读和写操作。</p>
+<p>经典的读和写操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private static void read(String filename) throws IOException &#123;</div><div class="line">     FileChannel fc = new FileInputStream(filename).getChannel();</div><div class="line">     ByteBuffer buff = ByteBuffer.allocate(BSIZE);</div><div class="line">     fc.read(buff);</div><div class="line">     buff.flip();</div><div class="line">     while (buff.hasRemaining()) &#123;</div><div class="line">         System.out.print((char) buff.get());</div><div class="line">     &#125;</div><div class="line">     fc.close();</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>写如果要附加到源文件末尾可以这样写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">private static void addToEnd(String filename) throws IOException &#123;</div><div class="line">      FileChannel fc = new RandomAccessFile(filename, &quot;rw&quot;).getChannel();</div><div class="line">      fc.position(fc.size());</div><div class="line">      fc.write(ByteBuffer.wrap(&quot;Some more &quot;.getBytes()));</div><div class="line">      fc.close();</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>也可以这样子：通过设置append模式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">   * 文件追加到文件的末尾。</div><div class="line">   * @param filename</div><div class="line">   * @throws IOException</div><div class="line">   */</div><div class="line">   static  void addByOutput(String filename)throws  IOException&#123;</div><div class="line">       FileChannel fc=new FileOutputStream(filename,true).getChannel();</div><div class="line">       fc.position(fc.size());</div><div class="line">       fc.write(ByteBuffer.wrap(&quot;ni hao &quot;.getBytes()));</div><div class="line">       fc.close();</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<h4 id="FileChannel源码实现"><a href="#FileChannel源码实现" class="headerlink" title="FileChannel源码实现"></a>FileChannel源码实现</h4><h5 id="read方法"><a href="#read方法" class="headerlink" title="read方法"></a>read方法</h5><p>下面重点看看FileChannel的源码：<br>FileChannel的read方法是通过FileChannelImpl来实现的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">public int read(ByteBuffer var1) throws IOException &#123;</div><div class="line">     this.ensureOpen();</div><div class="line">     if(!this.readable) &#123;</div><div class="line">         throw new NonReadableChannelException();</div><div class="line">     &#125; else &#123;</div><div class="line">         Object var2 = this.positionLock;</div><div class="line">         synchronized(this.positionLock) &#123;</div><div class="line">             int var3 = 0;</div><div class="line">             int var4 = -1;</div><div class="line"></div><div class="line">             byte var5;</div><div class="line">             try &#123;</div><div class="line">                 this.begin();</div><div class="line">                 var4 = this.threads.add();</div><div class="line">                 if(this.isOpen()) &#123;</div><div class="line">                     do &#123;</div><div class="line">                         var3 = IOUtil.read(this.fd, var1, -1L, this.nd);</div><div class="line">                     &#125; while(var3 == -3 &amp;&amp; this.isOpen());</div><div class="line"></div><div class="line">                     int var12 = IOStatus.normalize(var3);</div><div class="line">                     return var12;</div><div class="line">                 &#125;</div><div class="line"></div><div class="line">                 var5 = 0;</div><div class="line">             &#125; finally &#123;</div><div class="line">                 this.threads.remove(var4);</div><div class="line">                 this.end(var3 &gt; 0);</div><div class="line"></div><div class="line">                 assert IOStatus.check(var3);</div><div class="line"></div><div class="line">             &#125;</div><div class="line"></div><div class="line">             return var5;</div><div class="line">         &#125;</div><div class="line">     &#125;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>可以看到，read方法通过调用IOUtil.read方法来进行读的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">static int read(FileDescriptor var0, ByteBuffer var1, long var2, NativeDispatcher var4) throws IOException &#123;</div><div class="line">        if(var1.isReadOnly()) &#123;</div><div class="line">            throw new IllegalArgumentException(&quot;Read-only buffer&quot;);</div><div class="line">        &#125; else if(var1 instanceof DirectBuffer) &#123;</div><div class="line">            return readIntoNativeBuffer(var0, var1, var2, var4);</div><div class="line">        &#125; else &#123;</div><div class="line">            ByteBuffer var5 = Util.getTemporaryDirectBuffer(var1.remaining());</div><div class="line"></div><div class="line">            int var7;</div><div class="line">            try &#123;</div><div class="line">                int var6 = readIntoNativeBuffer(var0, var5, var2, var4);</div><div class="line">                var5.flip();</div><div class="line">                if(var6 &gt; 0) &#123;</div><div class="line">                    var1.put(var5);</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                var7 = var6;</div><div class="line">            &#125; finally &#123;</div><div class="line">                Util.offerFirstTemporaryDirectBuffer(var5);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            return var7;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>在read方法中，会调用getTemporaryDirectBuffer方法申请DirectBuffer堆内存，然后通过readIntoNativeBuffer方法将数据读取到缓冲区var5，读取完之后在复制到var1。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">private static int readIntoNativeBuffer(FileDescriptor var0, ByteBuffer var1, long var2, NativeDispatcher var4) throws IOException &#123;</div><div class="line">       int var5 = var1.position();</div><div class="line">       int var6 = var1.limit();</div><div class="line"></div><div class="line">       assert var5 &lt;= var6;</div><div class="line"></div><div class="line">       int var7 = var5 &lt;= var6?var6 - var5:0;</div><div class="line">       if(var7 == 0) &#123;</div><div class="line">           return 0;</div><div class="line">       &#125; else &#123;</div><div class="line">           boolean var8 = false;</div><div class="line">           int var9;</div><div class="line">           if(var2 != -1L) &#123;</div><div class="line">               var9 = var4.pread(var0, ((DirectBuffer)var1).address() + (long)var5, var7, var2);</div><div class="line">           &#125; else &#123;</div><div class="line">               var9 = var4.read(var0, ((DirectBuffer)var1).address() + (long)var5, var7);</div><div class="line">           &#125;</div><div class="line"></div><div class="line">           if(var9 &gt; 0) &#123;</div><div class="line">               var1.position(var5 + var9);</div><div class="line">           &#125;</div><div class="line"></div><div class="line">           return var9;</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>可以看到，底层是通过NativeDispatcher的read方法来实现的。</p>
+<h5 id="write方法"><a href="#write方法" class="headerlink" title="write方法"></a>write方法</h5><p>write方法和read方法的实现大体差不多：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">public int write(ByteBuffer var1) throws IOException &#123;</div><div class="line">        this.ensureOpen();</div><div class="line">        if(!this.writable) &#123;</div><div class="line">            throw new NonWritableChannelException();</div><div class="line">        &#125; else &#123;</div><div class="line">            Object var2 = this.positionLock;</div><div class="line">            synchronized(this.positionLock) &#123;</div><div class="line">                int var3 = 0;</div><div class="line">                int var4 = -1;</div><div class="line"></div><div class="line">                byte var5;</div><div class="line">                try &#123;</div><div class="line">                    this.begin();</div><div class="line">                    var4 = this.threads.add();</div><div class="line">                    if(this.isOpen()) &#123;</div><div class="line">                        do &#123;</div><div class="line">                            var3 = IOUtil.write(this.fd, var1, -1L, this.nd);</div><div class="line">                        &#125; while(var3 == -3 &amp;&amp; this.isOpen());</div><div class="line"></div><div class="line">                        int var12 = IOStatus.normalize(var3);</div><div class="line">                        return var12;</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                    var5 = 0;</div><div class="line">                &#125; finally &#123;</div><div class="line">                    this.threads.remove(var4);</div><div class="line">                    this.end(var3 &gt; 0);</div><div class="line"></div><div class="line">                    assert IOStatus.check(var3);</div><div class="line"></div><div class="line">                &#125;</div><div class="line"></div><div class="line">                return var5;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>通过调用IOUtil的write方法将buffer中的数据进行处理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">static int write(FileDescriptor var0, ByteBuffer var1, long var2, NativeDispatcher var4) throws IOException &#123;</div><div class="line">       if(var1 instanceof DirectBuffer) &#123;</div><div class="line">           return writeFromNativeBuffer(var0, var1, var2, var4);</div><div class="line">       &#125; else &#123;</div><div class="line">           int var5 = var1.position();</div><div class="line">           int var6 = var1.limit();</div><div class="line"></div><div class="line">           assert var5 &lt;= var6;</div><div class="line"></div><div class="line">           int var7 = var5 &lt;= var6?var6 - var5:0;</div><div class="line">           ByteBuffer var8 = Util.getTemporaryDirectBuffer(var7);</div><div class="line"></div><div class="line">           int var10;</div><div class="line">           try &#123;</div><div class="line">               var8.put(var1);</div><div class="line">               var8.flip();</div><div class="line">               var1.position(var5);</div><div class="line">               int var9 = writeFromNativeBuffer(var0, var8, var2, var4);</div><div class="line">               if(var9 &gt; 0) &#123;</div><div class="line">                   var1.position(var5 + var9);</div><div class="line">               &#125;</div><div class="line"></div><div class="line">               var10 = var9;</div><div class="line">           &#125; finally &#123;</div><div class="line">               Util.offerFirstTemporaryDirectBuffer(var8);</div><div class="line">           &#125;</div><div class="line"></div><div class="line">           return var10;</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>这里也是申请了一块DirectBuffer，将bytebuffer中数据放到var8中，调用writeFromNativeBuffer方法来实现写操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">private static int writeFromNativeBuffer(FileDescriptor var0, ByteBuffer var1, long var2, NativeDispatcher var4) throws IOException &#123;</div><div class="line">        int var5 = var1.position();</div><div class="line">        int var6 = var1.limit();</div><div class="line"></div><div class="line">        assert var5 &lt;= var6;</div><div class="line"></div><div class="line">        int var7 = var5 &lt;= var6?var6 - var5:0;</div><div class="line">        boolean var8 = false;</div><div class="line">        if(var7 == 0) &#123;</div><div class="line">            return 0;</div><div class="line">        &#125; else &#123;</div><div class="line">            int var9;</div><div class="line">            if(var2 != -1L) &#123;</div><div class="line">                var9 = var4.pwrite(var0, ((DirectBuffer)var1).address() + (long)var5, var7, var2);</div><div class="line">            &#125; else &#123;</div><div class="line">                var9 = var4.write(var0, ((DirectBuffer)var1).address() + (long)var5, var7);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if(var9 &gt; 0) &#123;</div><div class="line">                var1.position(var5 + var9);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            return var9;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>其底层都是通过NativeDispatcher类中的write方法来实现写操作。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>read方法导致数据复制了两次。</li>
+<li>write方法也导致数据复制了两次。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/30/nio-1/" rel="next" title="NIO（一）缓冲区">
+                <i class="fa fa-chevron-left"></i> NIO（一）缓冲区
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/02/01/nio-channel/"
+           data-title="NIO(二) 通道" data-url="http://caoqiwen2001.github.io/2018/02/01/nio-channel/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckywen" />
+          <p class="site-author-name" itemprop="name">luckywen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">24</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#NIO的通道"><span class="nav-number">1.</span> <span class="nav-text">NIO的通道</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#FileChannel源码实现"><span class="nav-number">1.0.1.</span> <span class="nav-text">FileChannel源码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#read方法"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">read方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#write方法"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">write方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.1.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckywen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
