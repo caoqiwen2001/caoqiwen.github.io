@@ -1,0 +1,736 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="ThreadLocal的作用主要是隔离线程中的数据，它针对每个线程独立设置值，不同线程之间的数据是相互隔离，不会相互影响，可以看一段测试代码：
+123456789101112131415161718192021222324252627282930313233public class ThreadLocalDemo &amp;#123;    public static void main(String[]">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThreadLocal案例及源码分析">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2018/03/03/threadLocall-1/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="ThreadLocal的作用主要是隔离线程中的数据，它针对每个线程独立设置值，不同线程之间的数据是相互隔离，不会相互影响，可以看一段测试代码：
+123456789101112131415161718192021222324252627282930313233public class ThreadLocalDemo &amp;#123;    public static void main(String[]">
+<meta property="og:updated_time" content="2018-03-03T02:55:33.197Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ThreadLocal案例及源码分析">
+<meta name="twitter:description" content="ThreadLocal的作用主要是隔离线程中的数据，它针对每个线程独立设置值，不同线程之间的数据是相互隔离，不会相互影响，可以看一段测试代码：
+123456789101112131415161718192021222324252627282930313233public class ThreadLocalDemo &amp;#123;    public static void main(String[]">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2018/03/03/threadLocall-1/"/>
+
+  <title> ThreadLocal案例及源码分析 | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ThreadLocal案例及源码分析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-03-03T10:36:00+08:00" content="2018-03-03">
+              2018-03-03
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java多线程集合/" itemprop="url" rel="index">
+                    <span itemprop="name">Java多线程集合</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/03/03/threadLocall-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/03/03/threadLocall-1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>ThreadLocal的作用主要是隔离线程中的数据，它针对每个线程独立设置值，不同线程之间的数据是相互隔离，不会相互影响，可以看一段测试代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">public class ThreadLocalDemo &#123;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Thread t1 = new Thread(new ThreadLocalTest());</div><div class="line">        Thread t2 = new Thread(new ThreadLocalTest());</div><div class="line">        Thread t3 = new Thread(new ThreadLocalTest());</div><div class="line">        t1.start();</div><div class="line">        t2.start();</div><div class="line">        t3.start();</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    static class Tools &#123;</div><div class="line">        public static ThreadLocal&lt;Integer&gt; t1 = new ThreadLocal&lt;&gt;();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    static class ThreadLocalTest implements Runnable &#123;</div><div class="line"></div><div class="line">        private static AtomicInteger ai = new AtomicInteger();</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            try &#123;</div><div class="line">                for (int i = 0; i &lt; 3; i++) &#123;</div><div class="line">                    Tools.t1.set(ai.addAndGet(1));</div><div class="line">                    System.out.println(Thread.currentThread().getName() + &quot;get value----&gt;&quot; + Tools.t1.get());</div><div class="line">                &#125;</div><div class="line">            &#125; catch (Exception ex) &#123;</div><div class="line">                ex.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">Thread-1get value----&gt;1</div><div class="line">Thread-0get value----&gt;2</div><div class="line">Thread-1get value----&gt;3</div><div class="line">Thread-0get value----&gt;4</div><div class="line">Thread-1get value----&gt;5</div><div class="line">Thread-0get value----&gt;6</div><div class="line">Thread-2get value----&gt;7</div><div class="line">Thread-2get value----&gt;8</div><div class="line">Thread-2get value----&gt;9</div></pre></td></tr></table></figure>
+<p>可以看到每次线程之间的值不会重复，不会互相干扰，这就是利用<em>数据隔离</em>的方法使多个线程之间的数据不会重复。</p>
+<p>下面来研究一下源码的实现：</p>
+<h4 id="set方法"><a href="#set方法" class="headerlink" title="set方法"></a>set方法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public void set(T value) &#123;</div><div class="line">      Thread t = Thread.currentThread();</div><div class="line">      ThreadLocalMap map = getMap(t);</div><div class="line">      if (map != null)</div><div class="line">          map.set(this, value);</div><div class="line">      else</div><div class="line">          createMap(t, value);</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ThreadLocalMap getMap(Thread t) &#123;</div><div class="line">      return t.threadLocals;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>可以看到，它的大概方向流程是这样子的：</p>
+<ol>
+<li>取得当前线程</li>
+<li>获取当前线程的 ThreadLocal.ThreadLocalMap</li>
+<li>如果当前ThreadLocal.ThreadLocalMap为空，则创建ThreadLocal.ThreadLocalMap，否则就设置一个值。<br>源码里面有一个非常重要的函数set(ThreadLocal key, Object value)方法。来看看他的实现：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">private void set(ThreadLocal key, Object value) &#123;</div><div class="line">           Entry[] tab = table;</div><div class="line">           int len = tab.length;</div><div class="line">           int i = key.threadLocalHashCode &amp; (len-1);</div><div class="line"></div><div class="line">           for (Entry e = tab[i];</div><div class="line">                e != null;</div><div class="line">                e = tab[i = nextIndex(i, len)]) &#123;</div><div class="line">               ThreadLocal k = e.get();</div><div class="line"></div><div class="line">               if (k == key) &#123;</div><div class="line">                   e.value = value;</div><div class="line">                   return;</div><div class="line">               &#125;</div><div class="line"></div><div class="line">               if (k == null) &#123;</div><div class="line">                   replaceStaleEntry(key, value, i);</div><div class="line">                   return;</div><div class="line">               &#125;</div><div class="line">           &#125;</div><div class="line"></div><div class="line">           tab[i] = new Entry(key, value);</div><div class="line">           int sz = ++size;</div><div class="line">           if (!cleanSomeSlots(i, sz) &amp;&amp; sz &gt;= threshold)</div><div class="line">               rehash();</div><div class="line">       &#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>先获取ThreadLocal里面的具体位置</li>
+<li>判断当前位置上的ThreadLocal和本身的ThreadLocal是不是同一个，如果相同数据直接覆盖返回即可。</li>
+<li>有可能当前的ThreadLocal变成NULL了，因为Entry是ThreadLocal弱引用，有可能被垃圾回收了，此时，只需要将它的值覆盖即可。</li>
+</ol>
+<h4 id="get方法"><a href="#get方法" class="headerlink" title="get方法"></a>get方法</h4><p>get方法比较简单。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public T get() &#123;</div><div class="line">    Thread t = Thread.currentThread();</div><div class="line">    ThreadLocalMap map = getMap(t);</div><div class="line">    if (map != null) &#123;</div><div class="line">        ThreadLocalMap.Entry e = map.getEntry(this);</div><div class="line">        if (e != null)</div><div class="line">            return (T)e.value;</div><div class="line">    &#125;</div><div class="line">    return setInitialValue();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>获取当前运行的线程</li>
+<li>获取当前线程的ThreadLocalMap</li>
+<li>如果当前线程存在ThreadLocalMap，则通过map.getEntry方法获取值。</li>
+<li>不存在ThreadLocalMap则通过setInitialValue方法设置初始值。</li>
+</ol>
+<h4 id="remove方法"><a href="#remove方法" class="headerlink" title="remove方法"></a>remove方法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public void remove() &#123;</div><div class="line">      ThreadLocalMap m = getMap(Thread.currentThread());</div><div class="line">      if (m != null)</div><div class="line">          m.remove(this);</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>remove方法也比较简单，首先获取当前线程，如果线程不为NULL,则直接移除ThreadLocal。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>ThreadLocal不是链表法实现的，而是通过开地址法实现的。</li>
+<li>塞数据的时候如果数组某个位置没有值，则寻找它的下一个位置为空的位置赋值。</li>
+<li>get方法获取值也是同理，没有值往下一个位置找。</li>
+<li>ThreadLocal一般用在框架，servlet中，它是一种空间换时间的思想。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/08/thread-2/" rel="next" title="Java多线程（二） synchronized锁机制">
+                <i class="fa fa-chevron-left"></i> Java多线程（二） synchronized锁机制
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/03/03/threadLocall-1/"
+           data-title="ThreadLocal案例及源码分析" data-url="http://caoqiwen2001.github.io/2018/03/03/threadLocall-1/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckywen" />
+          <p class="site-author-name" itemprop="name">luckywen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">28</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#set方法"><span class="nav-number">1.</span> <span class="nav-text">set方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#get方法"><span class="nav-number">2.</span> <span class="nav-text">get方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#remove方法"><span class="nav-number">3.</span> <span class="nav-text">remove方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number"></span> <span class="nav-text">总结</span></a></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckywen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
