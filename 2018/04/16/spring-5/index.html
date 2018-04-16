@@ -1,0 +1,718 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Spring," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Spring的初始化（下）上篇说道了bean的初始化，如何产生bean，现在轮到对bean中的属性进行注入的时候了，根据Spring的生命周期，还需要对Spring的扩展接口进行分析。
+属性注入所谓的属性注入，按照我的理解就是对产生的对象调用其setter方法给属性赋值。之前代码分析到doCreateBean方法，在AbstractAutowireCapableBeanFactory类中。我们可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring的初始化（下）">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2018/04/16/spring-5/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="Spring的初始化（下）上篇说道了bean的初始化，如何产生bean，现在轮到对bean中的属性进行注入的时候了，根据Spring的生命周期，还需要对Spring的扩展接口进行分析。
+属性注入所谓的属性注入，按照我的理解就是对产生的对象调用其setter方法给属性赋值。之前代码分析到doCreateBean方法，在AbstractAutowireCapableBeanFactory类中。我们可以">
+<meta property="og:updated_time" content="2018-04-16T07:35:02.148Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring的初始化（下）">
+<meta name="twitter:description" content="Spring的初始化（下）上篇说道了bean的初始化，如何产生bean，现在轮到对bean中的属性进行注入的时候了，根据Spring的生命周期，还需要对Spring的扩展接口进行分析。
+属性注入所谓的属性注入，按照我的理解就是对产生的对象调用其setter方法给属性赋值。之前代码分析到doCreateBean方法，在AbstractAutowireCapableBeanFactory类中。我们可以">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2018/04/16/spring-5/"/>
+
+  <title> Spring的初始化（下） | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Spring的初始化（下）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-04-16T15:33:05+08:00" content="2018-04-16">
+              2018-04-16
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/04/16/spring-5/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/04/16/spring-5/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Spring的初始化（下）"><a href="#Spring的初始化（下）" class="headerlink" title="Spring的初始化（下）"></a>Spring的初始化（下）</h3><p>上篇说道了bean的初始化，如何产生bean，现在轮到对bean中的属性进行注入的时候了，根据Spring的生命周期，还需要对Spring的扩展接口进行分析。</p>
+<h3 id="属性注入"><a href="#属性注入" class="headerlink" title="属性注入"></a>属性注入</h3><p>所谓的属性注入，按照我的理解就是对产生的对象调用其setter方法给属性赋值。<br>之前代码分析到doCreateBean方法，在AbstractAutowireCapableBeanFactory类中。我们可以发现一个populateBean方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line">protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper bw) &#123;</div><div class="line">       Object pvs = mbd.getPropertyValues();</div><div class="line">       if(bw == null) &#123;</div><div class="line">           if(!((PropertyValues)pvs).isEmpty()) &#123;</div><div class="line">               throw new BeanCreationException(mbd.getResourceDescription(), beanName, &quot;Cannot apply property values to null instance&quot;);</div><div class="line">           &#125;</div><div class="line">       &#125; else &#123;</div><div class="line">           boolean continueWithPropertyPopulation = true;</div><div class="line">           if(!mbd.isSynthetic() &amp;&amp; this.hasInstantiationAwareBeanPostProcessors()) &#123;</div><div class="line">               Iterator hasInstAwareBpps = this.getBeanPostProcessors().iterator();</div><div class="line"></div><div class="line">               while(hasInstAwareBpps.hasNext()) &#123;</div><div class="line">                   BeanPostProcessor needsDepCheck = (BeanPostProcessor)hasInstAwareBpps.next();</div><div class="line">                   if(needsDepCheck instanceof InstantiationAwareBeanPostProcessor) &#123;</div><div class="line">                       InstantiationAwareBeanPostProcessor filteredPds = (InstantiationAwareBeanPostProcessor)needsDepCheck;</div><div class="line">                       if(!filteredPds.postProcessAfterInstantiation(bw.getWrappedInstance(), beanName)) &#123;</div><div class="line">                           continueWithPropertyPopulation = false;</div><div class="line">                           break;</div><div class="line">                       &#125;</div><div class="line">                   &#125;</div><div class="line">               &#125;</div><div class="line">           &#125;</div><div class="line"></div><div class="line">           if(continueWithPropertyPopulation) &#123;</div><div class="line">               if(mbd.getResolvedAutowireMode() == 1 || mbd.getResolvedAutowireMode() == 2) &#123;</div><div class="line">                   MutablePropertyValues hasInstAwareBpps1 = new MutablePropertyValues((PropertyValues)pvs);</div><div class="line">                   if(mbd.getResolvedAutowireMode() == 1) &#123;</div><div class="line">                       this.autowireByName(beanName, mbd, bw, hasInstAwareBpps1);</div><div class="line">                   &#125;</div><div class="line"></div><div class="line">                   if(mbd.getResolvedAutowireMode() == 2) &#123;</div><div class="line">                       this.autowireByType(beanName, mbd, bw, hasInstAwareBpps1);</div><div class="line">                   &#125;</div><div class="line"></div><div class="line">                   pvs = hasInstAwareBpps1;</div><div class="line">               &#125;</div><div class="line"></div><div class="line">               boolean hasInstAwareBpps2 = this.hasInstantiationAwareBeanPostProcessors();</div><div class="line">               boolean needsDepCheck1 = mbd.getDependencyCheck() != 0;</div><div class="line">               if(hasInstAwareBpps2 || needsDepCheck1) &#123;</div><div class="line">                   PropertyDescriptor[] filteredPds1 = this.filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);</div><div class="line">                   if(hasInstAwareBpps2) &#123;</div><div class="line">                       Iterator var9 = this.getBeanPostProcessors().iterator();</div><div class="line"></div><div class="line">                       while(var9.hasNext()) &#123;</div><div class="line">                           BeanPostProcessor bp = (BeanPostProcessor)var9.next();</div><div class="line">                           if(bp instanceof InstantiationAwareBeanPostProcessor) &#123;</div><div class="line">                               InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor)bp;</div><div class="line">                               pvs = ibp.postProcessPropertyValues((PropertyValues)pvs, filteredPds1, bw.getWrappedInstance(), beanName);</div><div class="line">                               if(pvs == null) &#123;</div><div class="line">                                   return;</div><div class="line">                               &#125;</div><div class="line">                           &#125;</div><div class="line">                       &#125;</div><div class="line">                   &#125;</div><div class="line"></div><div class="line">                   if(needsDepCheck1) &#123;</div><div class="line">                       this.checkDependencies(beanName, mbd, filteredPds1, (PropertyValues)pvs);</div><div class="line">                   &#125;</div><div class="line">               &#125;</div><div class="line"></div><div class="line">               this.applyPropertyValues(beanName, mbd, bw, (PropertyValues)pvs);</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>上面这段代码是拿到MutablePropertyValues变量，然后调用applyPropertyValues方法进行属性赋值。<br>点击进去查看applyPropertyValues方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div></pre></td><td class="code"><pre><div class="line">protected void applyPropertyValues(String beanName, BeanDefinition mbd, BeanWrapper bw, PropertyValues pvs) &#123;</div><div class="line">       if(pvs != null &amp;&amp; !pvs.isEmpty()) &#123;</div><div class="line">           MutablePropertyValues mpvs = null;</div><div class="line">           if(System.getSecurityManager() != null &amp;&amp; bw instanceof BeanWrapperImpl) &#123;</div><div class="line">               ((BeanWrapperImpl)bw).setSecurityContext(this.getAccessControlContext());</div><div class="line">           &#125;</div><div class="line"></div><div class="line">           List original;</div><div class="line">           if(pvs instanceof MutablePropertyValues) &#123;</div><div class="line">               mpvs = (MutablePropertyValues)pvs;</div><div class="line">               if(mpvs.isConverted()) &#123;</div><div class="line">                   try &#123;</div><div class="line">                       bw.setPropertyValues(mpvs);</div><div class="line">                       return;</div><div class="line">                   &#125; catch (BeansException var18) &#123;</div><div class="line">                       throw new BeanCreationException(mbd.getResourceDescription(), beanName, &quot;Error setting property values&quot;, var18);</div><div class="line">                   &#125;</div><div class="line">               &#125;</div><div class="line"></div><div class="line">               original = mpvs.getPropertyValueList();</div><div class="line">           &#125; else &#123;</div><div class="line">               original = Arrays.asList(pvs.getPropertyValues());</div><div class="line">           &#125;</div><div class="line"></div><div class="line">           Object converter = this.getCustomTypeConverter();</div><div class="line">           if(converter == null) &#123;</div><div class="line">               converter = bw;</div><div class="line">           &#125;</div><div class="line"></div><div class="line">           BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this, beanName, mbd, (TypeConverter)converter);</div><div class="line">           ArrayList deepCopy = new ArrayList(original.size());</div><div class="line">           boolean resolveNecessary = false;</div><div class="line">           Iterator ex = original.iterator();</div><div class="line"></div><div class="line">           while(true) &#123;</div><div class="line">               while(ex.hasNext()) &#123;</div><div class="line">                   PropertyValue pv = (PropertyValue)ex.next();</div><div class="line">                   if(pv.isConverted()) &#123;</div><div class="line">                       deepCopy.add(pv);</div><div class="line">                   &#125; else &#123;</div><div class="line">                       String propertyName = pv.getName();</div><div class="line">                       Object originalValue = pv.getValue();</div><div class="line">                       Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);</div><div class="line">                       Object convertedValue = resolvedValue;</div><div class="line">                       boolean convertible = bw.isWritableProperty(propertyName) &amp;&amp; !PropertyAccessorUtils.isNestedOrIndexedProperty(propertyName);</div><div class="line">                       if(convertible) &#123;</div><div class="line">                           convertedValue = this.convertForProperty(resolvedValue, propertyName, bw, (TypeConverter)converter);</div><div class="line">                       &#125;</div><div class="line"></div><div class="line">                       if(resolvedValue == originalValue) &#123;</div><div class="line">                           if(convertible) &#123;</div><div class="line">                               pv.setConvertedValue(convertedValue);</div><div class="line">                           &#125;</div><div class="line"></div><div class="line">                           deepCopy.add(pv);</div><div class="line">                       &#125; else if(convertible &amp;&amp; originalValue instanceof TypedStringValue &amp;&amp; !((TypedStringValue)originalValue).isDynamic() &amp;&amp; !(convertedValue instanceof Collection) &amp;&amp; !ObjectUtils.isArray(convertedValue)) &#123;</div><div class="line">                           pv.setConvertedValue(convertedValue);</div><div class="line">                           deepCopy.add(pv);</div><div class="line">                       &#125; else &#123;</div><div class="line">                           resolveNecessary = true;</div><div class="line">                           deepCopy.add(new PropertyValue(pv, convertedValue));</div><div class="line">                       &#125;</div><div class="line">                   &#125;</div><div class="line">               &#125;</div><div class="line"></div><div class="line">               if(mpvs != null &amp;&amp; !resolveNecessary) &#123;</div><div class="line">                   mpvs.setConverted();</div><div class="line">               &#125;</div><div class="line"></div><div class="line">               try &#123;</div><div class="line">                   bw.setPropertyValues(new MutablePropertyValues(deepCopy));</div><div class="line">                   return;</div><div class="line">               &#125; catch (BeansException var19) &#123;</div><div class="line">                   throw new BeanCreationException(mbd.getResourceDescription(), beanName, &quot;Error setting property values&quot;, var19);</div><div class="line">               &#125;</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>这段代码的大致意思遍历当前的deepCopy,拿到每一个PropertyValue，通过BeanWrapper类的setPropertyValues方法进行操作。中间代码段太多了，截取了一段核心赋值代码，setValue方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">        public void setValue(final Object object, Object valueToApply) throws Exception &#123;</div><div class="line">            final Method writeMethod = this.pd instanceof GenericTypeAwarePropertyDescriptor?((GenericTypeAwarePropertyDescriptor)this.pd).getWriteMethodForActualAccess():this.pd.getWriteMethod();</div><div class="line">            if(!Modifier.isPublic(writeMethod.getDeclaringClass().getModifiers()) &amp;&amp; !writeMethod.isAccessible()) &#123;</div><div class="line">                if(System.getSecurityManager() != null) &#123;</div><div class="line">                    AccessController.doPrivileged(new PrivilegedAction() &#123;</div><div class="line">                        public Object run() &#123;</div><div class="line">                            writeMethod.setAccessible(true);</div><div class="line">                            return null;</div><div class="line">                        &#125;</div><div class="line">                    &#125;);</div><div class="line">                &#125; else &#123;</div><div class="line">                    writeMethod.setAccessible(true);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            final Object value = valueToApply;</div><div class="line">            if(System.getSecurityManager() != null) &#123;</div><div class="line">                try &#123;</div><div class="line">                    AccessController.doPrivileged(new PrivilegedExceptionAction() &#123;</div><div class="line">                        public Object run() throws Exception &#123;</div><div class="line">                            writeMethod.invoke(object, new Object[]&#123;value&#125;);</div><div class="line">                            return null;</div><div class="line">                        &#125;</div><div class="line">                    &#125;, BeanWrapperImpl.this.acc);</div><div class="line">                &#125; catch (PrivilegedActionException var6) &#123;</div><div class="line">                    throw var6.getException();</div><div class="line">                &#125;</div><div class="line">            &#125; else &#123;</div><div class="line">                writeMethod.invoke(BeanWrapperImpl.this.getWrappedInstance(), new Object[]&#123;valueToApply&#125;);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段代码是通过反射给Bean属性赋值。</p>
+<h3 id="接口注入"><a href="#接口注入" class="headerlink" title="接口注入"></a>接口注入</h3><p>属性注入完成之后，可以对扩展的接口如BeanFactoryAware，BeanNameAware进行注入。 首先来看initializeBean方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">protected Object initializeBean(final String beanName, final Object bean, RootBeanDefinition mbd) &#123;</div><div class="line">      if(System.getSecurityManager() != null) &#123;</div><div class="line">          AccessController.doPrivileged(new PrivilegedAction() &#123;</div><div class="line">              public Object run() &#123;</div><div class="line">                  AbstractAutowireCapableBeanFactory.this.invokeAwareMethods(beanName, bean);</div><div class="line">                  return null;</div><div class="line">              &#125;</div><div class="line">          &#125;, this.getAccessControlContext());</div><div class="line">      &#125; else &#123;</div><div class="line">          this.invokeAwareMethods(beanName, bean);</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      Object wrappedBean = bean;</div><div class="line">      if(mbd == null || !mbd.isSynthetic()) &#123;</div><div class="line">          wrappedBean = this.applyBeanPostProcessorsBeforeInitialization(bean, beanName);</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      try &#123;</div><div class="line">          this.invokeInitMethods(beanName, wrappedBean, mbd);</div><div class="line">      &#125; catch (Throwable var6) &#123;</div><div class="line">          throw new BeanCreationException(mbd != null?mbd.getResourceDescription():null, beanName, &quot;Invocation of init method failed&quot;, var6);</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      if(mbd == null || !mbd.isSynthetic()) &#123;</div><div class="line">          wrappedBean = this.applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      return wrappedBean;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>其中有一个invokeAwareMethods方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">private void invokeAwareMethods(String beanName, Object bean) &#123;</div><div class="line">     if(bean instanceof Aware) &#123;</div><div class="line">         if(bean instanceof BeanNameAware) &#123;</div><div class="line">             ((BeanNameAware)bean).setBeanName(beanName);</div><div class="line">         &#125;</div><div class="line"></div><div class="line">         if(bean instanceof BeanClassLoaderAware) &#123;</div><div class="line">             ((BeanClassLoaderAware)bean).setBeanClassLoader(this.getBeanClassLoader());</div><div class="line">         &#125;</div><div class="line"></div><div class="line">         if(bean instanceof BeanFactoryAware) &#123;</div><div class="line">             ((BeanFactoryAware)bean).setBeanFactory(this);</div><div class="line">         &#125;</div><div class="line">     &#125;</div><div class="line"></div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>bean如果实现了BeanNameAware接口。则给bean的name进行赋值。如果实现了BeanClassLoaderAware接口，则设置当前的BeanClassLoaderAware。如果当前当前实现了BeanFactoryAware接口，则设置setBeanFactory为当前的Factory.<br>接下来调用invokeInitMethods方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">protected void invokeInitMethods(String beanName, final Object bean, RootBeanDefinition mbd) throws Throwable &#123;</div><div class="line">        boolean isInitializingBean = bean instanceof InitializingBean;</div><div class="line">        if(isInitializingBean &amp;&amp; (mbd == null || !mbd.isExternallyManagedInitMethod(&quot;afterPropertiesSet&quot;))) &#123;</div><div class="line">            if(this.logger.isDebugEnabled()) &#123;</div><div class="line">                this.logger.debug(&quot;Invoking afterPropertiesSet() on bean with name \&apos;&quot; + beanName + &quot;\&apos;&quot;);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if(System.getSecurityManager() != null) &#123;</div><div class="line">                try &#123;</div><div class="line">                    AccessController.doPrivileged(new PrivilegedExceptionAction() &#123;</div><div class="line">                        public Object run() throws Exception &#123;</div><div class="line">                            ((InitializingBean)bean).afterPropertiesSet();</div><div class="line">                            return null;</div><div class="line">                        &#125;</div><div class="line">                    &#125;, this.getAccessControlContext());</div><div class="line">                &#125; catch (PrivilegedActionException var6) &#123;</div><div class="line">                    throw var6.getException();</div><div class="line">                &#125;</div><div class="line">            &#125; else &#123;</div><div class="line">                ((InitializingBean)bean).afterPropertiesSet();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if(mbd != null) &#123;</div><div class="line">            String initMethodName = mbd.getInitMethodName();</div><div class="line">            if(initMethodName != null &amp;&amp; (!isInitializingBean || !&quot;afterPropertiesSet&quot;.equals(initMethodName)) &amp;&amp; !mbd.isExternallyManagedInitMethod(initMethodName)) &#123;</div><div class="line">                this.invokeCustomInitMethod(beanName, bean, mbd);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>可以看到调用afterPropertiesSet()方法，接着尝试去哪init-method，假如有的话，通过反射，调用invokeCustomInitMethod方法。<br>继续往下走，可以看到调用applyBeanPostProcessorsAfterInitialization方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException &#123;</div><div class="line">      Object result = existingBean;</div><div class="line">      Iterator var4 = this.getBeanPostProcessors().iterator();</div><div class="line"></div><div class="line">      do &#123;</div><div class="line">          if(!var4.hasNext()) &#123;</div><div class="line">              return result;</div><div class="line">          &#125;</div><div class="line"></div><div class="line">          BeanPostProcessor beanProcessor = (BeanPostProcessor)var4.next();</div><div class="line">          result = beanProcessor.postProcessAfterInitialization(result, beanName);</div><div class="line">      &#125; while(result != null);</div><div class="line"></div><div class="line">      return result;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>通过遍历BeanPostProcessor的列表，调用postProcessAfterInitialization方法。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>bean的初始化从配置文件读入到对象的产生,整体流程就是这些，通过具体的分析可以得知bean是严格按照生命周期执行的，我们可以看源码的时候可以一部分拆开来看，多看几次就知道代码在做什么了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Spring/" rel="tag">#Spring</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/04/spring-4/" rel="next" title="Spring源码解析（bean的初始化过程（上））">
+                <i class="fa fa-chevron-left"></i> Spring源码解析（bean的初始化过程（上））
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/04/16/spring-5/"
+           data-title="Spring的初始化（下）" data-url="http://caoqiwen2001.github.io/2018/04/16/spring-5/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckyWen" />
+          <p class="site-author-name" itemprop="name">luckyWen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">34</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring的初始化（下）"><span class="nav-number">1.</span> <span class="nav-text">Spring的初始化（下）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#属性注入"><span class="nav-number">2.</span> <span class="nav-text">属性注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接口注入"><span class="nav-number">3.</span> <span class="nav-text">接口注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckyWen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
