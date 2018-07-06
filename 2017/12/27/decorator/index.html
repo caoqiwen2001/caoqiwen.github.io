@@ -1,0 +1,731 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="装饰器模式装饰器主要给模块添加额外的功能，可以通过派生或者组合来生成。如果通过直接修改对应类的来实现并不可取，造成很多冗余代码，在平常写代码的时候，尽可能用组合来实现。 装饰器实现的主要主要角色：  抽象构件角色一个抽象接口，以规范准备接受附加责任角色。 具体构件角色定义一个将要接受附加责任的类。 装饰角色持有构件角色实例，并定义与一个抽象构件接口的实例。 具体装饰角色给构件角色贴上对应的责任。总">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java设计模式-装饰器模式">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2017/12/27/decorator/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="装饰器模式装饰器主要给模块添加额外的功能，可以通过派生或者组合来生成。如果通过直接修改对应类的来实现并不可取，造成很多冗余代码，在平常写代码的时候，尽可能用组合来实现。 装饰器实现的主要主要角色：  抽象构件角色一个抽象接口，以规范准备接受附加责任角色。 具体构件角色定义一个将要接受附加责任的类。 装饰角色持有构件角色实例，并定义与一个抽象构件接口的实例。 具体装饰角色给构件角色贴上对应的责任。总">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-06T07:23:12.917Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java设计模式-装饰器模式">
+<meta name="twitter:description" content="装饰器模式装饰器主要给模块添加额外的功能，可以通过派生或者组合来生成。如果通过直接修改对应类的来实现并不可取，造成很多冗余代码，在平常写代码的时候，尽可能用组合来实现。 装饰器实现的主要主要角色：  抽象构件角色一个抽象接口，以规范准备接受附加责任角色。 具体构件角色定义一个将要接受附加责任的类。 装饰角色持有构件角色实例，并定义与一个抽象构件接口的实例。 具体装饰角色给构件角色贴上对应的责任。总">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2017/12/27/decorator/"/>
+
+  <title> Java设计模式-装饰器模式 | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java设计模式-装饰器模式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-12-27T09:22:26+08:00" content="2017-12-27">
+              2017-12-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/12/27/decorator/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/27/decorator/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="装饰器模式"><a href="#装饰器模式" class="headerlink" title="装饰器模式"></a>装饰器模式</h3><p>装饰器主要给模块添加额外的功能，可以通过派生或者组合来生成。如果通过直接修改对应类的来实现并不可取，造成很多冗余代码，在平常写代码的时候，尽可能用组合来实现。</p>
+<p>装饰器实现的主要主要角色：</p>
+<ol>
+<li>抽象构件角色<br>一个抽象接口，以规范准备接受附加责任角色。</li>
+<li>具体构件角色<br>定义一个将要接受附加责任的类。</li>
+<li>装饰角色<br>持有构件角色实例，并定义与一个抽象构件接口的实例。</li>
+<li>具体装饰角色<br>给构件角色贴上对应的责任。<br>总结一句话：保持接口，增强性能。</li>
+</ol>
+<h4 id="装饰器的具体实现"><a href="#装饰器的具体实现" class="headerlink" title="装饰器的具体实现"></a>装饰器的具体实现</h4><p>最近荒野行动这款吃鸡游戏很流行，国内盛行的抄袭风又开始了，如小米枪战，腾讯吃鸡手游，都是圈钱的机器，笔者就以这个举例来实现，首先我们需要一个具体吃鸡的接口：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Created by caoqiwen on 2017/12/26.</span><br><span class="line"> * 模拟吃鸡</span><br><span class="line"> */</span><br><span class="line">public interface Chicken &#123;</span><br><span class="line">     void eatChicken();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么在进入游戏时，给个吃鸡的提示，可以给一个具体的提示如“大吉大利，今晚吃鸡”，给具体的构件角色：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class ConChicken implements  Chicken&#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void eatChicken() &#123;</span><br><span class="line">            System.out.println(&quot;大吉大利，今晚吃鸡&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>大家都知道，在进入游戏点击的时候，肯定是少不了广告的，如腾讯公司可能会中插一段视频推销自己的最新游戏产品，而小米公司可能会推销自己最新出了几款新手机，笔者就以两家的广告营销为例作为增强吃鸡的功能。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class MiChicken  implements  Chicken&#123;</span><br><span class="line"></span><br><span class="line">    private Chicken chicken;</span><br><span class="line">    public  MiChicken(Chicken chicken)&#123;</span><br><span class="line">        super();</span><br><span class="line">        this.chicken=chicken;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public void eatChicken() &#123;</span><br><span class="line">        System.out.println(&quot;小米吃鸡游戏放点小米官网的广告&quot;);</span><br><span class="line">        chicken.eatChicken();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class TenCentChicken implements Chicken&#123;</span><br><span class="line">    private Chicken chicken;</span><br><span class="line">    public TenCentChicken(Chicken chicken)&#123;</span><br><span class="line">        super();</span><br><span class="line">        this.chicken=chicken;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public void eatChicken() &#123;</span><br><span class="line">        System.out.println(&quot;腾讯吃鸡游戏放点马化腾的广告&quot;);</span><br><span class="line">        chicken.eatChicken();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>等玩家点击游戏打开APP时，此时可以这样调用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Chicken chicken=new MiChicken(new ConChicken());</span><br><span class="line"> chicken.eatChicken();</span><br><span class="line"></span><br><span class="line"> Chicken chicken2=new TenCentChicken(new ConChicken());</span><br><span class="line"> chicken2.eatChicken();</span><br></pre></td></tr></table></figure>
+<p>此时输出为：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">小米吃鸡游戏放点小米官网的广告  </span><br><span class="line">大吉大利，今晚吃鸡  </span><br><span class="line">腾讯吃鸡游戏放点马化腾的广告  </span><br><span class="line">大吉大利，今晚吃鸡</span><br></pre></td></tr></table></figure>
+<p>小米公司和腾讯达成协议，要在腾讯游戏中植入小米手机的营销广告，此时，我们可以这样调用代码进行增强：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Chicken chicken1=new TenCentChicken(new MiChicken(new ConChicken()));</span><br><span class="line">        chicken1.eatChicken();</span><br></pre></td></tr></table></figure>
+<p>此时输入为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">腾讯吃鸡游戏放点马化腾的广告</span><br><span class="line">小米吃鸡游戏放点小米官网的广告</span><br><span class="line">大吉大利，今晚吃鸡</span><br></pre></td></tr></table></figure>
+<h4 id="装饰模式与代理模式的对比"><a href="#装饰模式与代理模式的对比" class="headerlink" title="装饰模式与代理模式的对比"></a>装饰模式与代理模式的对比</h4><p>笔者认为这两个设计模式的实现是非常类似的，只不过两个模式的侧重点不同，代理模式是委托实现该类的功能，屏蔽自身类，而装饰模式则是对原类方法的功能进行增强，在I/O流中就用到了很多装饰模式。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>装饰模式通过继承和引用来扩展功能，它可以提供更多的灵活性。</li>
+<li>通过不同的具体装饰器以及装饰排列组合，设计师可以创造出不同的组合来满足不同的业务需求。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/26/generic-1/" rel="next" title="浅谈Java中的泛型">
+                <i class="fa fa-chevron-left"></i> 浅谈Java中的泛型
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/28/arraylist/" rel="prev" title="ArrayList源码分析">
+                ArrayList源码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/12/27/decorator/"
+           data-title="Java设计模式-装饰器模式" data-url="http://caoqiwen2001.github.io/2017/12/27/decorator/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckyWen" />
+          <p class="site-author-name" itemprop="name">luckyWen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">35</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#装饰器模式"><span class="nav-number">1.</span> <span class="nav-text">装饰器模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#装饰器的具体实现"><span class="nav-number">1.1.</span> <span class="nav-text">装饰器的具体实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#装饰模式与代理模式的对比"><span class="nav-number">1.2.</span> <span class="nav-text">装饰模式与代理模式的对比</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckyWen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,736 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="synchronized锁数据脏读原因在多个线程对同一个对象实例变量进行并发访问的时候，很容易引起数据脏读的问题，来看一个简单的并发脏读的实例： 1234567891011121314151617181920public class HasSelfPrivateNum &amp;#123;    private int num = 0;    public void addI(String usernam">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java多线程（二） synchronized锁机制">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2018/02/08/thread-2/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="synchronized锁数据脏读原因在多个线程对同一个对象实例变量进行并发访问的时候，很容易引起数据脏读的问题，来看一个简单的并发脏读的实例： 1234567891011121314151617181920public class HasSelfPrivateNum &amp;#123;    private int num = 0;    public void addI(String usernam">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-06T07:23:13.228Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java多线程（二） synchronized锁机制">
+<meta name="twitter:description" content="synchronized锁数据脏读原因在多个线程对同一个对象实例变量进行并发访问的时候，很容易引起数据脏读的问题，来看一个简单的并发脏读的实例： 1234567891011121314151617181920public class HasSelfPrivateNum &amp;#123;    private int num = 0;    public void addI(String usernam">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2018/02/08/thread-2/"/>
+
+  <title> Java多线程（二） synchronized锁机制 | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java多线程（二） synchronized锁机制
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-02-08T15:43:50+08:00" content="2018-02-08">
+              2018-02-08
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java多线程集合/" itemprop="url" rel="index">
+                    <span itemprop="name">Java多线程集合</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/02/08/thread-2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/02/08/thread-2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="synchronized锁"><a href="#synchronized锁" class="headerlink" title="synchronized锁"></a>synchronized锁</h3><h4 id="数据脏读原因"><a href="#数据脏读原因" class="headerlink" title="数据脏读原因"></a>数据脏读原因</h4><p>在多个线程对同一个对象实例变量进行并发访问的时候，很容易引起数据脏读的问题，来看一个简单的并发脏读的实例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public class HasSelfPrivateNum &#123;</span><br><span class="line">    private int num = 0;</span><br><span class="line"></span><br><span class="line">    public void addI(String username) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            if (username.equals(&quot;a&quot;)) &#123;</span><br><span class="line">                num = 100;</span><br><span class="line">                System.out.println(&quot;a set over&quot;);</span><br><span class="line">                Thread.sleep(2000);</span><br><span class="line"></span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                num = 200;</span><br><span class="line">                System.out.println(&quot;b set over&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(username + &quot; num= &quot; + num);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着实现两个线程对HasSelfPrivateNum的方法进行访问：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class ThreadA extends Thread &#123;</span><br><span class="line">    private HasSelfPrivateNum numRef;</span><br><span class="line">    public ThreadA(HasSelfPrivateNum numRef) &#123;</span><br><span class="line">        super();</span><br><span class="line">        this.numRef = numRef;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        super.run();</span><br><span class="line">        numRef.addI(&quot;a&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class ThreadB extends Thread &#123;</span><br><span class="line">    private HasSelfPrivateNum numRef;</span><br><span class="line">    public ThreadB(HasSelfPrivateNum numRef) &#123;</span><br><span class="line">        super();</span><br><span class="line">        this.numRef = numRef;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        super.run();</span><br><span class="line">        numRef.addI(&quot;b&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后新建两个线程来进行调用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class Run2_private01 &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        HasSelfPrivateNum numRef = new HasSelfPrivateNum();</span><br><span class="line">        ThreadA threadA = new ThreadA(numRef);</span><br><span class="line">        threadA.start();</span><br><span class="line">        ThreadB threadB = new ThreadB(numRef);</span><br><span class="line">        threadB.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其结果输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a set over</span><br><span class="line">b set over</span><br><span class="line">b num= 200</span><br><span class="line">a num= 200</span><br></pre></td></tr></table></figure>
+<p>结果a和b都输出为200，原因在于num这个字段是一个全局的，在numRef中是共用的，在多个线程对这个字段赋值之后，会引起数据的混乱。那么如何解决并发引起的数据混乱问题呢？加上synchronized关键字就可以了，稍微修改下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class HasSelfPrivateNum &#123;</span><br><span class="line">    private int num = 0;</span><br><span class="line"></span><br><span class="line">    synchronized</span><br><span class="line">    public void addI(String username) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            if (username.equals(&quot;a&quot;)) &#123;</span><br><span class="line">                num = 100;</span><br><span class="line">                System.out.println(&quot;a set over&quot;);</span><br><span class="line">                Thread.sleep(2000);</span><br><span class="line"></span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                num = 200;</span><br><span class="line">                System.out.println(&quot;b set over&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(username + &quot; num= &quot; + num);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其他初始化线程的代码不变，执行后结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a set over</span><br><span class="line">a num= 100</span><br><span class="line">b set over</span><br><span class="line">b num= 200</span><br></pre></td></tr></table></figure>
+<h4 id="锁重入，支持继承"><a href="#锁重入，支持继承" class="headerlink" title="锁重入，支持继承"></a>锁重入，支持继承</h4><p>所谓重入，就是线程得到一个对象锁时，再次请求该对象的锁可以再次进入该对象方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class Main &#123;</span><br><span class="line">    protected int i = 10;</span><br><span class="line"></span><br><span class="line">    synchronized public void operateIinMain() &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            i--;</span><br><span class="line">            System.out.println(&quot;main print i=&quot; + i);</span><br><span class="line">            Thread.sleep(100);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过继承自Main类，来实现重入锁</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class Sub extends Main &#123;</span><br><span class="line">    synchronized public void operateIinSub() &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            while (i &gt; 0) &#123;</span><br><span class="line">                i--;</span><br><span class="line">                System.out.println(&quot;sub print i=&quot; + i);</span><br><span class="line">                Thread.sleep(100);</span><br><span class="line">                this.operateIinMain();</span><br><span class="line">                operateIinSub1();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public synchronized void operateIinSub1() &#123;</span><br><span class="line">        int i = 0;</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            i++;</span><br><span class="line">            if (i &gt; 5) break;</span><br><span class="line">            System.out.println(&quot;operateIinSub1 has begined&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到operateIinSub方法不仅可以调用operateIinMain方法，也可以调用实例的operateIinSub1方法，这就是锁可重入。</p>
+<h4 id="锁异常"><a href="#锁异常" class="headerlink" title="锁异常"></a>锁异常</h4><p>在多线程遇到锁异常的时候会自动释放其所有的锁：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class Service &#123;</span><br><span class="line">    synchronized public void testMethod() &#123;</span><br><span class="line">        if (Thread.currentThread().getName().equals(&quot;a&quot;)) &#123;</span><br><span class="line">            System.out.println(&quot;ThreadName=&quot; + Thread.currentThread().getName() + &quot; run beginTime=&quot; + System.currentTimeMillis());</span><br><span class="line"></span><br><span class="line">            int i = 1;</span><br><span class="line">            while (i == 1) &#123;</span><br><span class="line">                if ((&quot;&quot; + Math.random()).substring(0, 8).equals(&quot;0.123456&quot;)) &#123;</span><br><span class="line">                    System.out.println(&quot;ThreadName=&quot; + Thread.currentThread().getName() + &quot; run exceptionTime=&quot; + System.currentTimeMillis());</span><br><span class="line">                    Integer.parseInt(&quot;a&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            System.out.println(&quot;Thread b run Time=&quot; + System.currentTimeMillis());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>需要定义两个线程类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class ThreadA extends Thread &#123;</span><br><span class="line">    private Service service;</span><br><span class="line"></span><br><span class="line">    public ThreadA(String name, Service service) &#123;</span><br><span class="line">        super(name);</span><br><span class="line">        this.service = service;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        service.testMethod();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class ThreadB extends Thread &#123;</span><br><span class="line">    private Service service;</span><br><span class="line"></span><br><span class="line">    public ThreadB(String name, Service service) &#123;</span><br><span class="line">        super(name);</span><br><span class="line">        this.service = service;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        service.testMethod();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>主线程去调用这两个线程使其中一个抛出异常：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class Run6_exception &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            Service service = new Service();</span><br><span class="line">            ThreadA a = new ThreadA(&quot;a&quot;, service);</span><br><span class="line">            a.start();</span><br><span class="line">            Thread.sleep(500);</span><br><span class="line">            ThreadB b = new ThreadB(&quot;b&quot;, service);</span><br><span class="line">            b.start();</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ThreadName=a run beginTime=1517811391726</span><br><span class="line">ThreadName=a run exceptionTime=1517811393510</span><br><span class="line">Thread b run Time=1517811393510</span><br><span class="line">Exception in thread &quot;a&quot; java.lang.NumberFormatException: For input string: &quot;a&quot;</span><br><span class="line">	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)</span><br><span class="line">	at java.lang.Integer.parseInt(Integer.java:580)</span><br><span class="line">	at java.lang.Integer.parseInt(Integer.java:615)</span><br><span class="line">	at com.brianway.learning.java.multithread.synchronize.example6.Service.testMethod(Service.java:15)</span><br><span class="line">	at com.brianway.learning.java.multithread.synchronize.example6.ThreadA.run(ThreadA.java:16)</span><br></pre></td></tr></table></figure>
+<p>可以看到，抛出异常的同时线程B中的代码也开始执行了。</p>
+<h4 id="锁方法块"><a href="#锁方法块" class="headerlink" title="锁方法块"></a>锁方法块</h4><p>有时直接锁方法会造成执行一个同步时间长的任务，那么另外一个线程必须等待较长的时间。可以通过锁代码块来提高运行效率：</p>
+<ol>
+<li>通过synchronized(this)同步代码块。</li>
+<li>synchronized(非this对象)来同步代码实现。同一个时刻只能有一个线程能执行代码块中的代码。</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>上面是线程中锁的初步运用，在一些高并发框架里面运用的非常多，遇到多个线程数据同步的问题优先考虑加锁。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/05/thread-1/" rel="next" title="Java多线程（-） Thread的基础概念">
+                <i class="fa fa-chevron-left"></i> Java多线程（-） Thread的基础概念
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/03/threadLocall-1/" rel="prev" title="ThreadLocal案例及源码分析">
+                ThreadLocal案例及源码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/02/08/thread-2/"
+           data-title="Java多线程（二） synchronized锁机制" data-url="http://caoqiwen2001.github.io/2018/02/08/thread-2/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckyWen" />
+          <p class="site-author-name" itemprop="name">luckyWen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">35</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized锁"><span class="nav-number">1.</span> <span class="nav-text">synchronized锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据脏读原因"><span class="nav-number">1.1.</span> <span class="nav-text">数据脏读原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#锁重入，支持继承"><span class="nav-number">1.2.</span> <span class="nav-text">锁重入，支持继承</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#锁异常"><span class="nav-number">1.3.</span> <span class="nav-text">锁异常</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#锁方法块"><span class="nav-number">1.4.</span> <span class="nav-text">锁方法块</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckyWen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

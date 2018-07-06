@@ -1,0 +1,713 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="选择器最终来聊一下选择器，与传统的IO相比，选择器减少了创建多个线程对服务器的开销，因为线程的资源太宝贵了，针对传统的BIO阻塞模式，需要创建一个线程去处理socket请求，使得主线程去读数据的时候不会被阻塞，如果针对成千上万的请求，我们系统马上就会陷入崩溃状态。因此，NIO采用选择器（Selector）和选择键（SelectionKey）这种形式来处理客户端的请求。  选择器（Selector）">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NIO(三) 选择器">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2018/02/02/nio-selector/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="选择器最终来聊一下选择器，与传统的IO相比，选择器减少了创建多个线程对服务器的开销，因为线程的资源太宝贵了，针对传统的BIO阻塞模式，需要创建一个线程去处理socket请求，使得主线程去读数据的时候不会被阻塞，如果针对成千上万的请求，我们系统马上就会陷入崩溃状态。因此，NIO采用选择器（Selector）和选择键（SelectionKey）这种形式来处理客户端的请求。  选择器（Selector）">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-06T07:23:13.083Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NIO(三) 选择器">
+<meta name="twitter:description" content="选择器最终来聊一下选择器，与传统的IO相比，选择器减少了创建多个线程对服务器的开销，因为线程的资源太宝贵了，针对传统的BIO阻塞模式，需要创建一个线程去处理socket请求，使得主线程去读数据的时候不会被阻塞，如果针对成千上万的请求，我们系统马上就会陷入崩溃状态。因此，NIO采用选择器（Selector）和选择键（SelectionKey）这种形式来处理客户端的请求。  选择器（Selector）">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2018/02/02/nio-selector/"/>
+
+  <title> NIO(三) 选择器 | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                NIO(三) 选择器
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-02-02T16:15:20+08:00" content="2018-02-02">
+              2018-02-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/NIO/" itemprop="url" rel="index">
+                    <span itemprop="name">NIO</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/02/02/nio-selector/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/02/02/nio-selector/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="选择器"><a href="#选择器" class="headerlink" title="选择器"></a>选择器</h2><p>最终来聊一下选择器，与传统的IO相比，选择器减少了创建多个线程对服务器的开销，因为线程的资源太宝贵了，针对传统的BIO阻塞模式，需要创建一个线程去处理socket请求，使得主线程去读数据的时候不会被阻塞，如果针对成千上万的请求，我们系统马上就会陷入崩溃状态。<br>因此，NIO采用选择器（Selector）和选择键（SelectionKey）这种形式来处理客户端的请求。</p>
+<ul>
+<li>选择器（Selector）<br>它管理者一堆注册通道的集合和他们的就绪状态。</li>
+<li>选择键（SelectionKey）<br>SelectionKey它封装了特定的通道与特定选择器的注册关系，当调用SelectableChannel.register()方式时会返回一个SelectionKey值。<br>接着，下面这段代码来测试服务端与客户端进行通讯：<h4 id="服务端代码"><a href="#服务端代码" class="headerlink" title="服务端代码"></a>服务端代码</h4></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">public class SelectorServer &#123;</span><br><span class="line">    private static int port = 1234;</span><br><span class="line">    private static ByteBuffer buffer = ByteBuffer.allocate(1024);</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            ServerSocketChannel ssc = ServerSocketChannel.open();</span><br><span class="line">            ServerSocket serverSocket = ssc.socket();</span><br><span class="line">            serverSocket.bind(new InetSocketAddress(port));</span><br><span class="line">            ssc.configureBlocking(false);</span><br><span class="line">            Selector selector = Selector.open();</span><br><span class="line">            ssc.register(selector, SelectionKey.OP_ACCEPT);</span><br><span class="line">            while (true) &#123;</span><br><span class="line">                //这里还是会阻塞。只是在处理请求的时候不会再需要通过多线程去处理数据而已。</span><br><span class="line">                int n = selector.select();</span><br><span class="line">                // System.out.println(&quot;查看你会不会阻塞&quot;);</span><br><span class="line">                if (n == 0) continue;</span><br><span class="line">                Iterator&lt;SelectionKey&gt; iterator = selector.selectedKeys().iterator();</span><br><span class="line">                while (iterator.hasNext()) &#123;</span><br><span class="line">                    SelectionKey sk = iterator.next();</span><br><span class="line">                    if (sk.isAcceptable()) &#123;</span><br><span class="line">                        ServerSocketChannel ssc1 = (ServerSocketChannel) sk.channel();</span><br><span class="line">                        SocketChannel sc = ssc1.accept();</span><br><span class="line">                        sc.configureBlocking(false);</span><br><span class="line">                        sc.register(selector, SelectionKey.OP_READ);</span><br><span class="line">                    &#125; else if (sk.isReadable()) &#123;</span><br><span class="line">                        readData(sk);</span><br><span class="line">                    &#125;</span><br><span class="line">                    iterator.remove();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void readData(SelectionKey key) &#123;</span><br><span class="line">        SocketChannel sc = (SocketChannel) key.channel();</span><br><span class="line">        buffer.clear();</span><br><span class="line">        try &#123;</span><br><span class="line">            while (sc.read(buffer) &gt; 0) &#123;   //这里一直会去读通道的值</span><br><span class="line">                buffer.flip();</span><br><span class="line">                while (buffer.hasRemaining()) &#123;</span><br><span class="line">                    System.out.print((char) buffer.get());</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(&quot;&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>1、将ServerSocketChannel注册到注册到selector上。<br>2、不断轮询，调用select方法，这个方法是阻塞的，客户端有连接过来时，阻塞完毕，之后会一直轮询，看selector上的通道有多少。<br>3、获取SelectionKey中通道的集合，然后遍历所有的key，看是否有可接受的链接，是否有数据可以读取。<br>4、操作完之后需要将该键移除，因为这次对话已经结束了，客户端的通道已经关闭，服务端也需要对应操作。<br>在接受客户端请求的时候没有重新去开一个线程做请求处理。这里拿到对应的SocketChannel然后将其注册到selector上，下一次轮询就可以根据它的可读状态进行数据读操作。 在断点调试过程中，我发现SocketChannel的read方法不是阻塞的，即使客户端的链接释放了，服务端的SelectionKey一直处于isReadable状态，但由于buffer中没有可读的数据，就退出去继续轮询。</p>
+<h4 id="客户端代码"><a href="#客户端代码" class="headerlink" title="客户端代码"></a>客户端代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">public class SelectorClient &#123;</span><br><span class="line"></span><br><span class="line">    private static String str = &quot;hello world&quot;;</span><br><span class="line">    private static final int port = 1234;</span><br><span class="line">    private static final String ip = &quot;127.0.0.1&quot;;</span><br><span class="line">    private static final int thread_count = 5;</span><br><span class="line"></span><br><span class="line">    private static class NonBlockingClient extends Thread &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                SocketChannel socketChannel = SocketChannel.open();</span><br><span class="line">                socketChannel.configureBlocking(false);</span><br><span class="line">                socketChannel.connect(new InetSocketAddress(ip, port));</span><br><span class="line">                while (!socketChannel.finishConnect()) &#123;</span><br><span class="line">                    System.out.println(&quot;同&quot; + ip + &quot;的连接正在建立，请稍等！&quot;);</span><br><span class="line">                    Thread.sleep(10);</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(&quot;连接已经建立到ip+端口！，时间为:&quot; + System.currentTimeMillis());</span><br><span class="line">                String writeStr = str + this.getName();</span><br><span class="line">                ByteBuffer buffer = ByteBuffer.allocate(writeStr.length());</span><br><span class="line">                buffer.put(writeStr.getBytes());</span><br><span class="line">                buffer.flip();</span><br><span class="line">                socketChannel.write(buffer);</span><br><span class="line">                buffer.clear();</span><br><span class="line">                socketChannel.close();</span><br><span class="line">            &#125; catch (Exception ex) &#123;</span><br><span class="line">                ex.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        NonBlockingClient[] nbts = new NonBlockingClient[thread_count];</span><br><span class="line">        for (int i = 0; i &lt; thread_count; i++) &#123;</span><br><span class="line">            nbts[i] = new NonBlockingClient();</span><br><span class="line">        &#125;</span><br><span class="line">        for (int i = 0; i &lt; thread_count; i++) &#123;</span><br><span class="line">            nbts[i].start();</span><br><span class="line">        &#125;</span><br><span class="line">        for (int i = 0; i &lt; thread_count; i++) &#123;</span><br><span class="line">            nbts[i].join();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>客户端通过开启五个线程进行测试，每一个线程中启动一个SocketChannel连接到客户端。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Selector可以简化用单线程同时管理多个可选择通道的实现，可以减少服务端多开线程的开销，但是它并不是完全的非阻塞I/O。这种实现方式值得好好研究。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/01/nio-channel/" rel="next" title="NIO(二) 通道">
+                <i class="fa fa-chevron-left"></i> NIO(二) 通道
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/05/thread-1/" rel="prev" title="Java多线程（-） Thread的基础概念">
+                Java多线程（-） Thread的基础概念 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/02/02/nio-selector/"
+           data-title="NIO(三) 选择器" data-url="http://caoqiwen2001.github.io/2018/02/02/nio-selector/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckyWen" />
+          <p class="site-author-name" itemprop="name">luckyWen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">35</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#选择器"><span class="nav-number">1.</span> <span class="nav-text">选择器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#服务端代码"><span class="nav-number">1.0.1.</span> <span class="nav-text">服务端代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端代码"><span class="nav-number">1.0.2.</span> <span class="nav-text">客户端代码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.1.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckyWen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

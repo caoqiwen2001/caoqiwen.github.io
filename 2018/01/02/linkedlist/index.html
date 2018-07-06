@@ -1,0 +1,748 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="前言LinkedList也是用的非常多的一个集合框架，由于它的底层是采用双向链表实现的。双向链表既有头又有尾节点，它的尾节点的后一个节点是链表的头结点，链表头结点的前一个节点是尾节点。 链表的结构LinkedList中有一个内部类来标识它的内部存储单元： 1234567891011private static class Node&amp;lt;E&amp;gt; &amp;#123;     E item;     N">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LinkedList源码分析">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2018/01/02/linkedlist/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="前言LinkedList也是用的非常多的一个集合框架，由于它的底层是采用双向链表实现的。双向链表既有头又有尾节点，它的尾节点的后一个节点是链表的头结点，链表头结点的前一个节点是尾节点。 链表的结构LinkedList中有一个内部类来标识它的内部存储单元： 1234567891011private static class Node&amp;lt;E&amp;gt; &amp;#123;     E item;     N">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://note.youdao.com/yws/public/resource/812b564b763769a068df3b97ac8017ce/xmlnote/BDA1A1F424B1494197D24804E4CEA206/13058">
+<meta property="og:updated_time" content="2018-07-06T07:23:13.011Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LinkedList源码分析">
+<meta name="twitter:description" content="前言LinkedList也是用的非常多的一个集合框架，由于它的底层是采用双向链表实现的。双向链表既有头又有尾节点，它的尾节点的后一个节点是链表的头结点，链表头结点的前一个节点是尾节点。 链表的结构LinkedList中有一个内部类来标识它的内部存储单元： 1234567891011private static class Node&amp;lt;E&amp;gt; &amp;#123;     E item;     N">
+<meta name="twitter:image" content="https://note.youdao.com/yws/public/resource/812b564b763769a068df3b97ac8017ce/xmlnote/BDA1A1F424B1494197D24804E4CEA206/13058">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2018/01/02/linkedlist/"/>
+
+  <title> LinkedList源码分析 | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                LinkedList源码分析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-01-02T19:39:08+08:00" content="2018-01-02">
+              2018-01-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java集合框架/" itemprop="url" rel="index">
+                    <span itemprop="name">Java集合框架</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/01/02/linkedlist/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/01/02/linkedlist/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>LinkedList也是用的非常多的一个集合框架，由于它的底层是采用双向链表实现的。双向链表既有头又有尾节点，它的尾节点的后一个节点是链表的头结点，链表头结点的前一个节点是尾节点。</p>
+<h4 id="链表的结构"><a href="#链表的结构" class="headerlink" title="链表的结构"></a>链表的结构</h4><p>LinkedList中有一个内部类来标识它的内部存储单元：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private static class Node&lt;E&gt; &#123;</span><br><span class="line">     E item;</span><br><span class="line">     Node&lt;E&gt; next;</span><br><span class="line">     Node&lt;E&gt; prev;</span><br><span class="line"></span><br><span class="line">     Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) &#123;</span><br><span class="line">         this.item = element;</span><br><span class="line">         this.next = next;</span><br><span class="line">         this.prev = prev;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>关注点</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>是否允许为空</td>
+<td>允许 </td>
+</tr>
+<tr>
+<td>是否允许为重复数据</td>
+<td>允许</td>
+</tr>
+<tr>
+<td>是否有序</td>
+<td>是</td>
+</tr>
+<tr>
+<td>是否线程安全</td>
+<td>是</td>
+</tr>
+</tbody>
+</table>
+<h4 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h4><p>在尾部插入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">  * Links e as last element.</span><br><span class="line">  */</span><br><span class="line"> void linkLast(E e) &#123;</span><br><span class="line">     final Node&lt;E&gt; l = last;</span><br><span class="line">     final Node&lt;E&gt; newNode = new Node&lt;&gt;(l, e, null);</span><br><span class="line">     last = newNode;</span><br><span class="line">     if (l == null)</span><br><span class="line">         first = newNode;  //默认为首尾节点</span><br><span class="line">     else</span><br><span class="line">         l.next = newNode;   //把新的节点录入为末节点</span><br><span class="line">     size++;</span><br><span class="line">     modCount++;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，如果头节点为空，则把新增加的节点设置为头节点，否则就在尾部插入新增节点。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; lists = new LinkedList&lt;Integer&gt;();</span><br><span class="line">lists.add(5);</span><br><span class="line">lists.add(4);</span><br></pre></td></tr></table></figure>
+<p> 首先调用无参构造函数，之后添加元素5和4。其结果图如下：<br> <img src="https://note.youdao.com/yws/public/resource/812b564b763769a068df3b97ac8017ce/xmlnote/BDA1A1F424B1494197D24804E4CEA206/13058" alt="image"></p>
+<h4 id="addAll方法"><a href="#addAll方法" class="headerlink" title="addAll方法"></a>addAll方法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">public boolean addAll(int index, Collection&lt;? extends E&gt; c) &#123;</span><br><span class="line">       checkPositionIndex(index);</span><br><span class="line"></span><br><span class="line">       Object[] a = c.toArray();</span><br><span class="line">       int numNew = a.length;</span><br><span class="line">       if (numNew == 0)</span><br><span class="line">           return false;</span><br><span class="line"></span><br><span class="line">       Node&lt;E&gt; pred, succ;</span><br><span class="line">       if (index == size) &#123;</span><br><span class="line">           succ = null;</span><br><span class="line">           pred = last;</span><br><span class="line">       &#125; else &#123;</span><br><span class="line">           succ = node(index);</span><br><span class="line">           pred = succ.prev;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       for (Object o : a) &#123;</span><br><span class="line">           @SuppressWarnings(&quot;unchecked&quot;) E e = (E) o;</span><br><span class="line">           Node&lt;E&gt; newNode = new Node&lt;&gt;(pred, e, null);</span><br><span class="line">           if (pred == null)</span><br><span class="line">               first = newNode;</span><br><span class="line">           else</span><br><span class="line">               pred.next = newNode;</span><br><span class="line">           pred = newNode;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       if (succ == null) &#123;</span><br><span class="line">           last = pred;</span><br><span class="line">       &#125; else &#123;</span><br><span class="line">           pred.next = succ;</span><br><span class="line">           succ.prev = pred;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       size += numNew;</span><br><span class="line">       modCount++;</span><br><span class="line">       return true;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>其中node函数是找出后一个节点的位置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Node&lt;E&gt; node(int index) &#123;</span><br><span class="line">    // assert isElementIndex(index);</span><br><span class="line"></span><br><span class="line">    if (index &lt; (size &gt;&gt; 1)) &#123;</span><br><span class="line">        Node&lt;E&gt; x = first;</span><br><span class="line">        for (int i = 0; i &lt; index; i++)</span><br><span class="line">            x = x.next;</span><br><span class="line">        return x;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        Node&lt;E&gt; x = last;</span><br><span class="line">        for (int i = size - 1; i &gt; index; i--)</span><br><span class="line">            x = x.prev;</span><br><span class="line">        return x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果index小于size的一半，则从链表的前面往后面找，如果index大于size的一半，则从链表的后面往前面找。这种写法增加了查找的速度。</p>
+<h4 id="删除元素"><a href="#删除元素" class="headerlink" title="删除元素"></a>删除元素</h4><p>   元素的删除有从头删除和尾删除，下面讨论从头删除：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">private E unlinkFirst(Node&lt;E&gt; f) &#123;</span><br><span class="line">      // assert f == first &amp;&amp; f != null;</span><br><span class="line">      final E element = f.item;</span><br><span class="line">      final Node&lt;E&gt; next = f.next;</span><br><span class="line">      f.item = null;</span><br><span class="line">      f.next = null; // help GC</span><br><span class="line">      first = next;</span><br><span class="line">      if (next == null)</span><br><span class="line">          last = null;</span><br><span class="line">      else</span><br><span class="line">          next.prev = null;</span><br><span class="line">      size--;</span><br><span class="line">      modCount++;</span><br><span class="line">      return element;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>首先找到需要删除的节点的下一个节点，然后将当前节点置空并设置成null，然GC回收，然后将next的prev设置成null形成双链表。</p>
+<h4 id="关于循环遍历的问题"><a href="#关于循环遍历的问题" class="headerlink" title="关于循环遍历的问题"></a>关于循环遍历的问题</h4><p>在ArrayList中习惯用get方法进行遍历，在LinkedList中是不适用的，首先来看看源码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Node&lt;E&gt; node(int index) &#123;</span><br><span class="line">    // assert isElementIndex(index);</span><br><span class="line"></span><br><span class="line">    if (index &lt; (size &gt;&gt; 1)) &#123;</span><br><span class="line">        Node&lt;E&gt; x = first;</span><br><span class="line">        for (int i = 0; i &lt; index; i++)</span><br><span class="line">            x = x.next;</span><br><span class="line">        return x;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        Node&lt;E&gt; x = last;</span><br><span class="line">        for (int i = size - 1; i &gt; index; i--)</span><br><span class="line">            x = x.prev;</span><br><span class="line">        return x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到遍历的时候会从首部或者尾部进行遍历，它的时间复杂度达到了二次方系数，如果要遍历的话用foreach或者迭代器去遍历，原因是迭代器每次都保存了上次的节点位置，不需要重新从头部或者尾部去遍历。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/28/arraylist/" rel="next" title="ArrayList源码分析">
+                <i class="fa fa-chevron-left"></i> ArrayList源码分析
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/09/hashmap/" rel="prev" title="HashMap源码分析">
+                HashMap源码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/01/02/linkedlist/"
+           data-title="LinkedList源码分析" data-url="http://caoqiwen2001.github.io/2018/01/02/linkedlist/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckyWen" />
+          <p class="site-author-name" itemprop="name">luckyWen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">35</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#链表的结构"><span class="nav-number">1.1.</span> <span class="nav-text">链表的结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加元素"><span class="nav-number">1.2.</span> <span class="nav-text">添加元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#addAll方法"><span class="nav-number">1.3.</span> <span class="nav-text">addAll方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除元素"><span class="nav-number">1.4.</span> <span class="nav-text">删除元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于循环遍历的问题"><span class="nav-number">1.5.</span> <span class="nav-text">关于循环遍历的问题</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckyWen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
