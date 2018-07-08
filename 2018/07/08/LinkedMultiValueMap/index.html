@@ -1,0 +1,705 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="LinkedMultiValueMap源码解析最近在看HttpEntity的源码的时候，发现有一个类用到了MultiValueMap这个类，该类属于spring框架中自带的类型，首先看看它的基类实现： 12345678910111213141516public interface MultiValueMap&amp;lt;K, V&amp;gt; extends Map&amp;lt;K, List&amp;lt;V&amp;gt;&amp;g">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LinkedMultiValueMap源码解析">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2018/07/08/LinkedMultiValueMap/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="LinkedMultiValueMap源码解析最近在看HttpEntity的源码的时候，发现有一个类用到了MultiValueMap这个类，该类属于spring框架中自带的类型，首先看看它的基类实现： 12345678910111213141516public interface MultiValueMap&amp;lt;K, V&amp;gt; extends Map&amp;lt;K, List&amp;lt;V&amp;gt;&amp;g">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-08T03:18:37.105Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LinkedMultiValueMap源码解析">
+<meta name="twitter:description" content="LinkedMultiValueMap源码解析最近在看HttpEntity的源码的时候，发现有一个类用到了MultiValueMap这个类，该类属于spring框架中自带的类型，首先看看它的基类实现： 12345678910111213141516public interface MultiValueMap&amp;lt;K, V&amp;gt; extends Map&amp;lt;K, List&amp;lt;V&amp;gt;&amp;g">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2018/07/08/LinkedMultiValueMap/"/>
+
+  <title> LinkedMultiValueMap源码解析 | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                LinkedMultiValueMap源码解析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-08T11:14:59+08:00" content="2018-07-08">
+              2018-07-08
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java集合框架/" itemprop="url" rel="index">
+                    <span itemprop="name">Java集合框架</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/07/08/LinkedMultiValueMap/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/07/08/LinkedMultiValueMap/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="LinkedMultiValueMap源码解析"><a href="#LinkedMultiValueMap源码解析" class="headerlink" title="LinkedMultiValueMap源码解析"></a>LinkedMultiValueMap源码解析</h3><p>最近在看HttpEntity的源码的时候，发现有一个类用到了MultiValueMap这个类，该类属于spring框架中自带的类型，首先看看它的基类实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public interface MultiValueMap&lt;K, V&gt; extends Map&lt;K, List&lt;V&gt;&gt; &#123;</span><br><span class="line">    @Nullable</span><br><span class="line">    V getFirst(K var1);</span><br><span class="line"></span><br><span class="line">    void add(K var1, @Nullable V var2);</span><br><span class="line"></span><br><span class="line">    void addAll(K var1, List&lt;? extends V&gt; var2);</span><br><span class="line"></span><br><span class="line">    void addAll(MultiValueMap&lt;K, V&gt; var1);</span><br><span class="line"></span><br><span class="line">    void set(K var1, @Nullable V var2);</span><br><span class="line"></span><br><span class="line">    void setAll(Map&lt;K, V&gt; var1);</span><br><span class="line"></span><br><span class="line">    Map&lt;K, V&gt; toSingleValueMap();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>发现它的类型就是继承自Map,只不过在它的基础上做了一层封装，便于后续的管理调用，再来看看LinkedMultiValueMap的实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br></pre></td><td class="code"><pre><span class="line">public class LinkedMultiValueMap&lt;K, V&gt; implements MultiValueMap&lt;K, V&gt;, Serializable, Cloneable &#123;</span><br><span class="line">    private static final long serialVersionUID = 3801124242820219131L;</span><br><span class="line">    private final Map&lt;K, List&lt;V&gt;&gt; targetMap;</span><br><span class="line"></span><br><span class="line">    public LinkedMultiValueMap() &#123;</span><br><span class="line">        this.targetMap = new LinkedHashMap();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public LinkedMultiValueMap(int initialCapacity) &#123;</span><br><span class="line">        this.targetMap = new LinkedHashMap(initialCapacity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public LinkedMultiValueMap(Map&lt;K, List&lt;V&gt;&gt; otherMap) &#123;</span><br><span class="line">        this.targetMap = new LinkedHashMap(otherMap);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Nullable</span><br><span class="line">    public V getFirst(K key) &#123;</span><br><span class="line">        List&lt;V&gt; values = (List)this.targetMap.get(key);</span><br><span class="line">        return values != null ? values.get(0) : null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void add(K key, @Nullable V value) &#123;</span><br><span class="line">        List&lt;V&gt; values = (List)this.targetMap.computeIfAbsent(key, (k) -&gt; &#123;</span><br><span class="line">            return new LinkedList();</span><br><span class="line">        &#125;);</span><br><span class="line">        values.add(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void addAll(K key, List&lt;? extends V&gt; values) &#123;</span><br><span class="line">        List&lt;V&gt; currentValues = (List)this.targetMap.computeIfAbsent(key, (k) -&gt; &#123;</span><br><span class="line">            return new LinkedList();</span><br><span class="line">        &#125;);</span><br><span class="line">        currentValues.addAll(values);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void addAll(MultiValueMap&lt;K, V&gt; values) &#123;</span><br><span class="line">        Iterator var2 = values.entrySet().iterator();</span><br><span class="line"></span><br><span class="line">        while(var2.hasNext()) &#123;</span><br><span class="line">            Entry&lt;K, List&lt;V&gt;&gt; entry = (Entry)var2.next();</span><br><span class="line">            this.addAll(entry.getKey(), (List)entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void set(K key, @Nullable V value) &#123;</span><br><span class="line">        List&lt;V&gt; values = new LinkedList();</span><br><span class="line">        values.add(value);</span><br><span class="line">        this.targetMap.put(key, values);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAll(Map&lt;K, V&gt; values) &#123;</span><br><span class="line">        values.forEach(this::set);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Map&lt;K, V&gt; toSingleValueMap() &#123;</span><br><span class="line">        LinkedHashMap&lt;K, V&gt; singleValueMap = new LinkedHashMap(this.targetMap.size());</span><br><span class="line">        this.targetMap.forEach((key, value) -&gt; &#123;</span><br><span class="line">            singleValueMap.put(key, value.get(0));</span><br><span class="line">        &#125;);</span><br><span class="line">        return singleValueMap;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int size() &#123;</span><br><span class="line">        return this.targetMap.size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean isEmpty() &#123;</span><br><span class="line">        return this.targetMap.isEmpty();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean containsKey(Object key) &#123;</span><br><span class="line">        return this.targetMap.containsKey(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean containsValue(Object value) &#123;</span><br><span class="line">        return this.targetMap.containsValue(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Nullable</span><br><span class="line">    public List&lt;V&gt; get(Object key) &#123;</span><br><span class="line">        return (List)this.targetMap.get(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Nullable</span><br><span class="line">    public List&lt;V&gt; put(K key, List&lt;V&gt; value) &#123;</span><br><span class="line">        return (List)this.targetMap.put(key, value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Nullable</span><br><span class="line">    public List&lt;V&gt; remove(Object key) &#123;</span><br><span class="line">        return (List)this.targetMap.remove(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void putAll(Map&lt;? extends K, ? extends List&lt;V&gt;&gt; map) &#123;</span><br><span class="line">        this.targetMap.putAll(map);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void clear() &#123;</span><br><span class="line">        this.targetMap.clear();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Set&lt;K&gt; keySet() &#123;</span><br><span class="line">        return this.targetMap.keySet();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Collection&lt;List&lt;V&gt;&gt; values() &#123;</span><br><span class="line">        return this.targetMap.values();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Set&lt;Entry&lt;K, List&lt;V&gt;&gt;&gt; entrySet() &#123;</span><br><span class="line">        return this.targetMap.entrySet();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public LinkedMultiValueMap&lt;K, V&gt; deepCopy() &#123;</span><br><span class="line">        LinkedMultiValueMap&lt;K, V&gt; copy = new LinkedMultiValueMap(this.targetMap.size());</span><br><span class="line">        this.targetMap.forEach((key, value) -&gt; &#123;</span><br><span class="line">            copy.put(key, (List)(new LinkedList(value)));</span><br><span class="line">        &#125;);</span><br><span class="line">        return copy;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public LinkedMultiValueMap&lt;K, V&gt; clone() &#123;</span><br><span class="line">        return new LinkedMultiValueMap(this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean equals(Object obj) &#123;</span><br><span class="line">        return this.targetMap.equals(obj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int hashCode() &#123;</span><br><span class="line">        return this.targetMap.hashCode();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return this.targetMap.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，它的本质上还是一个Map，只不过存放的value是List类型的而已。<br>其中addAll 方法有多个重载，支持实现MultiValueMap接口类型的和参数为K,V类型的方法。<br>而它的add函数运用了lamda表达式，当值为null的时候，会new一个LinkedList去填充，里面的默认属性为空。<br>其他的实现方法都与Map的操作不相伯仲。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>如果在遇到有单个key和多个value的情况下，可以采用LinkedMultiValueMap这种方法来实现我们的需求。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/06/git-1/" rel="next" title="git操作指令">
+                <i class="fa fa-chevron-left"></i> git操作指令
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/07/08/LinkedMultiValueMap/"
+           data-title="LinkedMultiValueMap源码解析" data-url="http://caoqiwen2001.github.io/2018/07/08/LinkedMultiValueMap/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckyWen" />
+          <p class="site-author-name" itemprop="name">luckyWen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">36</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedMultiValueMap源码解析"><span class="nav-number">1.</span> <span class="nav-text">LinkedMultiValueMap源码解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckyWen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
