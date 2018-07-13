@@ -1,0 +1,712 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="JVM相关知识点整理平时在开发Java程序时，没有仔细查看过jvm的相关知识，与是来整理这块的知识点。 JDK所谓的JDK是指程序开发的最小环境，基本上Java程序设计语言、Java虚拟机、Java API类库这三部分组成了JDK JREJRE则是JAVA运行的标准环境，包含Java的api和java的虚拟机组成。 运行时数据区域的分布属于线程私有的数据 程序计数器 程序计数器表示当前线程执行的字">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM（相关知识点整理一）">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2018/07/13/jvm-1/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="JVM相关知识点整理平时在开发Java程序时，没有仔细查看过jvm的相关知识，与是来整理这块的知识点。 JDK所谓的JDK是指程序开发的最小环境，基本上Java程序设计语言、Java虚拟机、Java API类库这三部分组成了JDK JREJRE则是JAVA运行的标准环境，包含Java的api和java的虚拟机组成。 运行时数据区域的分布属于线程私有的数据 程序计数器 程序计数器表示当前线程执行的字">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-13T03:38:23.272Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM（相关知识点整理一）">
+<meta name="twitter:description" content="JVM相关知识点整理平时在开发Java程序时，没有仔细查看过jvm的相关知识，与是来整理这块的知识点。 JDK所谓的JDK是指程序开发的最小环境，基本上Java程序设计语言、Java虚拟机、Java API类库这三部分组成了JDK JREJRE则是JAVA运行的标准环境，包含Java的api和java的虚拟机组成。 运行时数据区域的分布属于线程私有的数据 程序计数器 程序计数器表示当前线程执行的字">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2018/07/13/jvm-1/"/>
+
+  <title> JVM（相关知识点整理一） | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                JVM（相关知识点整理一）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-13T11:36:52+08:00" content="2018-07-13">
+              2018-07-13
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/07/13/jvm-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/07/13/jvm-1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="JVM相关知识点整理"><a href="#JVM相关知识点整理" class="headerlink" title="JVM相关知识点整理"></a>JVM相关知识点整理</h3><p>平时在开发Java程序时，没有仔细查看过jvm的相关知识，与是来整理这块的知识点。</p>
+<h4 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h4><p>所谓的JDK是指程序开发的最小环境，基本上Java程序设计语言、Java虚拟机、Java API类库这三部分组成了JDK</p>
+<h4 id="JRE"><a href="#JRE" class="headerlink" title="JRE"></a>JRE</h4><p>JRE则是JAVA运行的标准环境，包含Java的api和java的虚拟机组成。</p>
+<h4 id="运行时数据区域的分布"><a href="#运行时数据区域的分布" class="headerlink" title="运行时数据区域的分布"></a>运行时数据区域的分布</h4><h5 id="属于线程私有的数据"><a href="#属于线程私有的数据" class="headerlink" title="属于线程私有的数据"></a>属于线程私有的数据</h5><ol>
+<li>程序计数器<br> 程序计数器表示当前线程执行的字节码的行号指示器，JAVA的方法才有这个值，如果调用本地的native方法则该值是不存在的。</li>
+<li>虚拟机栈<br>每个方法都会创建一个栈帧，主要存储操作数栈、局部变量表、动态链接，方法出口等数据。</li>
+</ol>
+<h5 id="属于线程共享的数据"><a href="#属于线程共享的数据" class="headerlink" title="属于线程共享的数据"></a>属于线程共享的数据</h5><ol>
+<li>堆<br>所谓的堆可以简单理解为平时我们new对象时存放的区域，它分为新生代和老年代，还有叫做Eden区，Servior区。  </li>
+<li><p>方法区<br>方法区存放了虚拟机加载类的信息，静态变量，常量等数据。</p>
+</li>
+<li><p>运行时常量池<br>用于存放编译时生成的各种字面常量和符合引用。比如Stirng s=”hello” 也是直接存放在常量池中的。</p>
+</li>
+</ol>
+<p>笔者认为以上是JVM中最基础的内容了，那么如何来模拟堆和栈的溢出呢，来看看对应的代码实现，以下代码都是基于JDK1.8实现的。</p>
+<h4 id="哪些对象需要回收"><a href="#哪些对象需要回收" class="headerlink" title="哪些对象需要回收"></a>哪些对象需要回收</h4><p>要回收的垃圾指的是不可能再被任何途径使用的对象，需要怎么样才能找到这些对象呢？</p>
+<ul>
+<li>引用计数法<br>它的大概思想是每当一个地方引用这个对象时，计数器值+1，当引用失效时，计数器则-1，但是Java虚拟机并没有采用这种算法来进行判断，来看下面一段测试代码：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">    public Object instance = null;</span><br><span class="line">    private static final int _1MB = 1024 * 1024;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 占点内存,以便  GC 日志观看</span><br><span class="line">     */</span><br><span class="line">    private byte[] bigSize = new byte[2 * _1MB];</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        testGC();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void testGC() &#123;</span><br><span class="line">        ReferenceCountingGC objA = new ReferenceCountingGC();</span><br><span class="line">        ReferenceCountingGC objB = new ReferenceCountingGC();</span><br><span class="line">        objA.instance = objB;</span><br><span class="line">        objB.instance = objA;</span><br><span class="line"></span><br><span class="line">        objA = null;</span><br><span class="line">        objB = null;</span><br><span class="line"></span><br><span class="line">        System.gc();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们以虚拟机参数-XX:+PrintGCDetails -XX:+UseSerialGC为例查看gc日记：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[Full GC (System.gc()) [Tenured: 0K-&gt;638K(87424K), 0.0055890 secs] 10995K-&gt;638K(126720K), [Metaspace: 3204K-&gt;3204K(1056768K)], 0.0056711 secs] [Times: user=0.02 sys=0.00, real=0.01 secs] </span><br><span class="line">Heap</span><br><span class="line"> def new generation   total 39424K, used 1052K [0x0000000081200000, 0x0000000083cc0000, 0x00000000ab6a0000)</span><br><span class="line">  eden space 35072K,   3% used [0x0000000081200000, 0x0000000081307280, 0x0000000083440000)</span><br><span class="line">  from space 4352K,   0% used [0x0000000083440000, 0x0000000083440000, 0x0000000083880000)</span><br><span class="line">  to   space 4352K,   0% used [0x0000000083880000, 0x0000000083880000, 0x0000000083cc0000)</span><br><span class="line"> tenured generation   total 87424K, used 638K [0x00000000ab6a0000, 0x00000000b0c00000, 0x0000000100000000)</span><br><span class="line">   the space 87424K,   0% used [0x00000000ab6a0000, 0x00000000ab73f9e0, 0x00000000ab73fa00, 0x00000000b0c00000)</span><br><span class="line"> Metaspace       used 3224K, capacity 4494K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 354K, capacity 386K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
+<p>可以看到[Tenured: 0K-&gt;638K(87424K), 0.0055890 secs] 10995K-&gt;638K(126720K) 意味着虚拟机有对这两个对象的引用进行垃圾回收。</p>
+<ul>
+<li>可达性分析算法<br>所谓的可达性指的是通过一系列的“GC Roots”的对象作为起点，从这些节点开始向下搜索，所有走过的路径作为引用链，当一个对象到GC roots没有任何引用的时候就会被回收。<br>用白话来可以这样形容：比如JAVA中的方法执行与结束是存放在栈帧中的，如果栈帧中存放对象A和对象B,假如A依赖于B，那么A和B就组成一对引用链，不会被回收。如果A没有引用B,且B没有被其他的对象引用，此时B是可以被回收的。<br>GC Roots包含的对象包含下面几种：</li>
+</ul>
+<ol>
+<li>虚拟机栈</li>
+<li>方法区中类静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>本地方法栈中（Native方法）引用的对象。</li>
+</ol>
+<h4 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h4><p>垃圾回收算法包括以下几种：</p>
+<ol>
+<li>标记清除算法：该算法是这样的，首先需要标记出所有需要回收的对象，标记完成之后统一回收所有被标记的对象，这种算法效率不会很高，而且清除之后会造成空间不连续，导致程序运行到后期需要分配大对象的时候堆的空间不够抛出异常。</li>
+<li>复制算法：该算法主要是把内存分成两块来管理，每次只会用到其中一块，当其中一块使用完了，就使用另一块的空间，然后再把使用过的一块的内存清除掉。这样只要对整个半区进行操作，该算法能很好管理内存的使用，不会造成内存碎片，但是空间有限。HotSpot虚拟机默认的使用Eden区和Survivor区的比例为8:1,Survivor区又分成From和To两块区域，每次只会用到其中一块。在垃圾回收时，如果Survivor区不能存放幸存的对象，此时需要依赖老年代进行担保。</li>
+</ol>
+<p>现在商业虚拟机大部分都是这两种算法的整合，如果有大量对象死去，需要回收，则采用复制算法，复制成本低。如果对象的成活率高，需要回收的垃圾比较少，此时就采用标志整理算法，剔除不需要的对象。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>本章主要介绍Java虚拟机的一些基础知识，包括虚拟机的内存分布及回收算法，这些知识点在面试高级岗位中都有可能会被问到，需要好好理解。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/08/LinkedMultiValueMap/" rel="next" title="LinkedMultiValueMap源码解析">
+                <i class="fa fa-chevron-left"></i> LinkedMultiValueMap源码解析
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/07/13/jvm-1/"
+           data-title="JVM（相关知识点整理一）" data-url="http://caoqiwen2001.github.io/2018/07/13/jvm-1/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckyWen" />
+          <p class="site-author-name" itemprop="name">luckyWen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">37</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM相关知识点整理"><span class="nav-number">1.</span> <span class="nav-text">JVM相关知识点整理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK"><span class="nav-number">1.1.</span> <span class="nav-text">JDK</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JRE"><span class="nav-number">1.2.</span> <span class="nav-text">JRE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行时数据区域的分布"><span class="nav-number">1.3.</span> <span class="nav-text">运行时数据区域的分布</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#属于线程私有的数据"><span class="nav-number">1.3.1.</span> <span class="nav-text">属于线程私有的数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#属于线程共享的数据"><span class="nav-number">1.3.2.</span> <span class="nav-text">属于线程共享的数据</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#哪些对象需要回收"><span class="nav-number">1.4.</span> <span class="nav-text">哪些对象需要回收</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#垃圾回收算法"><span class="nav-number">1.5.</span> <span class="nav-text">垃圾回收算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckyWen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
