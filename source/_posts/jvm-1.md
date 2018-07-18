@@ -2,6 +2,10 @@
 title: JVM（相关知识点整理一）
 date: 2018-07-13 11:36:52
 tags:
+  - Java虚拟机
+categories:
+    - Java虚拟机
+type: tags
 ---
 
 ###  JVM相关知识点整理
