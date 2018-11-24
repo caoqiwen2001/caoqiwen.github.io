@@ -297,6 +297,133 @@
             
               
                 
+                <a class="post-title-link" href="/2018/07/18/jvm-2/" itemprop="url">
+                  JVM（相关知识点整理二）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-18T21:23:04+08:00" content="2018-07-18">
+              2018-07-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">Java虚拟机</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/07/18/jvm-2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/07/18/jvm-2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          JVM相关知识点二知道了相关的JVM算法之后，我们来了解一下垃圾回收器以及每个垃圾回收器的特点。
+
+Serial收集器 该收集器是最基本，发展历史最悠久的一个收集器，它采用复制算法的单线程收集器，单线程默认只会使用一个CPU或者一条线程去收集垃圾，另一方面也意味着它进行垃圾收集时必须暂用其他线程的工
+          ...
+
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2018/07/18/jvm-2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/07/13/jvm-1/" itemprop="url">
                   JVM（相关知识点整理一）
                 </a>
@@ -604,8 +731,8 @@ JREJRE则是JAVA运行的标准环境，包含Java的api和jav
           git操作指令git用于代码管理，多版本多分支管理操作，在多人管理的过程中还是用的比较多的。以下记录个人用的比较多的git命令。
  增加操作
 1git add .
-如果只是修改了文件，并没有增加到暂存区，用这个指令进行操作：1git checkout -- 1.txt
-如果有进行add操作，那么可以
+如果只是修改了文件，并没有增加到暂存区，用这个指令进行撤回操作：1git checkout -- 1.txt
+如果有进行add操作到缓存
           ...
 
           <div class="post-more-link text-center">
@@ -1396,132 +1523,6 @@ ReentrantLock的实现前提是AbstractQueuedSynchronizer，即AQS,下面来介�
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/03/03/threadLocall-1/" itemprop="url">
-                  ThreadLocal案例及源码分析
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-03-03T10:36:00+08:00" content="2018-03-03">
-              2018-03-03
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Java多线程集合/" itemprop="url" rel="index">
-                    <span itemprop="name">Java多线程集合</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2018/03/03/threadLocall-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/03/03/threadLocall-1/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          ThreadLocal案例ThreadLocal的作用主要是隔离线程中的数据，它针对每个线程独立设置值，不同线程之间的数据是相互隔离，不会相互影响，可以看一段测试代码：
-123456789101112131415161718192021222324252627282930313233public c
-          ...
-
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2018/03/03/threadLocall-1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1567,7 +1568,7 @@ ReentrantLock的实现前提是AbstractQueuedSynchronizer，即AQS,下面来介�
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">37</span>
+              <span class="site-state-item-count">38</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1584,7 +1585,7 @@ ReentrantLock的实现前提是AbstractQueuedSynchronizer，即AQS,下面来介�
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

@@ -102,17 +102,17 @@
 
 
 
-<meta name="description" content="git操作指令git用于代码管理，多版本多分支管理操作，在多人管理的过程中还是用的比较多的。以下记录个人用的比较多的git命令。  增加操作 1git add . 如果只是修改了文件，并没有增加到暂存区，用这个指令进行操作：1git checkout -- 1.txt 如果有进行add操作，那么可以用reset指令将暂存区的代码进行复原。 1git reset --head 如果进行了commit">
+<meta name="description" content="git操作指令git用于代码管理，多版本多分支管理操作，在多人管理的过程中还是用的比较多的。以下记录个人用的比较多的git命令。  增加操作 1git add . 如果只是修改了文件，并没有增加到暂存区，用这个指令进行撤回操作：1git checkout -- 1.txt 如果有进行add操作到缓存区，那么可以用reset指令将暂存区的代码进行复原。 1git reset --head 如果进行了">
 <meta property="og:type" content="article">
 <meta property="og:title" content="git操作指令">
 <meta property="og:url" content="http://caoqiwen2001.github.io/2018/07/06/git-1/index.html">
 <meta property="og:site_name" content="Coding Running">
-<meta property="og:description" content="git操作指令git用于代码管理，多版本多分支管理操作，在多人管理的过程中还是用的比较多的。以下记录个人用的比较多的git命令。  增加操作 1git add . 如果只是修改了文件，并没有增加到暂存区，用这个指令进行操作：1git checkout -- 1.txt 如果有进行add操作，那么可以用reset指令将暂存区的代码进行复原。 1git reset --head 如果进行了commit">
+<meta property="og:description" content="git操作指令git用于代码管理，多版本多分支管理操作，在多人管理的过程中还是用的比较多的。以下记录个人用的比较多的git命令。  增加操作 1git add . 如果只是修改了文件，并没有增加到暂存区，用这个指令进行撤回操作：1git checkout -- 1.txt 如果有进行add操作到缓存区，那么可以用reset指令将暂存区的代码进行复原。 1git reset --head 如果进行了">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-06T07:34:59.010Z">
+<meta property="og:updated_time" content="2018-11-24T11:27:15.130Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git操作指令">
-<meta name="twitter:description" content="git操作指令git用于代码管理，多版本多分支管理操作，在多人管理的过程中还是用的比较多的。以下记录个人用的比较多的git命令。  增加操作 1git add . 如果只是修改了文件，并没有增加到暂存区，用这个指令进行操作：1git checkout -- 1.txt 如果有进行add操作，那么可以用reset指令将暂存区的代码进行复原。 1git reset --head 如果进行了commit">
+<meta name="twitter:description" content="git操作指令git用于代码管理，多版本多分支管理操作，在多人管理的过程中还是用的比较多的。以下记录个人用的比较多的git命令。  增加操作 1git add . 如果只是修改了文件，并没有增加到暂存区，用这个指令进行撤回操作：1git checkout -- 1.txt 如果有进行add操作到缓存区，那么可以用reset指令将暂存区的代码进行复原。 1git reset --head 如果进行了">
 
 
 
@@ -345,8 +345,8 @@
         <h3 id="git操作指令"><a href="#git操作指令" class="headerlink" title="git操作指令"></a>git操作指令</h3><p>git用于代码管理，多版本多分支管理操作，在多人管理的过程中还是用的比较多的。以下记录个人用的比较多的git命令。</p>
 <p> 增加操作</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br></pre></td></tr></table></figure>
-<p>如果只是修改了文件，并没有增加到暂存区，用这个指令进行操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -- 1.txt</span><br></pre></td></tr></table></figure></p>
-<p>如果有进行add操作，那么可以用reset指令将暂存区的代码进行复原。</p>
+<p>如果只是修改了文件，并没有增加到暂存区，用这个指令进行撤回操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -- 1.txt</span><br></pre></td></tr></table></figure></p>
+<p>如果有进行add操作到缓存区，那么可以用reset指令将暂存区的代码进行复原。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset --head</span><br></pre></td></tr></table></figure>
 <p>如果进行了commit操作，需要进行回退的话也是这个命令：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset -- hard Head</span><br></pre></td></tr></table></figure>
@@ -358,6 +358,15 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b dev origin/dev在本地创建分支dev并切换到该分支，分支命名为dev，</span><br></pre></td></tr></table></figure>
 <p>拉取远端的代码到当前分支</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin dev</span><br></pre></td></tr></table></figure>
+<p>本地切换分支到master</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout  master</span><br></pre></td></tr></table></figure>
+<font color="green"> 合并master分支到当前分支上 </font>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge  master</span><br></pre></td></tr></table></figure>
+ <font color="red">如果遇到有冲突，则需要解决冲突之后在执行以下两个命令</font>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add </span><br><span class="line">git commit</span><br></pre></td></tr></table></figure>
+<p>之后可以进行再次合并，然后在push到远程分支上。</p>
 
       
     </div>
@@ -465,7 +474,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">37</span>
+              <span class="site-state-item-count">38</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -482,7 +491,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
