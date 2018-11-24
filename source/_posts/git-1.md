@@ -11,11 +11,11 @@ git用于代码管理，多版本多分支管理操作，在多人管理的过�
 ```
 git add .
 ```
-如果只是修改了文件，并没有增加到暂存区，用这个指令进行操作：
+如果只是修改了文件，并没有增加到暂存区，用这个指令进行撤回操作：
 ```
  git checkout -- 1.txt
 ```
-如果有进行add操作，那么可以用reset指令将暂存区的代码进行复原。
+如果有进行add操作到缓存区，那么可以用reset指令将暂存区的代码进行复原。
 
 ```
 git reset --head
@@ -48,6 +48,24 @@ git checkout -b dev origin/dev在本地创建分支dev并切换到该分支，�
 ```
 git pull origin dev
 ```
+本地切换分支到master
+
+```
+git checkout  master
+
+```
+<font color="green"> 合并master分支到当前分支上 </font>
+
+```
+git merge  master
+```
+ <font color="red">如果遇到有冲突，则需要解决冲突之后在执行以下两个命令</font>
+
+```
+git add 
+git commit 
+```
+之后可以进行再次合并，然后在push到远程分支上。
 
 
 
