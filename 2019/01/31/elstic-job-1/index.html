@@ -1,0 +1,718 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="elastic-job源码分析," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="elastic-job 源码分析分布式任务调度框架值的好好研究，之前项目中都是直接关联在项目中的用Spring直接调用，这有个坏处在大数据量的时候如果是分布式部署的时候 做了大量重复的劳动，而当当的elastic-job 这套能很好的解决该问题。    实例演示只需要实现SimpleJob接口，该接口有execute方法，来看看他的接口实现： 123456789101112131415161718">
+<meta name="keywords" content="elastic-job源码分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="elastic-job 源码分析（一）整理启动流程">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2019/01/31/elstic-job-1/index.html">
+<meta property="og:site_name" content="Coding Running">
+<meta property="og:description" content="elastic-job 源码分析分布式任务调度框架值的好好研究，之前项目中都是直接关联在项目中的用Spring直接调用，这有个坏处在大数据量的时候如果是分布式部署的时候 做了大量重复的劳动，而当当的elastic-job 这套能很好的解决该问题。    实例演示只需要实现SimpleJob接口，该接口有execute方法，来看看他的接口实现： 123456789101112131415161718">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-31T10:18:29.508Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="elastic-job 源码分析（一）整理启动流程">
+<meta name="twitter:description" content="elastic-job 源码分析分布式任务调度框架值的好好研究，之前项目中都是直接关联在项目中的用Spring直接调用，这有个坏处在大数据量的时候如果是分布式部署的时候 做了大量重复的劳动，而当当的elastic-job 这套能很好的解决该问题。    实例演示只需要实现SimpleJob接口，该接口有execute方法，来看看他的接口实现： 123456789101112131415161718">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2019/01/31/elstic-job-1/"/>
+
+  <title> elastic-job 源码分析（一）整理启动流程 | Coding Running </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0772b55718e4712440fdda966310dc28";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Coding Running</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Java开发</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-share">
+          <a href="/share" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            有料
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                elastic-job 源码分析（一）整理启动流程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-01-31T18:12:26+08:00" content="2019-01-31">
+              2019-01-31
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/elastic-job源码分析/" itemprop="url" rel="index">
+                    <span itemprop="name">elastic-job源码分析</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2019/01/31/elstic-job-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/01/31/elstic-job-1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="elastic-job-源码分析"><a href="#elastic-job-源码分析" class="headerlink" title="elastic-job 源码分析"></a>elastic-job 源码分析</h3><p>分布式任务调度框架值的好好研究，之前项目中都是直接关联在项目中的用Spring直接调用，这有个坏处在大数据量的时候如果是分布式部署的时候 做了大量重复的劳动，而当当的elastic-job 这套能很好的解决该问题。   </p>
+<h3 id="实例演示"><a href="#实例演示" class="headerlink" title="实例演示"></a>实例演示</h3><p>只需要实现SimpleJob接口，该接口有execute方法，来看看他的接口实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public class SpringSimpleJob implements SimpleJob &#123;</span><br><span class="line"></span><br><span class="line">    private static final Logger LOGGER = LoggerFactory.getLogger(SpringSimpleJob.class);</span><br><span class="line"></span><br><span class="line">    @Resource</span><br><span class="line">    private FooRepository fooRepository;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void execute(final ShardingContext shardingContext) &#123;</span><br><span class="line">        LOGGER.info(String.format(&quot;Item: %s | Time: %s | Thread: %s | %s&quot;,</span><br><span class="line">                shardingContext.getShardingItem(), new SimpleDateFormat(&quot;HH:mm:ss&quot;).format(new Date()), Thread.currentThread().getId(), &quot;SIMPLE&quot;));</span><br><span class="line">//        System.out.println(String.format(&quot;Item: %s | Time: %s | Thread: %s | %s&quot;,</span><br><span class="line">//                shardingContext.getShardingItem(), new SimpleDateFormat(&quot;HH:mm:ss&quot;).format(new Date()), Thread.currentThread().getId(), &quot;SIMPLE&quot;));</span><br><span class="line">        List&lt;Foo&gt; data = fooRepository.findTodoData(shardingContext.getShardingParameter(), 10);</span><br><span class="line">        for (Foo each : data) &#123;</span><br><span class="line">            fooRepository.setCompleted(each.getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先来看看他的启动流程是怎么样的？笔者在git上下载了SpringBoot的demo，然后启动之，它的启动代码是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@Bean(initMethod = &quot;init&quot;)</span><br><span class="line"> public JobScheduler simpleJobScheduler(final SimpleJob simpleJob, @Value(&quot;$&#123;simpleJob.cron&#125;&quot;) final String cron, @Value(&quot;$&#123;simpleJob.shardingTotalCount&#125;&quot;) final int shardingTotalCount,</span><br><span class="line">                                        @Value(&quot;$&#123;simpleJob.shardingItemParameters&#125;&quot;) final String shardingItemParameters) &#123;</span><br><span class="line">     return new SpringJobScheduler(simpleJob, regCenter, getLiteJobConfiguration(simpleJob.getClass(), cron, shardingTotalCount, shardingItemParameters), jobEventConfiguration);</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> private LiteJobConfiguration getLiteJobConfiguration(final Class&lt;? extends SimpleJob&gt; jobClass, final String cron, final int shardingTotalCount, final String shardingItemParameters) &#123;</span><br><span class="line">     return LiteJobConfiguration.newBuilder(new SimpleJobConfiguration(JobCoreConfiguration.newBuilder(</span><br><span class="line">             jobClass.getName(), cron, shardingTotalCount).shardingItemParameters(shardingItemParameters).build(), jobClass.getCanonicalName())).overwrite(true).build();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>发现它是new一个SpringJobScheduler出来的，这个玩意是啥？发现它是继承自JobScheduler的，具体来看看obScheduler这个类，首先看看它的构造函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private JobScheduler(final CoordinatorRegistryCenter regCenter, final LiteJobConfiguration liteJobConfig, final JobEventBus jobEventBus, final ElasticJobListener... elasticJobListeners) &#123;</span><br><span class="line">     JobRegistry.getInstance().addJobInstance(liteJobConfig.getJobName(), new JobInstance());</span><br><span class="line">     this.liteJobConfig = liteJobConfig;</span><br><span class="line">     this.regCenter = regCenter;</span><br><span class="line">     List&lt;ElasticJobListener&gt; elasticJobListenerList = Arrays.asList(elasticJobListeners);</span><br><span class="line">     setGuaranteeServiceForElasticJobListeners(regCenter, elasticJobListenerList);</span><br><span class="line">     schedulerFacade = new SchedulerFacade(regCenter, liteJobConfig.getJobName(), elasticJobListenerList);</span><br><span class="line">     jobFacade = new LiteJobFacade(regCenter, liteJobConfig.getJobName(), Arrays.asList(elasticJobListeners), jobEventBus);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>可以发现构造里面多了SchedulerFacade类和LiteJobFacade这两个类以及JobRegistry这个类，通过查看JobRegistry这个类，发现它实现了单例模式。<br>接着看看init方法，为什么要看这个方法呢？因为在springboot方法上是调用该方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * 初始化作业.</span><br><span class="line">     */</span><br><span class="line">    public void init() &#123;</span><br><span class="line">        LiteJobConfiguration liteJobConfigFromRegCenter = schedulerFacade.updateJobConfiguration(liteJobConfig);</span><br><span class="line">        JobRegistry.getInstance().setCurrentShardingTotalCount(liteJobConfigFromRegCenter.getJobName(), liteJobConfigFromRegCenter.getTypeConfig().getCoreConfig().getShardingTotalCount());</span><br><span class="line">        JobScheduleController jobScheduleController = new JobScheduleController(</span><br><span class="line">                createScheduler(), createJobDetail(liteJobConfigFromRegCenter.getTypeConfig().getJobClass()), liteJobConfigFromRegCenter.getJobName());</span><br><span class="line">        JobRegistry.getInstance().registerJob(liteJobConfigFromRegCenter.getJobName(), jobScheduleController, regCenter);</span><br><span class="line">        schedulerFacade.registerStartUpInfo(!liteJobConfigFromRegCenter.isDisabled());</span><br><span class="line">        jobScheduleController.scheduleJob(liteJobConfigFromRegCenter.getTypeConfig().getCoreConfig().getCron());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>可以发现，所有的操作都是围绕SchedulerFacade和JobFacade这几个类来操作的。<br>在schedulerFacade中有一个updateJobConfiguration方法，该方法主要用来更新作业配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * 更新作业配置.</span><br><span class="line">     *</span><br><span class="line">     * @param liteJobConfig 作业配置</span><br><span class="line">     * @return 更新后的作业配置</span><br><span class="line">     */</span><br><span class="line">    public LiteJobConfiguration updateJobConfiguration(final LiteJobConfiguration liteJobConfig) &#123;</span><br><span class="line">        configService.persist(liteJobConfig);</span><br><span class="line">        return configService.load(false);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>它首先通过configService类去持久化liteJobConfig任务配置信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">   * 持久化分布式作业配置信息.</span><br><span class="line">   * </span><br><span class="line">   * @param liteJobConfig 作业配置</span><br><span class="line">   */</span><br><span class="line">  public void persist(final LiteJobConfiguration liteJobConfig) &#123;</span><br><span class="line">      checkConflictJob(liteJobConfig);</span><br><span class="line">      if (!jobNodeStorage.isJobNodeExisted(ConfigurationNode.ROOT) || liteJobConfig.isOverwrite()) &#123;</span><br><span class="line">          jobNodeStorage.replaceJobNode(ConfigurationNode.ROOT, LiteJobConfigurationGsonFactory.toJson(liteJobConfig));</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>首先检查zk下面是否存在config的节点，如果存在则抛出异常，否则则将该节点持久化到zk下面。节点名字也是config。数据通过Gson持久化。以下是我电脑上序列化出来Json字符串。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;jobName&quot;:&quot;com.dangdang.ddframe.job.example.job.dataflow.SpringDataflowJob&quot;,&quot;jobClass&quot;:&quot;com.dangdang.ddframe.job.example.job.dataflow.SpringDataflowJob&quot;,&quot;jobType&quot;:&quot;DATAFLOW&quot;,&quot;cron&quot;:&quot;0/5 * * * * ?&quot;,&quot;shardingTotalCount&quot;:8,&quot;shardingItemParameters&quot;:&quot;0\u003dBeijing,1\u003dShanghai,2\u003dGuangzhou&quot;,&quot;jobParameter&quot;:&quot;&quot;,&quot;failover&quot;:false,&quot;misfire&quot;:true,&quot;description&quot;:&quot;&quot;,&quot;jobProperties&quot;:&#123;&quot;job_exception_handler&quot;:&quot;com.dangdang.ddframe.job.executor.handler.impl.DefaultJobExceptionHandler&quot;,&quot;executor_service_handler&quot;:&quot;com.dangdang.ddframe.job.executor.handler.impl.DefaultExecutorServiceHandler&quot;&#125;,&quot;streamingProcess&quot;:true,&quot;monitorExecution&quot;:true,&quot;maxTimeDiffSeconds&quot;:-1,&quot;monitorPort&quot;:-1,&quot;jobShardingStrategyClass&quot;:&quot;&quot;,&quot;reconcileIntervalMinutes&quot;:10,&quot;disabled&quot;:false,&quot;overwrite&quot;:true&#125;</span><br></pre></td></tr></table></figure>
+<p>持久化完成后还需要从zk中拿出具体的配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public LiteJobConfiguration load(boolean fromCache) &#123;</span><br><span class="line">      String result;</span><br><span class="line">      if (fromCache) &#123;</span><br><span class="line">          result = this.jobNodeStorage.getJobNodeData(&quot;config&quot;);</span><br><span class="line">          if (null == result) &#123;</span><br><span class="line">              result = this.jobNodeStorage.getJobNodeDataDirectly(&quot;config&quot;);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">          result = this.jobNodeStorage.getJobNodeDataDirectly(&quot;config&quot;);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      return LiteJobConfigurationGsonFactory.fromJson(result);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这里传入的默认为false，则没有走缓存拿，直接从zk中拿取的数据，拿到数据之后通过反序列化将数据转换成LiteJobConfiguration对象。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>本文简单的简单的介绍了elastic-job 局部启动流程，对elastic-job有了一个大概的了解，为接下来详细分析每个操作步骤奠定了基础。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/elastic-job源码分析/" rel="tag">#elastic-job源码分析</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/18/jvm-2/" rel="next" title="JVM（相关知识点整理二）">
+                <i class="fa fa-chevron-left"></i> JVM（相关知识点整理二）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2019/01/31/elstic-job-1/"
+           data-title="elastic-job 源码分析（一）整理启动流程" data-url="http://caoqiwen2001.github.io/2019/01/31/elstic-job-1/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="luckyWen" />
+          <p class="site-author-name" itemprop="name">luckyWen</p>
+          <p class="site-description motion-element" itemprop="description">记录自己的学习成长之路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">39</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caoqiwen2001" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/MR_CAO" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#elastic-job-源码分析"><span class="nav-number">1.</span> <span class="nav-text">elastic-job 源码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例演示"><span class="nav-number">2.</span> <span class="nav-text">实例演示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">luckyWen</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"caoqiwen2001"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
