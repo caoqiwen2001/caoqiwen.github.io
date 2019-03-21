@@ -86,7 +86,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Java," />
+  <meta name="keywords" content="elastic-job源码分析," />
 
 
 
@@ -102,18 +102,18 @@
 
 
 
-<meta name="description" content="java的属性1234567private final char value[];  //final类型的char数组，则赋值之后是不能改变的。   /** Cache the hash code for the string */   private int hash; // Default to 0 //哈希值   /** use serialVersionUID from JDK 1.0.2">
-<meta name="keywords" content="Java">
+<meta name="description" content="elastic-job分片策略elastic-job为我们提供了三种分片策略,一种是基于平均分配算法的分片策略，也是项目中默认的分片策略。下面分别说说这三种算法： AverageAllocationJobShardingStrategy类该类是这几种算法中最基础的，其他三种都是基于它实现的：其中有一个方然shardingAliquot，来看看它的具体实现：1234567891011121314pr">
+<meta name="keywords" content="elastic-job源码分析">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java的String源码解析">
-<meta property="og:url" content="http://caoqiwen2001.github.io/2017/01/03/string-1/index.html">
+<meta property="og:title" content="elastic-job 源码分析（分片策略）">
+<meta property="og:url" content="http://caoqiwen2001.github.io/2019/03/21/elstic-job-2/index.html">
 <meta property="og:site_name" content="Coding Running">
-<meta property="og:description" content="java的属性1234567private final char value[];  //final类型的char数组，则赋值之后是不能改变的。   /** Cache the hash code for the string */   private int hash; // Default to 0 //哈希值   /** use serialVersionUID from JDK 1.0.2">
+<meta property="og:description" content="elastic-job分片策略elastic-job为我们提供了三种分片策略,一种是基于平均分配算法的分片策略，也是项目中默认的分片策略。下面分别说说这三种算法： AverageAllocationJobShardingStrategy类该类是这几种算法中最基础的，其他三种都是基于它实现的：其中有一个方然shardingAliquot，来看看它的具体实现：1234567891011121314pr">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-06T07:23:13.191Z">
+<meta property="og:updated_time" content="2019-03-21T07:21:03.168Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java的String源码解析">
-<meta name="twitter:description" content="java的属性1234567private final char value[];  //final类型的char数组，则赋值之后是不能改变的。   /** Cache the hash code for the string */   private int hash; // Default to 0 //哈希值   /** use serialVersionUID from JDK 1.0.2">
+<meta name="twitter:title" content="elastic-job 源码分析（分片策略）">
+<meta name="twitter:description" content="elastic-job分片策略elastic-job为我们提供了三种分片策略,一种是基于平均分配算法的分片策略，也是项目中默认的分片策略。下面分别说说这三种算法： AverageAllocationJobShardingStrategy类该类是这几种算法中最基础的，其他三种都是基于它实现的：其中有一个方然shardingAliquot，来看看它的具体实现：1234567891011121314pr">
 
 
 
@@ -134,9 +134,9 @@
 
 
 
-  <link rel="canonical" href="http://caoqiwen2001.github.io/2017/01/03/string-1/"/>
+  <link rel="canonical" href="http://caoqiwen2001.github.io/2019/03/21/elstic-job-2/"/>
 
-  <title> Java的String源码解析 | Coding Running </title>
+  <title> elastic-job 源码分析（分片策略） | Coding Running </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -296,7 +296,7 @@
             
             
               
-                Java的String源码解析
+                elastic-job 源码分析（分片策略）
               
             
           </h1>
@@ -308,8 +308,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-03T18:04:06+08:00" content="2017-01-03">
-              2017-01-03
+            <time itemprop="dateCreated" datetime="2019-03-21T15:16:50+08:00" content="2019-03-21">
+              2019-03-21
             </time>
           </span>
 
@@ -322,8 +322,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
+                  <a href="/categories/elastic-job源码分析/" itemprop="url" rel="index">
+                    <span itemprop="name">elastic-job源码分析</span>
                   </a>
                 </span>
 
@@ -338,8 +338,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/01/03/string-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/03/string-1/" itemprop="commentsCount"></span>
+                <a href="/2019/03/21/elstic-job-2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/03/21/elstic-job-2/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -362,12 +362,18 @@
       
 
       
-        <h2 id="java的属性"><a href="#java的属性" class="headerlink" title="java的属性"></a>java的属性</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">private final char value[];  //final类型的char数组，则赋值之后是不能改变的。</span><br><span class="line"></span><br><span class="line">   /** Cache the hash code for the string */</span><br><span class="line">   private int hash; // Default to 0 //哈希值</span><br><span class="line"></span><br><span class="line">   /** use serialVersionUID from JDK 1.0.2 for interoperability */</span><br><span class="line">   private static final long serialVersionUID = -6849794470754667710L;</span><br></pre></td></tr></table></figure>
-<h3 id="常用的构造函数"><a href="#常用的构造函数" class="headerlink" title="常用的构造函数"></a>常用的构造函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">//默认给一个空间</span><br><span class="line"> public String() &#123;</span><br><span class="line">        this.value = new char[0];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">  public String(String original) &#123;</span><br><span class="line">        this.value = original.value;</span><br><span class="line">        this.hash = original.hash;</span><br><span class="line">    &#125;    </span><br><span class="line">    //支持char数组初始化</span><br><span class="line">    public String(char value[]) &#123;</span><br><span class="line">        this.value = Arrays.copyOf(value, value.length);</span><br><span class="line">    &#125;  </span><br><span class="line">    //支持StringBuilder初始化</span><br><span class="line">    public String(StringBuilder builder) &#123;</span><br><span class="line">        this.value = Arrays.copyOf(builder.getValue(), builder.length());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="常用到的函数"><a href="#常用到的函数" class="headerlink" title="常用到的函数"></a>常用到的函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//返回char数组中对应的字符</span><br><span class="line">  public char charAt(int index) &#123;</span><br><span class="line">        if ((index &lt; 0) || (index &gt;= value.length)) &#123;</span><br><span class="line">            throw new StringIndexOutOfBoundsException(index);</span><br><span class="line">        &#125;</span><br><span class="line">        return value[index];</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//输入一个String返回一个char数组</span><br><span class="line">    public char[] toCharArray() &#123;</span><br><span class="line">        // Cannot use Arrays.copyOf because of class initialization order issues</span><br><span class="line">        char result[] = new char[value.length];</span><br><span class="line">        System.arraycopy(value, 0, result, 0, value.length);</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="附上java中考到的一个算法题。"><a href="#附上java中考到的一个算法题。" class="headerlink" title="附上java中考到的一个算法题。"></a>附上java中考到的一个算法题。</h2><p>求String字符串中重复的字符算法题</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public static Map&lt;Character, Integer&gt; allTotalSum(String str) &#123;</span><br><span class="line"></span><br><span class="line">	char[] chars=str.toCharArray();//把String转换成char数组</span><br><span class="line">	</span><br><span class="line">	HashMap&lt;Character, Integer&gt; hash = new HashMap&lt;Character, Integer&gt;();</span><br><span class="line"></span><br><span class="line">	for (int i = 0; i &lt; chars.length; i++) &#123;</span><br><span class="line">		if (!hash.containsKey(chars[i])) &#123;</span><br><span class="line">			hash.put(chars[i], 1);</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			int count = hash.get(chars[i]) + 1;</span><br><span class="line">			hash.put(chars[i], count);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return hash;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <h3 id="elastic-job分片策略"><a href="#elastic-job分片策略" class="headerlink" title="elastic-job分片策略"></a>elastic-job分片策略</h3><p>elastic-job为我们提供了三种分片策略,一种是基于平均分配算法的分片策略，也是项目中默认的分片策略。下面分别说说这三种算法：</p>
+<h4 id="AverageAllocationJobShardingStrategy类"><a href="#AverageAllocationJobShardingStrategy类" class="headerlink" title="AverageAllocationJobShardingStrategy类"></a>AverageAllocationJobShardingStrategy类</h4><p>该类是这几种算法中最基础的，其他三种都是基于它实现的：其中有一个方然shardingAliquot，来看看它的具体实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">private Map&lt;JobInstance, List&lt;Integer&gt;&gt; shardingAliquot(final List&lt;JobInstance&gt; shardingUnits, final int shardingTotalCount) &#123;</span><br><span class="line">     Map&lt;JobInstance, List&lt;Integer&gt;&gt; result = new LinkedHashMap&lt;&gt;(shardingTotalCount, 1);</span><br><span class="line">     int itemCountPerSharding = shardingTotalCount / shardingUnits.size();</span><br><span class="line">     int count = 0;</span><br><span class="line">     for (JobInstance each : shardingUnits) &#123;</span><br><span class="line">         List&lt;Integer&gt; shardingItems = new ArrayList&lt;&gt;(itemCountPerSharding + 1);</span><br><span class="line">         for (int i = count * itemCountPerSharding; i &lt; (count + 1) * itemCountPerSharding; i++) &#123;</span><br><span class="line">             shardingItems.add(i);</span><br><span class="line">         &#125;</span><br><span class="line">         result.put(each, shardingItems);</span><br><span class="line">         count++;</span><br><span class="line">     &#125;</span><br><span class="line">     return result;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>从这里可以看出，它的算法还是比较简单的，通过采用这种算法算出分片的数量。<br>其中有一个方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">private void addAliquant(final List&lt;JobInstance&gt; shardingUnits, final int shardingTotalCount, final Map&lt;JobInstance, List&lt;Integer&gt;&gt; shardingResults) &#123;</span><br><span class="line">      int aliquant = shardingTotalCount % shardingUnits.size();</span><br><span class="line">      int count = 0;</span><br><span class="line">      for (Map.Entry&lt;JobInstance, List&lt;Integer&gt;&gt; entry : shardingResults.entrySet()) &#123;</span><br><span class="line">          if (count &lt; aliquant) &#123;</span><br><span class="line">              entry.getValue().add(shardingTotalCount / shardingUnits.size() * shardingUnits.size() + count);</span><br><span class="line">          &#125;</span><br><span class="line">          count++;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>该方法是用来处理对于奇数个分片数目进行调整的算法，如果余数大于0则对当前分片数进行计算。</p>
+<h4 id="OdevitySortByNameJobShardingStrategy"><a href="#OdevitySortByNameJobShardingStrategy" class="headerlink" title="OdevitySortByNameJobShardingStrategy"></a>OdevitySortByNameJobShardingStrategy</h4><p>从官方文档来看，它的作用主要是通过作业值的哈希值进行排序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public Map&lt;JobInstance, List&lt;Integer&gt;&gt; sharding(final List&lt;JobInstance&gt; jobInstances, final String jobName, final int shardingTotalCount) &#123;</span><br><span class="line">    long jobNameHash = jobName.hashCode();</span><br><span class="line">    if (0 == jobNameHash % 2) &#123;</span><br><span class="line">        Collections.reverse(jobInstances);</span><br><span class="line">    &#125;</span><br><span class="line">    return averageAllocationJobShardingStrategy.sharding(jobInstances, jobName, shardingTotalCount);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果哈希值为偶数，则对实例列表进行翻转。其他的调用算法不变。</p>
+<h4 id="RotateServerByNameJobShardingStrategy"><a href="#RotateServerByNameJobShardingStrategy" class="headerlink" title="RotateServerByNameJobShardingStrategy"></a>RotateServerByNameJobShardingStrategy</h4><p>该算法对job的哈希值对服务器列表进行轮询从而达到分片策略。具体算法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">private List&lt;JobInstance&gt; rotateServerList(final List&lt;JobInstance&gt; shardingUnits, final String jobName) &#123;</span><br><span class="line">       int shardingUnitsSize = shardingUnits.size();</span><br><span class="line">       int offset = Math.abs(jobName.hashCode()) % shardingUnitsSize;</span><br><span class="line">       if (0 == offset) &#123;</span><br><span class="line">           return shardingUnits;</span><br><span class="line">       &#125;</span><br><span class="line">       List&lt;JobInstance&gt; result = new ArrayList&lt;&gt;(shardingUnitsSize);</span><br><span class="line">       for (int i = 0; i &lt; shardingUnitsSize; i++) &#123;</span><br><span class="line">           int index = (i + offset) % shardingUnitsSize;</span><br><span class="line">           result.add(shardingUnits.get(index));</span><br><span class="line">       &#125;</span><br><span class="line">       return result;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>从代码层面来看，也是对求的hashcode值进行取偏移取模计算。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>以上就是elastic-job的几种策略。在实际项目中可以选择我们需要的策略对数据进行分片。</p>
 
       
     </div>
@@ -390,7 +396,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Java/" rel="tag">#Java</a>
+            <a href="/tags/elastic-job源码分析/" rel="tag">#elastic-job源码分析</a>
           
         </div>
       
@@ -399,17 +405,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/12/19/io-1/" rel="next" title="java二进制流">
-                <i class="fa fa-chevron-left"></i> java二进制流
+              <a href="/2019/01/31/elstic-job-1/" rel="next" title="elastic-job 源码分析（一）整理启动流程">
+                <i class="fa fa-chevron-left"></i> elastic-job 源码分析（一）整理启动流程
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/12/14/java-design-singleton/" rel="prev" title="Java设计模式之单例">
-                Java设计模式之单例 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -435,8 +437,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/01/03/string-1/"
-           data-title="Java的String源码解析" data-url="http://caoqiwen2001.github.io/2017/01/03/string-1/">
+      <div class="ds-thread" data-thread-key="2019/03/21/elstic-job-2/"
+           data-title="elastic-job 源码分析（分片策略）" data-url="http://caoqiwen2001.github.io/2019/03/21/elstic-job-2/">
       </div>
     
   </div>
@@ -547,7 +549,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#java的属性"><span class="nav-number">1.</span> <span class="nav-text">java的属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常用的构造函数"><span class="nav-number">1.1.</span> <span class="nav-text">常用的构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用到的函数"><span class="nav-number">1.2.</span> <span class="nav-text">常用到的函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附上java中考到的一个算法题。"><span class="nav-number">2.</span> <span class="nav-text">附上java中考到的一个算法题。</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#elastic-job分片策略"><span class="nav-number">1.</span> <span class="nav-text">elastic-job分片策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AverageAllocationJobShardingStrategy类"><span class="nav-number">1.1.</span> <span class="nav-text">AverageAllocationJobShardingStrategy类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OdevitySortByNameJobShardingStrategy"><span class="nav-number">1.2.</span> <span class="nav-text">OdevitySortByNameJobShardingStrategy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RotateServerByNameJobShardingStrategy"><span class="nav-number">1.3.</span> <span class="nav-text">RotateServerByNameJobShardingStrategy</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
           </div>
         </section>
